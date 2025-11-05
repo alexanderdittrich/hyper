@@ -1,4 +1,5 @@
 """Interface for primitives which build on top of models."""
+
 import abc
 
 import tensorflow as tf
@@ -96,8 +97,7 @@ class Module(abc.ABC):
         """
         trainable = self._variable_scope.global_variables()
         return [
-            var for var in trainable
-            if 'hidden' in var.name and 'kernel' in var.name
+            var for var in trainable if "hidden" in var.name and "kernel" in var.name
         ]
 
     def get_params(self):
@@ -169,7 +169,7 @@ class Module(abc.ABC):
 
         """
         new_dict = self.__dict__.copy()
-        del new_dict['_cached_params']
+        del new_dict["_cached_params"]
         return new_dict
 
     def __setstate__(self, state):

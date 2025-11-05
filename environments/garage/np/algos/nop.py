@@ -1,4 +1,5 @@
 """NOP (no optimization performed) policy search algorithm."""
+
 from environments.garage.np.algos.rl_algorithm import RLAlgorithm
 
 

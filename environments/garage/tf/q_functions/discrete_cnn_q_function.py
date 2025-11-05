@@ -1,4 +1,5 @@
 """Discrete CNN QFunction with CNN-MLP structure."""
+
 # yapf: disable
 import akro
 import tensorflow as tf
@@ -66,36 +67,43 @@ class DiscreteCNNQFunction(Sequential):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 filters,
-                 strides,
-                 hidden_sizes=(256, ),
-                 name=None,
-                 padding='SAME',
-                 max_pooling=False,
-                 pool_strides=(2, 2),
-                 pool_shapes=(2, 2),
-                 cnn_hidden_nonlinearity=tf.nn.relu,
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 dueling=False,
-                 layer_normalization=False):
-        if not isinstance(env_spec.observation_space, akro.Box) or \
-                not len(env_spec.observation_space.shape) in (2, 3):
+    def __init__(
+        self,
+        env_spec,
+        filters,
+        strides,
+        hidden_sizes=(256,),
+        name=None,
+        padding="SAME",
+        max_pooling=False,
+        pool_strides=(2, 2),
+        pool_shapes=(2, 2),
+        cnn_hidden_nonlinearity=tf.nn.relu,
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        dueling=False,
+        layer_normalization=False,
+    ):
+        if not isinstance(env_spec.observation_space, akro.Box) or not len(
+            env_spec.observation_space.shape
+        ) in (2, 3):
             raise ValueError(
-                '{} can only process 2D, 3D akro.Image or'
-                ' akro.Box observations, but received an env_spec with '
-                'observation_space of type {} and shape {}'.format(
+                "{} can only process 2D, 3D akro.Image or"
+                " akro.Box observations, but received an env_spec with "
+                "observation_space of type {} and shape {}".format(
                     type(self).__name__,
                     type(env_spec.observation_space).__name__,
-                    env_spec.observation_space.shape))
+                    env_spec.observation_space.shape,
+                )
+            )
 
         self._env_spec = env_spec
         self._action_dim = env_spec.action_space.n
@@ -120,11 +128,13 @@ class DiscreteCNNQFunction(Sequential):
         action_dim = self._env_spec.action_space.flat_dim
 
         if not max_pooling:
-            cnn_model = CNNModel(input_dim=self.obs_dim,
-                                 filters=filters,
-                                 strides=strides,
-                                 padding=padding,
-                                 hidden_nonlinearity=cnn_hidden_nonlinearity)
+            cnn_model = CNNModel(
+                input_dim=self.obs_dim,
+                filters=filters,
+                strides=strides,
+                padding=padding,
+                hidden_nonlinearity=cnn_hidden_nonlinearity,
+            )
         else:
             cnn_model = CNNModelWithMaxPooling(
                 input_dim=self.obs_dim,
@@ -133,17 +143,20 @@ class DiscreteCNNQFunction(Sequential):
                 padding=padding,
                 pool_strides=pool_strides,
                 pool_shapes=pool_shapes,
-                hidden_nonlinearity=cnn_hidden_nonlinearity)
+                hidden_nonlinearity=cnn_hidden_nonlinearity,
+            )
         if not dueling:
-            output_model = MLPModel(output_dim=action_dim,
-                                    hidden_sizes=hidden_sizes,
-                                    hidden_nonlinearity=hidden_nonlinearity,
-                                    hidden_w_init=hidden_w_init,
-                                    hidden_b_init=hidden_b_init,
-                                    output_nonlinearity=output_nonlinearity,
-                                    output_w_init=output_w_init,
-                                    output_b_init=output_b_init,
-                                    layer_normalization=layer_normalization)
+            output_model = MLPModel(
+                output_dim=action_dim,
+                hidden_sizes=hidden_sizes,
+                hidden_nonlinearity=hidden_nonlinearity,
+                hidden_w_init=hidden_w_init,
+                hidden_b_init=hidden_b_init,
+                output_nonlinearity=output_nonlinearity,
+                output_w_init=output_w_init,
+                output_b_init=output_b_init,
+                layer_normalization=layer_normalization,
+            )
         else:
             output_model = MLPDuelingModel(
                 output_dim=action_dim,
@@ -154,7 +167,8 @@ class DiscreteCNNQFunction(Sequential):
                 output_nonlinearity=output_nonlinearity,
                 output_w_init=output_w_init,
                 output_b_init=output_b_init,
-                layer_normalization=layer_normalization)
+                layer_normalization=layer_normalization,
+            )
 
         super().__init__(cnn_model, output_model, name=name)
         self._network = None
@@ -164,14 +178,14 @@ class DiscreteCNNQFunction(Sequential):
     def _initialize(self):
         """Initialize QFunction."""
         if isinstance(self._env_spec.observation_space, akro.Image):
-            obs_ph = tf.compat.v1.placeholder(tf.uint8,
-                                              (None, ) + self.obs_dim,
-                                              name='obs')
+            obs_ph = tf.compat.v1.placeholder(
+                tf.uint8, (None,) + self.obs_dim, name="obs"
+            )
             augmented_obs_ph = tf.cast(obs_ph, tf.float32) / 255.0
         else:
-            obs_ph = tf.compat.v1.placeholder(tf.float32,
-                                              (None, ) + self.obs_dim,
-                                              name='obs')
+            obs_ph = tf.compat.v1.placeholder(
+                tf.float32, (None,) + self.obs_dim, name="obs"
+            )
             augmented_obs_ph = obs_ph
 
         self._network = super().build(augmented_obs_ph)
@@ -227,23 +241,25 @@ class DiscreteCNNQFunction(Sequential):
             garage.tf.q_functions.DiscreteCNNQFunction: Clone of this object
 
         """
-        new_qf = self.__class__(name=name,
-                                env_spec=self._env_spec,
-                                filters=self._filters,
-                                strides=self._strides,
-                                hidden_sizes=self._hidden_sizes,
-                                padding=self._padding,
-                                max_pooling=self._max_pooling,
-                                pool_shapes=self._pool_shapes,
-                                pool_strides=self._pool_strides,
-                                hidden_nonlinearity=self._hidden_nonlinearity,
-                                hidden_w_init=self._hidden_w_init,
-                                hidden_b_init=self._hidden_b_init,
-                                output_nonlinearity=self._output_nonlinearity,
-                                output_w_init=self._output_w_init,
-                                output_b_init=self._output_b_init,
-                                dueling=self._dueling,
-                                layer_normalization=self._layer_normalization)
+        new_qf = self.__class__(
+            name=name,
+            env_spec=self._env_spec,
+            filters=self._filters,
+            strides=self._strides,
+            hidden_sizes=self._hidden_sizes,
+            padding=self._padding,
+            max_pooling=self._max_pooling,
+            pool_shapes=self._pool_shapes,
+            pool_strides=self._pool_strides,
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            output_nonlinearity=self._output_nonlinearity,
+            output_w_init=self._output_w_init,
+            output_b_init=self._output_b_init,
+            dueling=self._dueling,
+            layer_normalization=self._layer_normalization,
+        )
         new_qf.parameters = self.parameters
         return new_qf
 
@@ -265,6 +281,6 @@ class DiscreteCNNQFunction(Sequential):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_obs_input']
-        del new_dict['_network']
+        del new_dict["_obs_input"]
+        del new_dict["_network"]
         return new_dict

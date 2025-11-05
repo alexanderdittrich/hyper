@@ -1,4 +1,5 @@
 """TanhGaussianMLPPolicy."""
+
 import numpy as np
 from torch import nn
 
@@ -51,21 +52,23 @@ class TanhGaussianMLPPolicy(StochasticPolicy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=nn.ReLU,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 init_std=1.0,
-                 min_std=np.exp(-20.),
-                 max_std=np.exp(2.),
-                 std_parameterization='exp',
-                 layer_normalization=False):
-        super().__init__(env_spec, name='TanhGaussianPolicy')
+    def __init__(
+        self,
+        env_spec,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=nn.ReLU,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        init_std=1.0,
+        min_std=np.exp(-20.0),
+        max_std=np.exp(2.0),
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
+        super().__init__(env_spec, name="TanhGaussianPolicy")
 
         self._obs_dim = env_spec.observation_space.flat_dim
         self._action_dim = env_spec.action_space.flat_dim
@@ -85,7 +88,8 @@ class TanhGaussianMLPPolicy(StochasticPolicy):
             max_std=max_std,
             std_parameterization=std_parameterization,
             layer_normalization=layer_normalization,
-            normal_distribution_cls=TanhNormal)
+            normal_distribution_cls=TanhNormal,
+        )
 
     def forward(self, observations):
         """Compute the action distributions from the observations.

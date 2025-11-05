@@ -7,7 +7,7 @@ root_logger = logging.getLogger()
 
 # Should be "gym", but we'll support people doing somewhat crazy
 # things.
-package_name = '.'.join(__name__.split('.')[:-1])
+package_name = ".".join(__name__.split(".")[:-1])
 gym_logger = logging.getLogger(package_name)
 
 # Should be modified only by official Gym plugins. This is an
@@ -15,7 +15,7 @@ gym_logger = logging.getLogger(package_name)
 _extra_loggers = [gym_logger]
 
 # Set up the default handler
-formatter = logging.Formatter('[%(asctime)s] %(message)s')
+formatter = logging.Formatter("[%(asctime)s] %(message)s")
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 

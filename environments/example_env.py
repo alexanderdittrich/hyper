@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 
 
 class ExampleEnv(gym.Env):
@@ -33,17 +33,19 @@ class ExampleEnv(gym.Env):
         """
         pass
 
-    def visualise_behaviour(self,
-                            env,
-                            args,
-                            policy,
-                            iter_idx,
-                            encoder=None,
-                            reward_decoder=None,
-                            state_decoder=None,
-                            task_decoder=None,
-                            image_folder=None,
-                            **kwargs):
+    def visualise_behaviour(
+        self,
+        env,
+        args,
+        policy,
+        iter_idx,
+        encoder=None,
+        reward_decoder=None,
+        state_decoder=None,
+        task_decoder=None,
+        image_folder=None,
+        **kwargs,
+    ):
         """
         Optional. If this is not overwritten, a default visualisation will be used (see utils/evaluation.py).
         Should return the following:

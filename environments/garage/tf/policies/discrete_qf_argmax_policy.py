@@ -2,6 +2,7 @@
 
 This policy chooses the action that yields to the largest Q-value.
 """
+
 import akro
 import numpy as np
 import tensorflow as tf
@@ -20,12 +21,14 @@ class DiscreteQFArgmaxPolicy(Module, Policy):
 
     """
 
-    def __init__(self, env_spec, qf, name='DiscreteQFArgmaxPolicy'):
+    def __init__(self, env_spec, qf, name="DiscreteQFArgmaxPolicy"):
         assert isinstance(env_spec.action_space, akro.Discrete), (
-            'DiscreteQFArgmaxPolicy only supports akro.Discrete action spaces')
+            "DiscreteQFArgmaxPolicy only supports akro.Discrete action spaces"
+        )
         if isinstance(env_spec.observation_space, akro.Dict):
-            raise ValueError('CNN policies do not support'
-                             'with akro.Dict observation spaces.')
+            raise ValueError(
+                "CNN policies do not supportwith akro.Dict observation spaces."
+            )
         super().__init__(name)
         self._env_spec = env_spec
         self._qf = qf
@@ -35,7 +38,8 @@ class DiscreteQFArgmaxPolicy(Module, Policy):
     def _initialize(self):
         # pylint: disable=protected-access
         self._f_qval = tf.compat.v1.get_default_session().make_callable(
-            self._qf.q_vals, feed_list=[self._qf.input])
+            self._qf.q_vals, feed_list=[self._qf.input]
+        )
 
     def get_action(self, observation):
         """Get action from this policy for the input observation.
@@ -64,11 +68,10 @@ class DiscreteQFArgmaxPolicy(Module, Policy):
                 dict since there is no parameterization.
 
         """
-        if isinstance(self.env_spec.observation_space, akro.Image) and \
-                len(observations[0].shape) < \
-                len(self.env_spec.observation_space.shape):
-            observations = self.env_spec.observation_space.unflatten_n(
-                observations)
+        if isinstance(self.env_spec.observation_space, akro.Image) and len(
+            observations[0].shape
+        ) < len(self.env_spec.observation_space.shape):
+            observations = self.env_spec.observation_space.unflatten_n(observations)
         q_vals = self._f_qval(observations)
         opt_actions = np.argmax(q_vals, axis=1)
 
@@ -160,7 +163,7 @@ class DiscreteQFArgmaxPolicy(Module, Policy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_qval']
+        del new_dict["_f_qval"]
         return new_dict
 
     def __setstate__(self, state):

@@ -2,13 +2,15 @@
 
 See https://github.com/deepmind/dm_control
 """
+
 try:
     import dm_control  # noqa: F401
 except ImportError:
-    raise ImportError("To use garage's dm_control wrappers, please install "
-                      'garage[dm_control].')
+    raise ImportError(
+        "To use garage's dm_control wrappers, please install garage[dm_control]."
+    )
 
 from environments.garage.envs.dm_control.dm_control_env import DMControlEnv
 from environments.garage.envs.dm_control.dm_control_viewer import DmControlViewer
 
-__all__ = ['DmControlViewer', 'DMControlEnv']
+__all__ = ["DmControlViewer", "DMControlEnv"]

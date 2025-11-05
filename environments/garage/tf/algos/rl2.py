@@ -2,6 +2,7 @@
 
 This module contains RL2, RL2Worker and the environment wrapper for RL2.
 """
+
 # yapf: disable
 import abc
 import collections
@@ -36,7 +37,8 @@ class RL2Env(Wrapper):
         self._spec = EnvSpec(
             action_space=self.action_space,
             observation_space=self._observation_space,
-            max_episode_length=self._env.spec.max_episode_length)
+            max_episode_length=self._env.spec.max_episode_length,
+        )
 
     @property
     def observation_space(self):
@@ -63,8 +65,8 @@ class RL2Env(Wrapper):
         """
         first_obs, episode_info = self._env.reset()
         first_obs = np.concatenate(
-            [first_obs,
-             np.zeros(self._env.action_space.shape), [0], [0]])
+            [first_obs, np.zeros(self._env.action_space.shape), [0], [0]]
+        )
 
         return first_obs, episode_info
 
@@ -84,16 +86,18 @@ class RL2Env(Wrapper):
         """
         es = self._env.step(action)
         next_obs = es.observation
-        next_obs = np.concatenate([
-            next_obs, action, [es.reward], [es.step_type == StepType.TERMINAL]
-        ])
+        next_obs = np.concatenate(
+            [next_obs, action, [es.reward], [es.step_type == StepType.TERMINAL]]
+        )
 
-        return EnvStep(env_spec=self.spec,
-                       action=action,
-                       reward=es.reward,
-                       observation=next_obs,
-                       env_info=es.env_info,
-                       step_type=es.step_type)
+        return EnvStep(
+            env_spec=self.spec,
+            action=action,
+            reward=es.reward,
+            observation=next_obs,
+            env_info=es.env_info,
+            step_type=es.step_type,
+        )
 
     def _create_rl2_obs_space(self):
         """Create observation space for RL2.
@@ -104,9 +108,9 @@ class RL2Env(Wrapper):
         """
         obs_flat_dim = np.prod(self._env.observation_space.shape)
         action_flat_dim = np.prod(self._env.action_space.shape)
-        return akro.Box(low=-np.inf,
-                        high=np.inf,
-                        shape=(obs_flat_dim + action_flat_dim + 1 + 1, ))
+        return akro.Box(
+            low=-np.inf, high=np.inf, shape=(obs_flat_dim + action_flat_dim + 1 + 1,)
+        )
 
 
 class RL2Worker(DefaultWorker):
@@ -133,16 +137,19 @@ class RL2Worker(DefaultWorker):
     """
 
     def __init__(
-            self,
-            *,  # Require passing by keyword, since everything's an int.
-            seed,
-            max_episode_length,
-            worker_number,
-            n_episodes_per_trial=2):
+        self,
+        *,  # Require passing by keyword, since everything's an int.
+        seed,
+        max_episode_length,
+        worker_number,
+        n_episodes_per_trial=2,
+    ):
         self._n_episodes_per_trial = n_episodes_per_trial
-        super().__init__(seed=seed,
-                         max_episode_length=max_episode_length,
-                         worker_number=worker_number)
+        super().__init__(
+            seed=seed,
+            max_episode_length=max_episode_length,
+            worker_number=worker_number,
+        )
 
     def start_episode(self):
         """Begin a new episode."""
@@ -161,8 +168,9 @@ class RL2Worker(DefaultWorker):
             self.start_episode()
             while not self.step_episode():
                 pass
-        self._agent_infos['batch_idx'] = np.full(len(self._env_steps),
-                                                 self._worker_number)
+        self._agent_infos["batch_idx"] = np.full(
+            len(self._env_steps), self._worker_number
+        )
         return self.collect_episode()
 
 
@@ -305,13 +313,22 @@ class RL2(MetaRLAlgorithm, abc.ABC):
 
     """
 
-    def __init__(self, env_spec, episodes_per_trial, meta_batch_size,
-                 task_sampler, meta_evaluator, n_epochs_per_eval,
-                 **inner_algo_args):
+    def __init__(
+        self,
+        env_spec,
+        episodes_per_trial,
+        meta_batch_size,
+        task_sampler,
+        meta_evaluator,
+        n_epochs_per_eval,
+        **inner_algo_args,
+    ):
         self._env_spec = env_spec
         _inner_env_spec = EnvSpec(
-            env_spec.observation_space, env_spec.action_space,
-            episodes_per_trial * env_spec.max_episode_length)
+            env_spec.observation_space,
+            env_spec.action_space,
+            episodes_per_trial * env_spec.max_episode_length,
+        )
         self._inner_algo = RL2NPO(env_spec=_inner_env_spec, **inner_algo_args)
         self._rl2_max_episode_length = self._env_spec.max_episode_length
         self._n_epochs_per_eval = n_epochs_per_eval
@@ -341,9 +358,9 @@ class RL2(MetaRLAlgorithm, abc.ABC):
                     self._meta_evaluator.evaluate(self)
             trainer.step_episode = trainer.obtain_episodes(
                 trainer.step_itr,
-                env_update=self._task_sampler.sample(self._meta_batch_size))
-            last_return = self.train_once(trainer.step_itr,
-                                          trainer.step_episode)
+                env_update=self._task_sampler.sample(self._meta_batch_size),
+            )
+            last_return = self.train_once(trainer.step_itr, trainer.step_episode)
             trainer.step_itr += 1
 
         return last_return
@@ -360,7 +377,7 @@ class RL2(MetaRLAlgorithm, abc.ABC):
 
         """
         episodes, average_return = self._process_samples(itr, episodes)
-        logger.log('Optimizing policy...')
+        logger.log("Optimizing policy...")
         self._inner_algo.optimize_policy(episodes)
         return average_return
 
@@ -425,16 +442,16 @@ class RL2(MetaRLAlgorithm, abc.ABC):
 
         paths_by_task = collections.defaultdict(list)
         for episode in episodes.split():
-            if hasattr(episode, 'batch_idx'):
+            if hasattr(episode, "batch_idx"):
                 paths_by_task[episode.batch_idx[0]].append(episode)
-            elif 'batch_idx' in episode.agent_infos:
-                paths_by_task[episode.agent_infos['batch_idx'][0]].append(
-                    episode)
+            elif "batch_idx" in episode.agent_infos:
+                paths_by_task[episode.agent_infos["batch_idx"][0]].append(episode)
             else:
                 raise ValueError(
-                    'Batch idx is required for RL2 but not found, '
-                    'Make sure to use garage.tf.algos.rl2.RL2Worker '
-                    'for sampling')
+                    "Batch idx is required for RL2 but not found, "
+                    "Make sure to use garage.tf.algos.rl2.RL2Worker "
+                    "for sampling"
+                )
 
         # all path in paths_by_task[i] are sampled from task[i]
         for episode_list in paths_by_task.values():
@@ -444,15 +461,15 @@ class RL2(MetaRLAlgorithm, abc.ABC):
         concatenated_episodes = EpisodeBatch.concatenate(*concatenated_paths)
 
         name_map = None
-        if hasattr(self._task_sampler, '_envs') and hasattr(
-                self._task_sampler._envs[0]._env, 'all_task_names'):
-            names = [
-                env._env.all_task_names[0] for env in self._task_sampler._envs
-            ]
+        if hasattr(self._task_sampler, "_envs") and hasattr(
+            self._task_sampler._envs[0]._env, "all_task_names"
+        ):
+            names = [env._env.all_task_names[0] for env in self._task_sampler._envs]
             name_map = dict(enumerate(names))
 
         undiscounted_returns = log_multitask_performance(
-            itr, episodes, self._inner_algo._discount, name_map=name_map)
+            itr, episodes, self._inner_algo._discount, name_map=name_map
+        )
 
         average_return = np.mean(undiscounted_returns)
 
@@ -487,23 +504,22 @@ class RL2(MetaRLAlgorithm, abc.ABC):
             k: np.concatenate([b.episode_infos[k] for b in episode_list])
             for k in episode_list[0].episode_infos.keys()
         }
-        actions = np.concatenate([
-            self._env_spec.action_space.flatten_n(ep.actions)
-            for ep in episode_list
-        ])
+        actions = np.concatenate(
+            [self._env_spec.action_space.flatten_n(ep.actions) for ep in episode_list]
+        )
 
         return EpisodeBatch(
             env_spec=episode_list[0].env_spec,
             episode_infos=episode_infos,
-            observations=np.concatenate(
-                [ep.observations for ep in episode_list]),
+            observations=np.concatenate([ep.observations for ep in episode_list]),
             last_observations=episode_list[-1].last_observations,
             actions=actions,
             rewards=np.concatenate([ep.rewards for ep in episode_list]),
             env_infos=env_infos,
             agent_infos=agent_infos,
             step_types=np.concatenate([ep.step_types for ep in episode_list]),
-            lengths=np.asarray([sum([ep.lengths[0] for ep in episode_list])]))
+            lengths=np.asarray([sum([ep.lengths[0] for ep in episode_list])]),
+        )
 
     @property
     def policy(self):

@@ -8,15 +8,16 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class StateTransitionDecoder(nn.Module):
-    def __init__(self,
-                 layers,
-                 latent_dim,
-                 action_dim,
-                 action_embed_dim,
-                 state_dim,
-                 state_embed_dim,
-                 pred_type='deterministic'
-                 ):
+    def __init__(
+        self,
+        layers,
+        latent_dim,
+        action_dim,
+        action_embed_dim,
+        state_dim,
+        state_embed_dim,
+        pred_type="deterministic",
+    ):
         super(StateTransitionDecoder, self).__init__()
 
         self.state_encoder = utl.FeatureExtractor(state_dim, state_embed_dim, F.relu)
@@ -29,13 +30,12 @@ class StateTransitionDecoder(nn.Module):
             curr_input_dim = layers[i]
 
         # output layer
-        if pred_type == 'gaussian':
+        if pred_type == "gaussian":
             self.fc_out = nn.Linear(curr_input_dim, 2 * state_dim)
         else:
             self.fc_out = nn.Linear(curr_input_dim, state_dim)
 
     def forward(self, latent_state, state, action):
-
         ha = self.action_encoder(action)
         hs = self.state_encoder(state)
         h = torch.cat((latent_state, hs, ha), dim=-1)
@@ -47,19 +47,20 @@ class StateTransitionDecoder(nn.Module):
 
 
 class RewardDecoder(nn.Module):
-    def __init__(self,
-                 layers,
-                 latent_dim,
-                 action_dim,
-                 action_embed_dim,
-                 state_dim,
-                 state_embed_dim,
-                 num_states,
-                 multi_head=False,
-                 pred_type='deterministic',
-                 input_prev_state=True,
-                 input_action=True,
-                 ):
+    def __init__(
+        self,
+        layers,
+        latent_dim,
+        action_dim,
+        action_embed_dim,
+        state_dim,
+        state_embed_dim,
+        num_states,
+        multi_head=False,
+        pred_type="deterministic",
+        input_prev_state=True,
+        input_action=True,
+    ):
         super(RewardDecoder, self).__init__()
 
         self.pred_type = pred_type
@@ -77,8 +78,12 @@ class RewardDecoder(nn.Module):
             self.fc_out = nn.Linear(curr_input_dim, num_states)
         else:
             # get state as input and predict reward prob
-            self.state_encoder = utl.FeatureExtractor(state_dim, state_embed_dim, F.relu)
-            self.action_encoder = utl.FeatureExtractor(action_dim, action_embed_dim, F.relu)
+            self.state_encoder = utl.FeatureExtractor(
+                state_dim, state_embed_dim, F.relu
+            )
+            self.action_encoder = utl.FeatureExtractor(
+                action_dim, action_embed_dim, F.relu
+            )
             curr_input_dim = latent_dim + state_embed_dim
             if input_prev_state:
                 curr_input_dim += state_embed_dim
@@ -89,13 +94,12 @@ class RewardDecoder(nn.Module):
                 self.fc_layers.append(nn.Linear(curr_input_dim, layers[i]))
                 curr_input_dim = layers[i]
 
-            if pred_type == 'gaussian':
+            if pred_type == "gaussian":
                 self.fc_out = nn.Linear(curr_input_dim, 2)
             else:
                 self.fc_out = nn.Linear(curr_input_dim, 1)
 
     def forward(self, latent_state, next_state, prev_state=None, action=None):
-
         if self.multi_head:
             h = latent_state.clone()
         else:
@@ -115,13 +119,14 @@ class RewardDecoder(nn.Module):
 
 
 class TaskDecoder(nn.Module):
-    def __init__(self,
-                 layers,
-                 latent_dim,
-                 pred_type,
-                 task_dim,
-                 num_tasks,
-                 ):
+    def __init__(
+        self,
+        layers,
+        latent_dim,
+        pred_type,
+        task_dim,
+        num_tasks,
+    ):
         super(TaskDecoder, self).__init__()
 
         # "task_description" or "task id"
@@ -133,11 +138,10 @@ class TaskDecoder(nn.Module):
             self.fc_layers.append(nn.Linear(curr_input_dim, layers[i]))
             curr_input_dim = layers[i]
 
-        output_dim = task_dim if pred_type == 'task_description' else num_tasks
+        output_dim = task_dim if pred_type == "task_description" else num_tasks
         self.fc_out = nn.Linear(curr_input_dim, output_dim)
 
     def forward(self, latent_state):
-
         h = latent_state
 
         for i in range(len(self.fc_layers)):

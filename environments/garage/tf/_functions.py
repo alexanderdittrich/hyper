@@ -1,4 +1,5 @@
 """Utility functions for tf-based Reinforcement learning algorithms."""
+
 import collections
 
 import numpy as np
@@ -54,8 +55,8 @@ def get_target_ops(variables, target_variables, tau=None):
 
         if tau is not None:
             update_ops.append(
-                tf.compat.v1.assign(target_var,
-                                    tau * var + (1.0 - tau) * target_var))
+                tf.compat.v1.assign(target_var, tau * var + (1.0 - tau) * target_var)
+            )
 
     if tau is not None:
         return init_ops, update_ops
@@ -63,7 +64,7 @@ def get_target_ops(variables, target_variables, tau=None):
         return init_ops
 
 
-def flatten_batch(t, name='flatten_batch'):
+def flatten_batch(t, name="flatten_batch"):
     """Flatten a batch of observations.
 
     Reshape a tensor of size (X, Y, Z) into (X*Y, Z)
@@ -78,7 +79,7 @@ def flatten_batch(t, name='flatten_batch'):
     return tf.reshape(t, [-1] + list(t.shape[2:]), name=name)
 
 
-def flatten_batch_dict(d, name='flatten_batch_dict'):
+def flatten_batch_dict(d, name="flatten_batch_dict"):
     """Flatten a batch of observations represented as a dict.
 
     Args:
@@ -92,7 +93,7 @@ def flatten_batch_dict(d, name='flatten_batch_dict'):
         return {k: flatten_batch(v) for k, v in d.items()}
 
 
-def filter_valids(t, valid, name='filter_valids'):
+def filter_valids(t, valid, name="filter_valids"):
     """Filter out tensor using valid array.
 
     Args:
@@ -105,13 +106,10 @@ def filter_valids(t, valid, name='filter_valids'):
         tf.Tensor: Filtered Tensor.
     """
     # Must round before cast to prevent floating-error
-    return tf.dynamic_partition(t,
-                                tf.cast(tf.round(valid), tf.int32),
-                                2,
-                                name=name)[1]
+    return tf.dynamic_partition(t, tf.cast(tf.round(valid), tf.int32), 2, name=name)[1]
 
 
-def filter_valids_dict(d, valid, name='filter_valids_dict'):
+def filter_valids_dict(d, valid, name="filter_valids_dict"):
     """Filter valid values on a dict.
 
     Args:
@@ -158,7 +156,8 @@ def flatten_inputs(deep):
         # pylint: disable=missing-yield-doc,missing-yield-type-doc
         for d in deep:
             if isinstance(d, collections.abc.Iterable) and not isinstance(
-                    d, (str, bytes, tf.Tensor, np.ndarray)):
+                d, (str, bytes, tf.Tensor, np.ndarray)
+            ):
                 yield from flatten(d)
             else:
                 yield d
@@ -176,9 +175,9 @@ def flatten_tensor_variables(ts):
     Returns:
         tf.Tensor: Flattened Tensor.
     """
-    return tf.concat([tf.reshape(x, [-1]) for x in ts],
-                     0,
-                     name='flatten_tensor_variables')
+    return tf.concat(
+        [tf.reshape(x, [-1]) for x in ts], 0, name="flatten_tensor_variables"
+    )
 
 
 def new_tensor(name, ndim, dtype):
@@ -192,9 +191,7 @@ def new_tensor(name, ndim, dtype):
     Returns:
         tf.Tensor: Placeholder tensor.
     """
-    return tf.compat.v1.placeholder(dtype=dtype,
-                                    shape=[None] * ndim,
-                                    name=name)
+    return tf.compat.v1.placeholder(dtype=dtype, shape=[None] * ndim, name=name)
 
 
 def new_tensor_like(name, arr_like):
@@ -210,8 +207,7 @@ def new_tensor_like(name, arr_like):
     Returns:
         tf.Tensor: New placeholder tensor.
     """
-    return new_tensor(name,
-                      arr_like.get_shape().ndims, arr_like.dtype.base_dtype)
+    return new_tensor(name, arr_like.get_shape().ndims, arr_like.dtype.base_dtype)
 
 
 def concat_tensor_list(tensor_list):
@@ -315,11 +311,9 @@ def pad_tensor(x, max_len):
     Returns:
         numpy.ndarray: Padded tensor.
     """
-    return np.concatenate([
-        x,
-        np.tile(np.zeros_like(x[0]),
-                (max_len - len(x), ) + (1, ) * np.ndim(x[0]))
-    ])
+    return np.concatenate(
+        [x, np.tile(np.zeros_like(x[0]), (max_len - len(x),) + (1,) * np.ndim(x[0]))]
+    )
 
 
 def pad_tensor_n(xs, max_len):
@@ -334,7 +328,7 @@ def pad_tensor_n(xs, max_len):
     """
     ret = np.zeros((len(xs), max_len) + xs[0].shape[1:], dtype=xs[0].dtype)
     for idx, x in enumerate(xs):
-        ret[idx][:len(x)] = x
+        ret[idx][: len(x)] = x
 
     return ret
 
@@ -360,12 +354,9 @@ def pad_tensor_dict(tensor_dict, max_len):
     return ret
 
 
-def compute_advantages(discount,
-                       gae_lambda,
-                       max_len,
-                       baselines,
-                       rewards,
-                       name='compute_advantages'):
+def compute_advantages(
+    discount, gae_lambda, max_len, baselines, rewards, name="compute_advantages"
+):
     """Calculate advantages.
 
     Advantages are a discounted cumulative sum.
@@ -418,12 +409,10 @@ def compute_advantages(discount,
     """
     with tf.name_scope(name):
         # Prepare convolutional IIR filter to calculate advantages
-        gamma_lambda = tf.constant(float(discount) * float(gae_lambda),
-                                   dtype=tf.float32,
-                                   shape=[max_len, 1, 1])
-        advantage_filter = tf.compat.v1.cumprod(gamma_lambda,
-                                                axis=0,
-                                                exclusive=True)
+        gamma_lambda = tf.constant(
+            float(discount) * float(gae_lambda), dtype=tf.float32, shape=[max_len, 1, 1]
+        )
+        advantage_filter = tf.compat.v1.cumprod(gamma_lambda, axis=0, exclusive=True)
 
         # Calculate deltas
         pad = tf.zeros_like(baselines[:, :1])
@@ -431,19 +420,16 @@ def compute_advantages(discount,
         deltas = rewards + discount * baseline_shift - baselines
 
         # Convolve deltas with the discount filter to get advantages
-        deltas_pad = tf.expand_dims(tf.concat(
-            [deltas, tf.zeros_like(deltas[:, :-1])], 1),
-                                    axis=2)
-        adv = tf.nn.conv1d(deltas_pad,
-                           advantage_filter,
-                           stride=1,
-                           padding='VALID')
+        deltas_pad = tf.expand_dims(
+            tf.concat([deltas, tf.zeros_like(deltas[:, :-1])], 1), axis=2
+        )
+        adv = tf.nn.conv1d(deltas_pad, advantage_filter, stride=1, padding="VALID")
         advantages = tf.reshape(adv, [-1])
 
     return advantages
 
 
-def center_advs(advs, axes, eps, offset=0, scale=1, name='center_adv'):
+def center_advs(advs, axes, eps, offset=0, scale=1, name="center_adv"):
     """Normalize the advs tensor.
 
     This calculates the mean and variance using the axes specified
@@ -469,7 +455,7 @@ def center_advs(advs, axes, eps, offset=0, scale=1, name='center_adv'):
     return advs
 
 
-def positive_advs(advs, eps, name='positive_adv'):
+def positive_advs(advs, eps, name="positive_adv"):
     """Make all the values in the advs tensor positive.
 
     Offsets all values in advs by the minimum value in
@@ -490,7 +476,7 @@ def positive_advs(advs, eps, name='positive_adv'):
     return advs
 
 
-def discounted_returns(discount, max_len, rewards, name='discounted_returns'):
+def discounted_returns(discount, max_len, rewards, name="discounted_returns"):
     """Calculate discounted returns.
 
     Args:
@@ -506,16 +492,11 @@ def discounted_returns(discount, max_len, rewards, name='discounted_returns'):
         tf.Tensor: Tensor of discounted returns.
     """
     with tf.name_scope(name):
-        gamma = tf.constant(float(discount),
-                            dtype=tf.float32,
-                            shape=[max_len, 1, 1])
+        gamma = tf.constant(float(discount), dtype=tf.float32, shape=[max_len, 1, 1])
         return_filter = tf.math.cumprod(gamma, axis=0, exclusive=True)
-        rewards_pad = tf.expand_dims(tf.concat(
-            [rewards, tf.zeros_like(rewards[:, :-1])], 1),
-                                     axis=2)
-        returns = tf.nn.conv1d(rewards_pad,
-                               return_filter,
-                               stride=1,
-                               padding='VALID')
+        rewards_pad = tf.expand_dims(
+            tf.concat([rewards, tf.zeros_like(rewards[:, :-1])], 1), axis=2
+        )
+        returns = tf.nn.conv1d(rewards_pad, return_filter, stride=1, padding="VALID")
 
     return returns

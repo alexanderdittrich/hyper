@@ -1,4 +1,5 @@
 """Simple 2D Grid environment."""
+
 import akro
 import numpy as np
 
@@ -28,7 +29,7 @@ MAPS = {
         'FHFFHFHF',
         'FFFHFFFG'
     ],
-}   # yapf: disable
+}  # yapf: disable
 
 
 class GridWorldEnv(Environment):
@@ -41,7 +42,7 @@ class GridWorldEnv(Environment):
     | 'G' : goal
     """
 
-    def __init__(self, desc='4x4', max_episode_length=None):
+    def __init__(self, desc="4x4", max_episode_length=None):
         """Initialize the environment.
 
         Args:
@@ -51,12 +52,12 @@ class GridWorldEnv(Environment):
         if isinstance(desc, str):
             desc = MAPS[desc]
         desc = np.array(list(map(list, desc)))
-        desc[desc == '.'] = 'F'
-        desc[desc == 'o'] = 'H'
-        desc[desc == 'x'] = 'W'
+        desc[desc == "."] = "F"
+        desc[desc == "o"] = "H"
+        desc[desc == "x"] = "W"
         self._desc = desc
         self._n_row, self._n_col = desc.shape
-        (start_x, ), (start_y, ) = np.nonzero(desc == 'S')
+        (start_x,), (start_y,) = np.nonzero(desc == "S")
         self._start_state = start_x * self._n_col + start_y
         self._state = None
         self._domain_fig = None
@@ -66,9 +67,11 @@ class GridWorldEnv(Environment):
 
         self._action_space = akro.Discrete(4)
         self._observation_space = akro.Discrete(self._n_row * self._n_col)
-        self._spec = EnvSpec(action_space=self.action_space,
-                             observation_space=self.observation_space,
-                             max_episode_length=max_episode_length)
+        self._spec = EnvSpec(
+            action_space=self.action_space,
+            observation_space=self.observation_space,
+            max_episode_length=max_episode_length,
+        )
 
     @property
     def action_space(self):
@@ -130,10 +133,9 @@ class GridWorldEnv(Environment):
                 known state type.
         """
         if self._step_cnt is None:
-            raise RuntimeError('reset() must be called before step()!')
+            raise RuntimeError("reset() must be called before step()!")
 
-        possible_next_states = self._get_possible_next_states(
-            self._state, action)
+        possible_next_states = self._get_possible_next_states(self._state, action)
 
         probs = [x[1] for x in possible_next_states]
         next_state_idx = np.random.choice(len(probs), p=probs)
@@ -143,13 +145,13 @@ class GridWorldEnv(Environment):
         next_y = next_state % self._n_col
 
         next_state_type = self._desc[next_x, next_y]
-        if next_state_type == 'H':
+        if next_state_type == "H":
             done = True
             reward = 0.0
-        elif next_state_type in ['F', 'S']:
+        elif next_state_type in ["F", "S"]:
             done = False
             reward = 0.0
-        elif next_state_type == 'G':
+        elif next_state_type == "G":
             done = True
             reward = 1.0
         else:
@@ -161,17 +163,20 @@ class GridWorldEnv(Environment):
         step_type = StepType.get_step_type(
             step_cnt=self._step_cnt,
             max_episode_length=self._max_episode_length,
-            done=done)
+            done=done,
+        )
 
         if step_type in (StepType.TERMINAL, StepType.TIMEOUT):
             self._step_cnt = None
 
-        return EnvStep(env_spec=self.spec,
-                       action=action,
-                       reward=reward,
-                       observation=next_state,
-                       env_info={},
-                       step_type=step_type)
+        return EnvStep(
+            env_spec=self.spec,
+            action=action,
+            reward=reward,
+            observation=next_state,
+            env_info={},
+            step_type=step_type,
+        )
 
     def render(self, mode):
         """Renders the environment.
@@ -204,12 +209,13 @@ class GridWorldEnv(Environment):
         coords = np.array([x, y])
 
         increments = np.array([[0, -1], [1, 0], [0, 1], [-1, 0]])
-        next_coords = np.clip(coords + increments[action], [0, 0],
-                              [self._n_row - 1, self._n_col - 1])
+        next_coords = np.clip(
+            coords + increments[action], [0, 0], [self._n_row - 1, self._n_col - 1]
+        )
         next_state = next_coords[0] * self._n_col + next_coords[1]
         state_type = self._desc[x, y]
         next_state_type = self._desc[next_coords[0], next_coords[1]]
-        if next_state_type == 'W' or state_type == 'H' or state_type == 'G':
-            return [(state, 1.)]
+        if next_state_type == "W" or state_type == "H" or state_type == "G":
+            return [(state, 1.0)]
         else:
-            return [(next_state, 1.)]
+            return [(next_state, 1.0)]

@@ -1,4 +1,5 @@
 """Worker that "vectorizes" environments."""
+
 import copy
 
 import numpy as np
@@ -30,16 +31,20 @@ class FragmentWorker(DefaultWorker):
 
     DEFAULT_N_ENVS = 8
 
-    def __init__(self,
-                 *,
-                 seed,
-                 max_episode_length,
-                 worker_number,
-                 n_envs=DEFAULT_N_ENVS,
-                 timesteps_per_call=1):
-        super().__init__(seed=seed,
-                         max_episode_length=max_episode_length,
-                         worker_number=worker_number)
+    def __init__(
+        self,
+        *,
+        seed,
+        max_episode_length,
+        worker_number,
+        n_envs=DEFAULT_N_ENVS,
+        timesteps_per_call=1,
+    ):
+        super().__init__(
+            seed=seed,
+            max_episode_length=max_episode_length,
+            worker_number=worker_number,
+        )
         self._n_envs = n_envs
         self._timesteps_per_call = timesteps_per_call
         self._needs_env_reset = True
@@ -68,19 +73,19 @@ class FragmentWorker(DefaultWorker):
         """
         if isinstance(env_update, list):
             if len(env_update) != self._n_envs:
-                raise ValueError('If separate environments are passed for '
-                                 'each worker, there must be exactly n_envs '
-                                 '({}) environments, but received {} '
-                                 'environments.'.format(
-                                     self._n_envs, len(env_update)))
+                raise ValueError(
+                    "If separate environments are passed for "
+                    "each worker, there must be exactly n_envs "
+                    "({}) environments, but received {} "
+                    "environments.".format(self._n_envs, len(env_update))
+                )
         elif env_update is not None:
-            env_update = [
-                copy.deepcopy(env_update) for _ in range(self._n_envs)
-            ]
+            env_update = [copy.deepcopy(env_update) for _ in range(self._n_envs)]
         if env_update:
             for env_index, env_up in enumerate(env_update):
                 self._envs[env_index], up = _apply_env_update(
-                    self._envs[env_index], env_up)
+                    self._envs[env_index], env_up
+                )
                 self._needs_env_reset |= up
 
     def start_episode(self):
@@ -107,8 +112,10 @@ class FragmentWorker(DefaultWorker):
                 agent_info = {k: v[i] for (k, v) in agent_infos.items()}
                 frag.step(action, agent_info)
                 self._episode_lengths[i] += 1
-            if (self._episode_lengths[i] >= self._max_episode_length
-                    or frag.step_types[-1] == StepType.TERMINAL):
+            if (
+                self._episode_lengths[i] >= self._max_episode_length
+                or frag.step_types[-1] == StepType.TERMINAL
+            ):
                 self._episode_lengths[i] = 0
                 complete_frag = frag.to_batch()
                 self._complete_fragments.append(complete_frag)
@@ -130,8 +137,9 @@ class FragmentWorker(DefaultWorker):
             if len(frag.rewards) > 0:
                 complete_frag = frag.to_batch()
                 self._complete_fragments.append(complete_frag)
-                self._fragments[i] = InProgressEpisode(frag.env, frag.last_obs,
-                                                       frag.episode_info)
+                self._fragments[i] = InProgressEpisode(
+                    frag.env, frag.last_obs, frag.episode_info
+                )
         assert len(self._complete_fragments) > 0
         result = EpisodeBatch.concatenate(*self._complete_fragments)
         self._complete_fragments = []

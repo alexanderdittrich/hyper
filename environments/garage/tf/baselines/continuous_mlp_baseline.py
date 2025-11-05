@@ -1,4 +1,5 @@
 """A value function (baseline) based on a MLP model."""
+
 from dowel import tabular
 import numpy as np
 import tensorflow as tf
@@ -52,22 +53,26 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 num_seq_inputs=1,
-                 name='ContinuousMLPBaseline',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 optimizer=None,
-                 optimizer_args=None,
-                 normalize_inputs=True):
+    def __init__(
+        self,
+        env_spec,
+        num_seq_inputs=1,
+        name="ContinuousMLPBaseline",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        optimizer=None,
+        optimizer_args=None,
+        normalize_inputs=True,
+    ):
         self._env_spec = env_spec
         self._normalize_inputs = normalize_inputs
         self._name = name
@@ -79,17 +84,18 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
         else:
             self._optimizer = make_optimizer(optimizer, **optimizer_args)
 
-        super().__init__(input_shape=(env_spec.observation_space.flat_dim *
-                                      num_seq_inputs, ),
-                         output_dim=1,
-                         name=name,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init)
+        super().__init__(
+            input_shape=(env_spec.observation_space.flat_dim * num_seq_inputs,),
+            output_dim=1,
+            name=name,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+        )
 
         self._x_mean = None
         self._x_std = None
@@ -97,16 +103,15 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
         self._initialize()
 
     def _initialize(self):
-        input_var = tf.compat.v1.placeholder(tf.float32,
-                                             shape=(None, ) +
-                                             self._input_shape)
+        input_var = tf.compat.v1.placeholder(
+            tf.float32, shape=(None,) + self._input_shape
+        )
 
-        ys_var = tf.compat.v1.placeholder(dtype=tf.float32,
-                                          name='ys',
-                                          shape=(None, self._output_dim))
+        ys_var = tf.compat.v1.placeholder(
+            dtype=tf.float32, name="ys", shape=(None, self._output_dim)
+        )
 
-        (self._y_hat, self._x_mean,
-         self._x_std) = self.build(input_var).outputs
+        (self._y_hat, self._x_mean, self._x_std) = self.build(input_var).outputs
 
         loss = tf.reduce_mean(tf.square(self._y_hat - ys_var))
         self._f_predict = compile_function([input_var], self._y_hat)
@@ -115,8 +120,8 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
             target=self,
             network_outputs=[ys_var],
         )
-        optimizer_args['inputs'] = [input_var, ys_var]
-        with tf.name_scope('update_opt'):
+        optimizer_args["inputs"] = [input_var, ys_var]
+        with tf.name_scope("update_opt"):
             self._optimizer.update_opt(**optimizer_args)
 
     def fit(self, paths):
@@ -126,10 +131,10 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
             paths (dict[numpy.ndarray]): Sample paths.
 
         """
-        xs = np.concatenate([p['observations'] for p in paths])
+        xs = np.concatenate([p["observations"] for p in paths])
         if not isinstance(xs, np.ndarray) or len(xs.shape) > 2:
             xs = self._env_spec.observation_space.flatten_n(xs)
-        ys = np.concatenate([p['returns'] for p in paths])
+        ys = np.concatenate([p["returns"] for p in paths])
         ys = ys.reshape((-1, 1))
         if self._normalize_inputs:
             # recompute normalizing constants for inputs
@@ -138,11 +143,11 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
 
         inputs = [xs, ys]
         loss_before = self._optimizer.loss(inputs)
-        tabular.record('{}/LossBefore'.format(self._name), loss_before)
+        tabular.record("{}/LossBefore".format(self._name), loss_before)
         self._optimizer.optimize(inputs)
         loss_after = self._optimizer.loss(inputs)
-        tabular.record('{}/LossAfter'.format(self._name), loss_after)
-        tabular.record('{}/dLoss'.format(self._name), loss_before - loss_after)
+        tabular.record("{}/LossAfter".format(self._name), loss_after)
+        tabular.record("{}/dLoss".format(self._name), loss_before - loss_after)
 
     def predict(self, paths):
         """Predict value based on paths.
@@ -154,7 +159,7 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
             numpy.ndarray: Predicted value.
 
         """
-        obs = paths['observations']
+        obs = paths["observations"]
         if not isinstance(obs, np.ndarray) or len(obs.shape) > 2:
             obs = self._env_spec.observation_space.flatten_n(obs)
         return self._f_predict(obs).flatten()
@@ -182,10 +187,10 @@ class ContinuousMLPBaseline(NormalizedInputMLPModel, Baseline):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_predict']
-        del new_dict['_x_mean']
-        del new_dict['_x_std']
-        del new_dict['_y_hat']
+        del new_dict["_f_predict"]
+        del new_dict["_x_mean"]
+        del new_dict["_x_std"]
+        del new_dict["_y_hat"]
         return new_dict
 
     def __setstate__(self, state):

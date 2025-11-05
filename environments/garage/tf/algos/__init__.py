@@ -1,4 +1,5 @@
 """Tensorflow implementation of reinforcement learning algorithms."""
+
 from environments.garage.tf.algos.ddpg import DDPG
 from environments.garage.tf.algos.dqn import DQN
 from environments.garage.tf.algos.erwr import ERWR
@@ -16,19 +17,19 @@ from environments.garage.tf.algos.trpo import TRPO
 from environments.garage.tf.algos.vpg import VPG
 
 __all__ = [
-    'DDPG',
-    'DQN',
-    'ERWR',
-    'NPO',
-    'PPO',
-    'REPS',
-    'RL2',
-    'RL2PPO',
-    'RL2TRPO',
-    'TD3',
-    'TNPG',
-    'TRPO',
-    'VPG',
-    'TENPO',
-    'TEPPO',
+    "DDPG",
+    "DQN",
+    "ERWR",
+    "NPO",
+    "PPO",
+    "REPS",
+    "RL2",
+    "RL2PPO",
+    "RL2TRPO",
+    "TD3",
+    "TNPG",
+    "TRPO",
+    "VPG",
+    "TENPO",
+    "TEPPO",
 ]

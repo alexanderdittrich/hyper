@@ -2,10 +2,13 @@
 
 Random exploration according to the value of epsilon.
 """
+
 from dowel import tabular
 import numpy as np
 
-from environments.garage.np.exploration_policies.exploration_policy import ExplorationPolicy
+from environments.garage.np.exploration_policies.exploration_policy import (
+    ExplorationPolicy,
+)
 
 
 class EpsilonGreedyPolicy(ExplorationPolicy):
@@ -29,22 +32,23 @@ class EpsilonGreedyPolicy(ExplorationPolicy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 *,
-                 total_timesteps,
-                 max_epsilon=1.0,
-                 min_epsilon=0.02,
-                 decay_ratio=0.1):
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        *,
+        total_timesteps,
+        max_epsilon=1.0,
+        min_epsilon=0.02,
+        decay_ratio=0.1,
+    ):
         super().__init__(policy)
         self._env_spec = env_spec
         self._max_epsilon = max_epsilon
         self._min_epsilon = min_epsilon
         self._decay_period = int(total_timesteps * decay_ratio)
         self._action_space = env_spec.action_space
-        self._decrement = (self._max_epsilon -
-                           self._min_epsilon) / self._decay_period
+        self._decrement = (self._max_epsilon - self._min_epsilon) / self._decay_period
         self._total_env_steps = 0
         self._last_total_env_steps = 0
 
@@ -103,10 +107,11 @@ class EpsilonGreedyPolicy(ExplorationPolicy):
                 were sampled with this policy active.
 
         """
-        self._total_env_steps = (self._last_total_env_steps +
-                                 np.sum(episode_batch.lengths))
+        self._total_env_steps = self._last_total_env_steps + np.sum(
+            episode_batch.lengths
+        )
         self._last_total_env_steps = self._total_env_steps
-        tabular.record('EpsilonGreedyPolicy/Epsilon', self._epsilon())
+        tabular.record("EpsilonGreedyPolicy/Epsilon", self._epsilon())
 
     def get_param_values(self):
         """Get parameter values.
@@ -116,8 +121,8 @@ class EpsilonGreedyPolicy(ExplorationPolicy):
 
         """
         return {
-            'total_env_steps': self._total_env_steps,
-            'inner_params': self.policy.get_param_values()
+            "total_env_steps": self._total_env_steps,
+            "inner_params": self.policy.get_param_values(),
         }
 
     def set_param_values(self, params):
@@ -127,6 +132,6 @@ class EpsilonGreedyPolicy(ExplorationPolicy):
             params (np.ndarray): A numpy array of parameter values.
 
         """
-        self._total_env_steps = params['total_env_steps']
-        self.policy.set_param_values(params['inner_params'])
+        self._total_env_steps = params["total_env_steps"]
+        self.policy.set_param_values(params["inner_params"])
         self._last_total_env_steps = self._total_env_steps

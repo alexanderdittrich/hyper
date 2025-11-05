@@ -1,4 +1,5 @@
 """CNN and MLP Merge Model."""
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -78,31 +79,36 @@ class CNNMLPMergeModel(Model):
 
     """
 
-    def __init__(self,
-                 input_dim,
-                 filters,
-                 strides,
-                 hidden_sizes=(256, ),
-                 output_dim=1,
-                 action_merge_layer=-2,
-                 name=None,
-                 padding='SAME',
-                 max_pooling=False,
-                 pool_strides=(2, 2),
-                 pool_shapes=(2, 2),
-                 cnn_hidden_nonlinearity=tf.nn.relu,
-                 cnn_hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 cnn_hidden_b_init=tf.zeros_initializer(),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
+    def __init__(
+        self,
+        input_dim,
+        filters,
+        strides,
+        hidden_sizes=(256,),
+        output_dim=1,
+        action_merge_layer=-2,
+        name=None,
+        padding="SAME",
+        max_pooling=False,
+        pool_strides=(2, 2),
+        pool_shapes=(2, 2),
+        cnn_hidden_nonlinearity=tf.nn.relu,
+        cnn_hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        cnn_hidden_b_init=tf.zeros_initializer(),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         super().__init__(name)
 
         if not max_pooling:
@@ -113,7 +119,8 @@ class CNNMLPMergeModel(Model):
                 hidden_b_init=cnn_hidden_b_init,
                 strides=strides,
                 padding=padding,
-                hidden_nonlinearity=cnn_hidden_nonlinearity)
+                hidden_nonlinearity=cnn_hidden_nonlinearity,
+            )
         else:
             self.cnn_model = CNNModelWithMaxPooling(
                 input_dim=input_dim,
@@ -124,7 +131,8 @@ class CNNMLPMergeModel(Model):
                 padding=padding,
                 pool_strides=pool_strides,
                 pool_shapes=pool_shapes,
-                hidden_nonlinearity=cnn_hidden_nonlinearity)
+                hidden_nonlinearity=cnn_hidden_nonlinearity,
+            )
 
         self.mlp_merge_model = MLPMergeModel(
             output_dim=output_dim,
@@ -136,7 +144,8 @@ class CNNMLPMergeModel(Model):
             output_nonlinearity=output_nonlinearity,
             output_w_init=output_w_init,
             output_b_init=output_b_init,
-            layer_normalization=layer_normalization)
+            layer_normalization=layer_normalization,
+        )
 
     def network_input_spec(self):
         """Network input spec.
@@ -145,7 +154,7 @@ class CNNMLPMergeModel(Model):
             list[str]: List of key(str) for the network inputs.
 
         """
-        return ['state', 'action']
+        return ["state", "action"]
 
     # pylint: disable=arguments-differ
     def _build(self, state, action, name=None):
@@ -168,6 +177,5 @@ class CNNMLPMergeModel(Model):
 
         """
         cnn_out = self.cnn_model.build(state, name=name).outputs
-        mlp_out = self.mlp_merge_model.build(cnn_out, action,
-                                             name=name).outputs
+        mlp_out = self.mlp_merge_model.build(cnn_out, action, name=name).outputs
         return mlp_out

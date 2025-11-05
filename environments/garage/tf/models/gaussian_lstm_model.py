@@ -3,6 +3,7 @@
 A model represented by a Gaussian distribution
 which is parameterized by a Long short-term memory (LSTM).
 """
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -66,30 +67,35 @@ class GaussianLSTMModel(Model):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 hidden_dim=32,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 cell_state_init=tf.zeros_initializer(),
-                 cell_state_init_trainable=False,
-                 forget_bias=True,
-                 learn_std=True,
-                 init_std=1.0,
-                 std_share_network=False,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        hidden_dim=32,
+        name=None,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        cell_state_init=tf.zeros_initializer(),
+        cell_state_init_trainable=False,
+        forget_bias=True,
+        learn_std=True,
+        init_std=1.0,
+        std_share_network=False,
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._output_dim = output_dim
         self._hidden_dim = hidden_dim
@@ -123,7 +129,8 @@ class GaussianLSTMModel(Model):
             recurrent_activation=self._recurrent_nonlinearity,
             recurrent_initializer=self._recurrent_w_init,
             unit_forget_bias=self._forget_bias,
-            name='mean_std_lstm_layer')
+            name="mean_std_lstm_layer",
+        )
         self._mean_lstm_cell = tf.keras.layers.LSTMCell(
             units=self._hidden_dim,
             activation=self._hidden_nonlinearity,
@@ -132,19 +139,22 @@ class GaussianLSTMModel(Model):
             recurrent_activation=self._recurrent_nonlinearity,
             recurrent_initializer=self._recurrent_w_init,
             unit_forget_bias=self._forget_bias,
-            name='mean_lstm_layer')
+            name="mean_lstm_layer",
+        )
         self._mean_std_output_nonlinearity_layer = tf.keras.layers.Dense(
             units=action_dim * 2,
             activation=self._output_nonlinearity,
             kernel_initializer=self._output_w_init,
             bias_initializer=self._output_b_init,
-            name='mean_std_output_layer')
+            name="mean_std_output_layer",
+        )
         self._mean_output_nonlinearity_layer = tf.keras.layers.Dense(
             units=action_dim,
             activation=self._output_nonlinearity,
             kernel_initializer=self._output_w_init,
             bias_initializer=self._output_b_init,
-            name='mean_output_layer')
+            name="mean_output_layer",
+        )
 
     def network_input_spec(self):
         """Network input spec.
@@ -153,9 +163,7 @@ class GaussianLSTMModel(Model):
             list[str]: Name of the model inputs, in order.
 
         """
-        return [
-            'full_input', 'step_input', 'step_hidden_input', 'step_cell_input'
-        ]
+        return ["full_input", "step_input", "step_hidden_input", "step_cell_input"]
 
     def network_output_spec(self):
         """Network output spec.
@@ -165,17 +173,17 @@ class GaussianLSTMModel(Model):
 
         """
         return [
-            'dist', 'step_mean', 'step_log_std', 'step_hidden', 'step_cell',
-            'init_hidden', 'init_cell'
+            "dist",
+            "step_mean",
+            "step_log_std",
+            "step_hidden",
+            "step_cell",
+            "init_hidden",
+            "init_cell",
         ]
 
     # pylint: disable=arguments-differ
-    def _build(self,
-               state_input,
-               step_input,
-               step_hidden,
-               step_cell,
-               name=None):
+    def _build(self, state_input, step_input, step_hidden, step_cell, name=None):
         """Build model.
 
         Args:
@@ -204,62 +212,81 @@ class GaussianLSTMModel(Model):
         del name
         action_dim = self._output_dim
 
-        with tf.compat.v1.variable_scope('dist_params'):
+        with tf.compat.v1.variable_scope("dist_params"):
             if self._std_share_network:
                 # mean and std networks share an MLP
-                (outputs, step_outputs, step_hidden, step_cell,
-                 hidden_init_var, cell_init_var) = lstm(
-                     name='mean_std_network',
-                     lstm_cell=self._mean_std_lstm_cell,
-                     all_input_var=state_input,
-                     step_input_var=step_input,
-                     step_hidden_var=step_hidden,
-                     step_cell_var=step_cell,
-                     hidden_state_init=self._hidden_state_init,
-                     hidden_state_init_trainable=self.
-                     _hidden_state_init_trainable,
-                     cell_state_init=self._cell_state_init,
-                     cell_state_init_trainable=self._cell_state_init_trainable,
-                     output_nonlinearity_layer=self.
-                     _mean_std_output_nonlinearity_layer)
-                with tf.compat.v1.variable_scope('mean_network'):
+                (
+                    outputs,
+                    step_outputs,
+                    step_hidden,
+                    step_cell,
+                    hidden_init_var,
+                    cell_init_var,
+                ) = lstm(
+                    name="mean_std_network",
+                    lstm_cell=self._mean_std_lstm_cell,
+                    all_input_var=state_input,
+                    step_input_var=step_input,
+                    step_hidden_var=step_hidden,
+                    step_cell_var=step_cell,
+                    hidden_state_init=self._hidden_state_init,
+                    hidden_state_init_trainable=self._hidden_state_init_trainable,
+                    cell_state_init=self._cell_state_init,
+                    cell_state_init_trainable=self._cell_state_init_trainable,
+                    output_nonlinearity_layer=self._mean_std_output_nonlinearity_layer,
+                )
+                with tf.compat.v1.variable_scope("mean_network"):
                     mean_var = outputs[..., :action_dim]
                     step_mean_var = step_outputs[..., :action_dim]
-                with tf.compat.v1.variable_scope('log_std_network'):
+                with tf.compat.v1.variable_scope("log_std_network"):
                     log_std_var = outputs[..., action_dim:]
                     step_log_std_var = step_outputs[..., action_dim:]
 
             else:
                 # separate MLPs for mean and std networks
                 # mean network
-                (mean_var, step_mean_var, step_hidden, step_cell,
-                 hidden_init_var, cell_init_var) = lstm(
-                     name='mean_network',
-                     lstm_cell=self._mean_lstm_cell,
-                     all_input_var=state_input,
-                     step_input_var=step_input,
-                     step_hidden_var=step_hidden,
-                     step_cell_var=step_cell,
-                     hidden_state_init=self._hidden_state_init,
-                     hidden_state_init_trainable=self.
-                     _hidden_state_init_trainable,
-                     cell_state_init=self._cell_state_init,
-                     cell_state_init_trainable=self._cell_state_init_trainable,
-                     output_nonlinearity_layer=self.
-                     _mean_output_nonlinearity_layer)
+                (
+                    mean_var,
+                    step_mean_var,
+                    step_hidden,
+                    step_cell,
+                    hidden_init_var,
+                    cell_init_var,
+                ) = lstm(
+                    name="mean_network",
+                    lstm_cell=self._mean_lstm_cell,
+                    all_input_var=state_input,
+                    step_input_var=step_input,
+                    step_hidden_var=step_hidden,
+                    step_cell_var=step_cell,
+                    hidden_state_init=self._hidden_state_init,
+                    hidden_state_init_trainable=self._hidden_state_init_trainable,
+                    cell_state_init=self._cell_state_init,
+                    cell_state_init_trainable=self._cell_state_init_trainable,
+                    output_nonlinearity_layer=self._mean_output_nonlinearity_layer,
+                )
                 log_std_var, step_log_std_var = recurrent_parameter(
                     input_var=state_input,
                     step_input_var=step_input,
                     length=action_dim,
                     initializer=tf.constant_initializer(self._init_std_param),
                     trainable=self._learn_std,
-                    name='log_std_param')
+                    name="log_std_param",
+                )
 
         dist = tfp.distributions.MultivariateNormalDiag(
-            loc=mean_var, scale_diag=tf.exp(log_std_var))
+            loc=mean_var, scale_diag=tf.exp(log_std_var)
+        )
 
-        return (dist, step_mean_var, step_log_std_var, step_hidden, step_cell,
-                hidden_init_var, cell_init_var)
+        return (
+            dist,
+            step_mean_var,
+            step_log_std_var,
+            step_hidden,
+            step_cell,
+            hidden_init_var,
+            cell_init_var,
+        )
 
     def __getstate__(self):
         """Object.__getstate__.
@@ -269,10 +296,10 @@ class GaussianLSTMModel(Model):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_mean_std_lstm_cell']
-        del new_dict['_mean_lstm_cell']
-        del new_dict['_mean_std_output_nonlinearity_layer']
-        del new_dict['_mean_output_nonlinearity_layer']
+        del new_dict["_mean_std_lstm_cell"]
+        del new_dict["_mean_lstm_cell"]
+        del new_dict["_mean_std_output_nonlinearity_layer"]
+        del new_dict["_mean_output_nonlinearity_layer"]
         return new_dict
 
     def __setstate__(self, state):

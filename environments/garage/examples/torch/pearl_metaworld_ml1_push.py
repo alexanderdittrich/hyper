@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """PEARL ML1 example."""
+
 import click
 import metaworld
 
@@ -12,43 +13,47 @@ from environments.garage.torch import set_gpu_mode
 from environments.garage.torch.algos import PEARL
 from environments.garage.torch.algos.pearl import PEARLWorker
 from environments.garage.torch.embeddings import MLPEncoder
-from environments.garage.torch.policies import (ContextConditionedPolicy,
-                                   TanhGaussianMLPPolicy)
+from environments.garage.torch.policies import (
+    ContextConditionedPolicy,
+    TanhGaussianMLPPolicy,
+)
 from environments.garage.torch.q_functions import ContinuousMLPQFunction
 from environments.garage.trainer import Trainer
 
 
 @click.command()
-@click.option('--num_epochs', default=1000)
-@click.option('--num_train_tasks', default=50)
-@click.option('--encoder_hidden_size', default=200)
-@click.option('--net_size', default=300)
-@click.option('--num_steps_per_epoch', default=4000)
-@click.option('--num_initial_steps', default=4000)
-@click.option('--num_steps_prior', default=750)
-@click.option('--num_extra_rl_steps_posterior', default=750)
-@click.option('--batch_size', default=256)
-@click.option('--embedding_batch_size', default=64)
-@click.option('--embedding_mini_batch_size', default=64)
+@click.option("--num_epochs", default=1000)
+@click.option("--num_train_tasks", default=50)
+@click.option("--encoder_hidden_size", default=200)
+@click.option("--net_size", default=300)
+@click.option("--num_steps_per_epoch", default=4000)
+@click.option("--num_initial_steps", default=4000)
+@click.option("--num_steps_prior", default=750)
+@click.option("--num_extra_rl_steps_posterior", default=750)
+@click.option("--batch_size", default=256)
+@click.option("--embedding_batch_size", default=64)
+@click.option("--embedding_mini_batch_size", default=64)
 @wrap_experiment
-def pearl_metaworld_ml1_push(ctxt=None,
-                             seed=1,
-                             num_epochs=1000,
-                             num_train_tasks=50,
-                             latent_size=7,
-                             encoder_hidden_size=200,
-                             net_size=300,
-                             meta_batch_size=16,
-                             num_steps_per_epoch=4000,
-                             num_initial_steps=4000,
-                             num_tasks_sample=15,
-                             num_steps_prior=750,
-                             num_extra_rl_steps_posterior=750,
-                             batch_size=256,
-                             embedding_batch_size=64,
-                             embedding_mini_batch_size=64,
-                             reward_scale=10.,
-                             use_gpu=False):
+def pearl_metaworld_ml1_push(
+    ctxt=None,
+    seed=1,
+    num_epochs=1000,
+    num_train_tasks=50,
+    latent_size=7,
+    encoder_hidden_size=200,
+    net_size=300,
+    meta_batch_size=16,
+    num_steps_per_epoch=4000,
+    num_initial_steps=4000,
+    num_tasks_sample=15,
+    num_steps_prior=750,
+    num_extra_rl_steps_posterior=750,
+    batch_size=256,
+    embedding_batch_size=64,
+    embedding_mini_batch_size=64,
+    reward_scale=10.0,
+    use_gpu=False,
+):
     """Train PEARL with ML1 environments.
 
     Args:
@@ -84,39 +89,47 @@ def pearl_metaworld_ml1_push(ctxt=None,
 
     """
     set_seed(seed)
-    encoder_hidden_sizes = (encoder_hidden_size, encoder_hidden_size,
-                            encoder_hidden_size)
+    encoder_hidden_sizes = (
+        encoder_hidden_size,
+        encoder_hidden_size,
+        encoder_hidden_size,
+    )
     # create multi-task environment and sample tasks
-    ml1 = metaworld.ML1('push-v1')
-    train_env = MetaWorldSetTaskEnv(ml1, 'train')
-    env_sampler = SetTaskSampler(MetaWorldSetTaskEnv,
-                                 env=train_env,
-                                 wrapper=lambda env, _: normalize(env))
+    ml1 = metaworld.ML1("push-v1")
+    train_env = MetaWorldSetTaskEnv(ml1, "train")
+    env_sampler = SetTaskSampler(
+        MetaWorldSetTaskEnv, env=train_env, wrapper=lambda env, _: normalize(env)
+    )
     env = env_sampler.sample(num_train_tasks)
-    test_env = MetaWorldSetTaskEnv(ml1, 'test')
-    test_env_sampler = SetTaskSampler(MetaWorldSetTaskEnv,
-                                      env=test_env,
-                                      wrapper=lambda env, _: normalize(env))
+    test_env = MetaWorldSetTaskEnv(ml1, "test")
+    test_env_sampler = SetTaskSampler(
+        MetaWorldSetTaskEnv, env=test_env, wrapper=lambda env, _: normalize(env)
+    )
 
     trainer = Trainer(ctxt)
 
     # instantiate networks
     augmented_env = PEARL.augment_env_spec(env[0](), latent_size)
-    qf = ContinuousMLPQFunction(env_spec=augmented_env,
-                                hidden_sizes=[net_size, net_size, net_size])
+    qf = ContinuousMLPQFunction(
+        env_spec=augmented_env, hidden_sizes=[net_size, net_size, net_size]
+    )
 
-    vf_env = PEARL.get_env_spec(env[0](), latent_size, 'vf')
-    vf = ContinuousMLPQFunction(env_spec=vf_env,
-                                hidden_sizes=[net_size, net_size, net_size])
+    vf_env = PEARL.get_env_spec(env[0](), latent_size, "vf")
+    vf = ContinuousMLPQFunction(
+        env_spec=vf_env, hidden_sizes=[net_size, net_size, net_size]
+    )
 
     inner_policy = TanhGaussianMLPPolicy(
-        env_spec=augmented_env, hidden_sizes=[net_size, net_size, net_size])
+        env_spec=augmented_env, hidden_sizes=[net_size, net_size, net_size]
+    )
 
-    sampler = LocalSampler(agents=None,
-                           envs=env[0](),
-                           max_episode_length=env[0]().spec.max_episode_length,
-                           n_workers=1,
-                           worker_class=PEARLWorker)
+    sampler = LocalSampler(
+        agents=None,
+        envs=env[0](),
+        max_episode_length=env[0]().spec.max_episode_length,
+        n_workers=1,
+        worker_class=PEARLWorker,
+    )
 
     pearl = PEARL(
         env=env,

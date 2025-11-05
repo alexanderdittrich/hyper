@@ -1,4 +1,5 @@
 """Cross Entropy Method."""
+
 import collections
 
 from dowel import logger, tabular
@@ -33,16 +34,18 @@ class CEM(RLAlgorithm):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 sampler,
-                 n_samples,
-                 discount=0.99,
-                 init_std=1,
-                 best_frac=0.05,
-                 extra_std=1.,
-                 extra_decay_time=100):
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        sampler,
+        n_samples,
+        discount=0.99,
+        init_std=1,
+        best_frac=0.05,
+        extra_std=1.0,
+        extra_decay_time=100,
+    ):
         self.policy = policy
         self.max_episode_length = env_spec.max_episode_length
 
@@ -77,10 +80,9 @@ class CEM(RLAlgorithm):
         """
         extra_var_mult = max(1.0 - epoch / self._extra_decay_time, 0)
         sample_std = np.sqrt(
-            np.square(self._cur_std) +
-            np.square(self._extra_std) * extra_var_mult)
-        return np.random.standard_normal(
-            self._n_params) * sample_std + self._cur_mean
+            np.square(self._cur_std) + np.square(self._extra_std) * extra_var_mult
+        )
+        return np.random.standard_normal(self._n_params) * sample_std + self._cur_mean
 
     def train(self, trainer):
         """Initialize variables and start training.
@@ -103,7 +105,8 @@ class CEM(RLAlgorithm):
         # constant
         self._n_best = int(self._n_samples * self._best_frac)
         assert self._n_best >= 1, (
-            'n_samples is too low. Make sure that n_samples * best_frac >= 1')
+            "n_samples is too low. Make sure that n_samples * best_frac >= 1"
+        )
         self._n_params = len(self._cur_mean)
 
         # start actual training
@@ -112,8 +115,7 @@ class CEM(RLAlgorithm):
         for _ in trainer.step_epochs():
             for _ in range(self._n_samples):
                 trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-                last_return = self._train_once(trainer.step_itr,
-                                               trainer.step_path)
+                last_return = self._train_once(trainer.step_itr, trainer.step_path)
                 trainer.step_itr += 1
 
         return last_return
@@ -131,25 +133,22 @@ class CEM(RLAlgorithm):
 
         """
         # -- Stage: Run and calculate performance of the algorithm
-        undiscounted_returns = log_performance(itr,
-                                               episodes,
-                                               discount=self._discount)
+        undiscounted_returns = log_performance(itr, episodes, discount=self._discount)
         self._episode_reward_mean.extend(undiscounted_returns)
-        tabular.record('Extras/EpisodeRewardMean',
-                       np.mean(self._episode_reward_mean))
+        tabular.record("Extras/EpisodeRewardMean", np.mean(self._episode_reward_mean))
         average_return = np.mean(undiscounted_returns)
 
         epoch = itr // self._n_samples
         i_sample = itr - epoch * self._n_samples
-        tabular.record('Epoch', epoch)
-        tabular.record('# Sample', i_sample)
+        tabular.record("Epoch", epoch)
+        tabular.record("# Sample", i_sample)
         rtn = average_return
         self._all_returns.append(average_return)
 
         # -- Stage: Update policy distribution.
         if (itr + 1) % self._n_samples == 0:
             avg_rtns = np.array(self._all_returns)
-            best_inds = np.argsort(-avg_rtns)[:self._n_best]
+            best_inds = np.argsort(-avg_rtns)[: self._n_best]
             best_params = np.array(self._all_params)[best_inds]
 
             # MLE of normal distribution

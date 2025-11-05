@@ -7,6 +7,7 @@ Results:
     AverageReturn: 100
     RiseTime: epoch 8
 """
+
 from environments.garage import wrap_experiment
 from environments.garage.envs import GymEnv
 from environments.garage.experiment.deterministic import set_seed
@@ -29,24 +30,28 @@ def cem_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
 
-        policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      hidden_sizes=(32, 32))
+        policy = CategoricalMLPPolicy(
+            name="policy", env_spec=env.spec, hidden_sizes=(32, 32)
+        )
 
         n_samples = 20
 
-        sampler = LocalSampler(agents=policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True)
+        sampler = LocalSampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = CEM(env_spec=env.spec,
-                   policy=policy,
-                   sampler=sampler,
-                   best_frac=0.05,
-                   n_samples=n_samples)
+        algo = CEM(
+            env_spec=env.spec,
+            policy=policy,
+            sampler=sampler,
+            best_frac=0.05,
+            n_samples=n_samples,
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=1000)

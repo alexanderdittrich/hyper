@@ -6,7 +6,7 @@ Helpers for dealing with vectorized envs.
 
 from collections import OrderedDict
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 
@@ -51,7 +51,7 @@ def obs_space_info(obs_space):
     for key, box in subspaces.items():
         keys.append(key)
         shapes[key] = box.shape
-        dtypes[key] = getattr(box, 'dtype', np.float32)
+        dtypes[key] = getattr(box, "dtype", np.float32)
     return keys, shapes, dtypes
 
 

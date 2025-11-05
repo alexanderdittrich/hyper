@@ -1,4 +1,5 @@
 """Discrete Dueling CNN Q Function."""
+
 import torch
 from torch import nn
 
@@ -66,50 +67,53 @@ class DiscreteDuelingCNNQFunction(DiscreteDuelingCNNModule):
         is_image (bool): If true, the inputs are normalized by dividing by 255.
     """
 
-    def __init__(self,
-                 env_spec,
-                 kernel_sizes,
-                 hidden_channels,
-                 strides,
-                 hidden_sizes=(32, 32),
-                 cnn_hidden_nonlinearity=torch.nn.ReLU,
-                 mlp_hidden_nonlinearity=torch.nn.ReLU,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 paddings=0,
-                 padding_mode='zeros',
-                 max_pool=False,
-                 pool_shape=None,
-                 pool_stride=1,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 layer_normalization=False,
-                 is_image=True):
-
+    def __init__(
+        self,
+        env_spec,
+        kernel_sizes,
+        hidden_channels,
+        strides,
+        hidden_sizes=(32, 32),
+        cnn_hidden_nonlinearity=torch.nn.ReLU,
+        mlp_hidden_nonlinearity=torch.nn.ReLU,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        paddings=0,
+        padding_mode="zeros",
+        max_pool=False,
+        pool_shape=None,
+        pool_stride=1,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        layer_normalization=False,
+        is_image=True,
+    ):
         self._env_spec = env_spec
-        input_shape = (1, ) + env_spec.observation_space.shape
+        input_shape = (1,) + env_spec.observation_space.shape
         output_dim = env_spec.action_space.flat_dim
-        super().__init__(input_shape=input_shape,
-                         output_dim=output_dim,
-                         kernel_sizes=kernel_sizes,
-                         strides=strides,
-                         hidden_sizes=hidden_sizes,
-                         hidden_channels=hidden_channels,
-                         cnn_hidden_nonlinearity=cnn_hidden_nonlinearity,
-                         mlp_hidden_nonlinearity=mlp_hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         paddings=paddings,
-                         padding_mode=padding_mode,
-                         max_pool=max_pool,
-                         pool_shape=pool_shape,
-                         pool_stride=pool_stride,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         layer_normalization=layer_normalization,
-                         is_image=is_image)
+        super().__init__(
+            input_shape=input_shape,
+            output_dim=output_dim,
+            kernel_sizes=kernel_sizes,
+            strides=strides,
+            hidden_sizes=hidden_sizes,
+            hidden_channels=hidden_channels,
+            cnn_hidden_nonlinearity=cnn_hidden_nonlinearity,
+            mlp_hidden_nonlinearity=mlp_hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            paddings=paddings,
+            padding_mode=padding_mode,
+            max_pool=max_pool,
+            pool_shape=pool_shape,
+            pool_stride=pool_stride,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+            is_image=is_image,
+        )
 
     # pylint: disable=arguments-differ
     def forward(self, observations):
@@ -124,7 +128,6 @@ class DiscreteDuelingCNNQFunction(DiscreteDuelingCNNModule):
         if observations.shape != self._env_spec.observation_space.shape:
             # avoid using observation_space.unflatten_n
             # to support tensors on GPUs
-            obs_shape = ((len(observations), ) +
-                         self._env_spec.observation_space.shape)
+            obs_shape = (len(observations),) + self._env_spec.observation_space.shape
             observations = observations.reshape(obs_shape)
         return super().forward(observations)

@@ -1,4 +1,5 @@
 """Base class of HalfCheetah meta-environments."""
+
 from gym.envs.mujoco import HalfCheetahEnv as HalfCheetahEnv_
 import numpy as np
 
@@ -22,8 +23,9 @@ class HalfCheetahEnvMetaBase(HalfCheetahEnv_):
     def __init__(self, task):
         self._task = task
         super().__init__()
-        self.spec = EnvSpec(action_space=self.action_space,
-                            observation_space=self.observation_space)
+        self.spec = EnvSpec(
+            action_space=self.action_space, observation_space=self.observation_space
+        )
 
     def _get_obs(self):
         """Get a low-dimensional observation of the state.
@@ -33,15 +35,21 @@ class HalfCheetahEnvMetaBase(HalfCheetahEnv_):
                 velocity quaternion, and cartesian position.
 
         """
-        return np.concatenate([
-            self.sim.data.qpos.flat[1:],
-            self.sim.data.qvel.flat,
-            self.get_body_com('torso').flat,
-        ]).astype(np.float32).flatten()
+        return (
+            np.concatenate(
+                [
+                    self.sim.data.qpos.flat[1:],
+                    self.sim.data.qvel.flat,
+                    self.get_body_com("torso").flat,
+                ]
+            )
+            .astype(np.float32)
+            .flatten()
+        )
 
     def viewer_setup(self):
         """Start the viewer."""
-        camera_id = self.model.camera_name2id('track')
+        camera_id = self.model.camera_name2id("track")
         self.viewer.cam.type = 2
         self.viewer.cam.fixedcamid = camera_id
         self.viewer.cam.distance = self.model.stat.extent * 0.35
@@ -67,4 +75,4 @@ class HalfCheetahEnvMetaBase(HalfCheetahEnv_):
             state (dict): Unpickled state of this object.
 
         """
-        self.__init__(task=state['task'])
+        self.__init__(task=state["task"])

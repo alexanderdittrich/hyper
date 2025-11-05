@@ -14,6 +14,7 @@ from environments.garage._dtypes import StepType
 @dataclass(frozen=True)
 class InOutSpec:
     """Describes the input and output spaces of a primitive or module."""
+
     input_space: akro.Space
     output_space: akro.Space
 
@@ -30,14 +31,10 @@ class EnvSpec(InOutSpec):
 
     """
 
-    def __init__(self,
-                 observation_space,
-                 action_space,
-                 max_episode_length=None):
-        object.__setattr__(self, 'max_episode_length', max_episode_length)
-        object.__setattr__(self, 'id', "default")
-        super().__init__(input_space=action_space,
-                         output_space=observation_space)
+    def __init__(self, observation_space, action_space, max_episode_length=None):
+        object.__setattr__(self, "max_episode_length", max_episode_length)
+        object.__setattr__(self, "id", "default")
+        super().__init__(input_space=action_space, output_space=observation_space)
 
     max_episode_length: int or None = None
 
@@ -140,8 +137,7 @@ class EnvStep:
     @property
     def last(self):
         """bool: Whether this `TimeStep` is the last of a sequence."""
-        return self.step_type is StepType.TERMINAL or self.step_type \
-            is StepType.TIMEOUT
+        return self.step_type is StepType.TERMINAL or self.step_type is StepType.TIMEOUT
 
 
 class Environment(abc.ABC):
@@ -347,9 +343,11 @@ class Environment(abc.ABC):
 
     def _validate_render_mode(self, mode):
         if mode not in self.render_modes:
-            raise ValueError('Supported render modes are {}, but '
-                             'got render mode {} instead.'.format(
-                                 self.render_modes, mode))
+            raise ValueError(
+                "Supported render modes are {}, but got render mode {} instead.".format(
+                    self.render_modes, mode
+                )
+            )
 
     def __del__(self):
         """Environment destructor."""
@@ -382,11 +380,12 @@ class Wrapper(Environment):
             wrapped environment.
 
         """
-        if name.startswith('_'):
+        if name.startswith("_"):
             raise AttributeError(
-                "attempted to get missing private attribute '{}'".format(name))
+                "attempted to get missing private attribute '{}'".format(name)
+            )
         if not hasattr(self._env, name):
-            raise AttributeError('Attribute {} is not found'.format(name))
+            raise AttributeError("Attribute {} is not found".format(name))
         return getattr(self._env, name)
 
     @property
@@ -460,4 +459,4 @@ class Wrapper(Environment):
     @property
     def unwrapped(self):
         """garage.Environment: The inner environment."""
-        return getattr(self._env, 'unwrapped', self._env)
+        return getattr(self._env, "unwrapped", self._env)

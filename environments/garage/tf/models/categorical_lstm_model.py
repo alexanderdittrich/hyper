@@ -3,6 +3,7 @@
 A model represented by a Categorical distribution
 which is parameterized by a Long short-term memory (LSTM).
 """
+
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -59,27 +60,32 @@ class CategoricalLSTMModel(LSTMModel):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 hidden_dim,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 cell_state_init=tf.zeros_initializer(),
-                 cell_state_init_trainable=False,
-                 forget_bias=True,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        hidden_dim,
+        name=None,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        cell_state_init=tf.zeros_initializer(),
+        cell_state_init_trainable=False,
+        forget_bias=True,
+        layer_normalization=False,
+    ):
         super().__init__(
             output_dim=output_dim,
             hidden_dim=hidden_dim,
@@ -97,7 +103,8 @@ class CategoricalLSTMModel(LSTMModel):
             cell_state_init=cell_state_init,
             cell_state_init_trainable=cell_state_init_trainable,
             forget_bias=forget_bias,
-            layer_normalization=layer_normalization)
+            layer_normalization=layer_normalization,
+        )
 
     def network_output_spec(self):
         """Network output spec.
@@ -107,17 +114,16 @@ class CategoricalLSTMModel(LSTMModel):
 
         """
         return [
-            'dist', 'step_output', 'step_hidden', 'step_cell', 'init_hidden',
-            'init_cell'
+            "dist",
+            "step_output",
+            "step_hidden",
+            "step_cell",
+            "init_hidden",
+            "init_cell",
         ]
 
     # pylint: disable=arguments-differ
-    def _build(self,
-               state_input,
-               step_input,
-               step_hidden,
-               step_cell,
-               name=None):
+    def _build(self, state_input, step_input, step_hidden, step_cell, name=None):
         """Build model.
 
         Args:
@@ -144,12 +150,8 @@ class CategoricalLSTMModel(LSTMModel):
                 when policy resets. Shape: :math:`(S^*)`
 
         """
-        (outputs, step_output, step_hidden, step_cell, init_hidden,
-         init_cell) = super()._build(state_input,
-                                     step_input,
-                                     step_hidden,
-                                     step_cell,
-                                     name=name)
+        (outputs, step_output, step_hidden, step_cell, init_hidden, init_cell) = (
+            super()._build(state_input, step_input, step_hidden, step_cell, name=name)
+        )
         dist = tfp.distributions.OneHotCategorical(probs=outputs)
-        return (dist, step_output, step_hidden, step_cell, init_hidden,
-                init_cell)
+        return (dist, step_output, step_hidden, step_cell, init_hidden, init_cell)

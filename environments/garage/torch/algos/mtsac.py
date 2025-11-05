@@ -1,4 +1,5 @@
 """This modules creates a MTSAC model in PyTorch."""
+
 # yapf: disable
 import numpy as np
 import torch
@@ -91,7 +92,7 @@ class MTSAC(SAC):
         max_episode_length_eval=None,
         fixed_alpha=None,
         target_entropy=None,
-        initial_log_entropy=0.,
+        initial_log_entropy=0.0,
         discount=0.99,
         buffer_batch_size=64,
         min_buffer_size=int(1e4),
@@ -104,7 +105,6 @@ class MTSAC(SAC):
         num_evaluation_episodes=5,
         use_deterministic_evaluation=True,
     ):
-
         super().__init__(
             policy=policy,
             qf1=qf1,
@@ -128,7 +128,8 @@ class MTSAC(SAC):
             steps_per_epoch=steps_per_epoch,
             num_evaluation_episodes=num_evaluation_episodes,
             eval_env=eval_env,
-            use_deterministic_evaluation=use_deterministic_evaluation)
+            use_deterministic_evaluation=use_deterministic_evaluation,
+        )
         self._num_tasks = num_tasks
         self._eval_env = eval_env
         self._use_automatic_entropy_tuning = fixed_alpha is None
@@ -137,16 +138,15 @@ class MTSAC(SAC):
             if target_entropy:
                 self._target_entropy = target_entropy
             else:
-                self._target_entropy = -np.prod(
-                    self.env_spec.action_space.shape).item()
-            self._log_alpha = torch.Tensor([self._initial_log_entropy] *
-                                           self._num_tasks).requires_grad_()
-            self._alpha_optimizer = optimizer([self._log_alpha] *
-                                              self._num_tasks,
-                                              lr=self._policy_lr)
+                self._target_entropy = -np.prod(self.env_spec.action_space.shape).item()
+            self._log_alpha = torch.Tensor(
+                [self._initial_log_entropy] * self._num_tasks
+            ).requires_grad_()
+            self._alpha_optimizer = optimizer(
+                [self._log_alpha] * self._num_tasks, lr=self._policy_lr
+            )
         else:
-            self._log_alpha = torch.Tensor([self._fixed_alpha] *
-                                           self._num_tasks).log()
+            self._log_alpha = torch.Tensor([self._fixed_alpha] * self._num_tasks).log()
         self._epoch_mean_success_rate = []
         self._epoch_median_success_rate = []
 
@@ -176,16 +176,19 @@ class MTSAC(SAC):
             torch.Tensor: log_alpha. shape is (1, self.buffer_batch_size)
 
         """
-        obs = samples_data['observation']
+        obs = samples_data["observation"]
         log_alpha = self._log_alpha
-        one_hots = obs[:, -self._num_tasks:]
-        if (log_alpha.shape[0] != one_hots.shape[1]
-                or one_hots.shape[1] != self._num_tasks
-                or log_alpha.shape[0] != self._num_tasks):
+        one_hots = obs[:, -self._num_tasks :]
+        if (
+            log_alpha.shape[0] != one_hots.shape[1]
+            or one_hots.shape[1] != self._num_tasks
+            or log_alpha.shape[0] != self._num_tasks
+        ):
             raise ValueError(
-                'The number of tasks in the environment does '
-                'not match self._num_tasks. Are you sure that you passed '
-                'The correct number of tasks?')
+                "The number of tasks in the environment does "
+                "not match self._num_tasks. Are you sure that you passed "
+                "The correct number of tasks?"
+            )
         ret = torch.mm(one_hots, log_alpha.unsqueeze(0).t()).squeeze()
         return ret
 
@@ -211,10 +214,11 @@ class MTSAC(SAC):
                     eval_env,
                     self._max_episode_length_eval,
                     num_eps=self._num_evaluation_episodes,
-                    deterministic=self._use_deterministic_evaluation))
+                    deterministic=self._use_deterministic_evaluation,
+                )
+            )
         eval_eps = EpisodeBatch.concatenate(*eval_eps)
-        last_return = log_multitask_performance(epoch, eval_eps,
-                                                self._discount)
+        last_return = log_multitask_performance(epoch, eval_eps, self._discount)
         return last_return
 
     def to(self, device=None):
@@ -228,11 +232,15 @@ class MTSAC(SAC):
         if device is None:
             device = global_device()
         if not self._use_automatic_entropy_tuning:
-            self._log_alpha = torch.Tensor([self._fixed_alpha] *
-                                           self._num_tasks).log().to(device)
+            self._log_alpha = (
+                torch.Tensor([self._fixed_alpha] * self._num_tasks).log().to(device)
+            )
         else:
-            self._log_alpha = torch.Tensor(
-                [self._initial_log_entropy] *
-                self._num_tasks).to(device).requires_grad_()
-            self._alpha_optimizer = self._optimizer([self._log_alpha],
-                                                    lr=self._policy_lr)
+            self._log_alpha = (
+                torch.Tensor([self._initial_log_entropy] * self._num_tasks)
+                .to(device)
+                .requires_grad_()
+            )
+            self._alpha_optimizer = self._optimizer(
+                [self._log_alpha], lr=self._policy_lr
+            )

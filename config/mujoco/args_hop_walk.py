@@ -1,12 +1,15 @@
 import argparse
 from config.mujoco import args_cheetah_dir_varibad
 
+
 def get_args(rest_args):
     parser = argparse.ArgumentParser()
 
     # --- GENERAL ---
 
-    parser.add_argument('--env_name', default='HopWalk-v0', help='environment to train on')
+    parser.add_argument(
+        "--env_name", default="HopWalk-v0", help="environment to train on"
+    )
 
     # take other args from args_cheetah_dir_varibad
     args, unkown_args = parser.parse_known_args(rest_args)

@@ -11,7 +11,7 @@ color2num = dict(
     magenta=35,
     cyan=36,
     white=37,
-    crimson=38
+    crimson=38,
 )
 
 
@@ -28,8 +28,10 @@ def colorize(string, color, bold=False, highlight=False):
 
     attr = []
     num = color2num[color]
-    if highlight: num += 10
+    if highlight:
+        num += 10
     attr.append(six.u(str(num)))
-    if bold: attr.append(six.u('1'))
-    attrs = six.u(';').join(attr)
-    return six.u('\x1b[%sm%s\x1b[0m') % (attrs, string)
+    if bold:
+        attr.append(six.u("1"))
+    attrs = six.u(";").join(attr)
+    return six.u("\x1b[%sm%s\x1b[0m") % (attrs, string)

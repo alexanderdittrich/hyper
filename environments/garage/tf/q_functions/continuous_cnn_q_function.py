@@ -1,4 +1,5 @@
 """Continuous CNN QFunction with CNN-MLP structure."""
+
 import akro
 import tensorflow as tf
 
@@ -67,37 +68,43 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 filters,
-                 strides,
-                 hidden_sizes=(256, ),
-                 action_merge_layer=-2,
-                 name=None,
-                 padding='SAME',
-                 max_pooling=False,
-                 pool_strides=(2, 2),
-                 pool_shapes=(2, 2),
-                 cnn_hidden_nonlinearity=tf.nn.relu,
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
-
-        if (not isinstance(env_spec.observation_space, akro.Box)
-                or not len(env_spec.observation_space.shape) in (2, 3)):
+    def __init__(
+        self,
+        env_spec,
+        filters,
+        strides,
+        hidden_sizes=(256,),
+        action_merge_layer=-2,
+        name=None,
+        padding="SAME",
+        max_pooling=False,
+        pool_strides=(2, 2),
+        pool_shapes=(2, 2),
+        cnn_hidden_nonlinearity=tf.nn.relu,
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
+        if not isinstance(env_spec.observation_space, akro.Box) or not len(
+            env_spec.observation_space.shape
+        ) in (2, 3):
             raise ValueError(
-                '{} can only process 2D, 3D akro.Image or'
-                ' akro.Box observations, but received an env_spec with '
-                'observation_space of type {} and shape {}'.format(
+                "{} can only process 2D, 3D akro.Image or"
+                " akro.Box observations, but received an env_spec with "
+                "observation_space of type {} and shape {}".format(
                     type(self).__name__,
                     type(env_spec.observation_space).__name__,
-                    env_spec.observation_space.shape))
+                    env_spec.observation_space.shape,
+                )
+            )
 
         self._env_spec = env_spec
         self._filters = filters
@@ -120,45 +127,47 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
         self._obs_dim = self._env_spec.observation_space.shape
         self._action_dim = self._env_spec.action_space.shape
 
-        super().__init__(name=name,
-                         input_dim=self._obs_dim,
-                         filters=self._filters,
-                         strides=self._strides,
-                         hidden_sizes=self._hidden_sizes,
-                         action_merge_layer=self._action_merge_layer,
-                         padding=self._padding,
-                         max_pooling=self._max_pooling,
-                         pool_strides=self._pool_strides,
-                         pool_shapes=self._pool_shapes,
-                         cnn_hidden_nonlinearity=self._cnn_hidden_nonlinearity,
-                         hidden_nonlinearity=self._hidden_nonlinearity,
-                         hidden_w_init=self._hidden_w_init,
-                         hidden_b_init=self._hidden_b_init,
-                         output_nonlinearity=self._output_nonlinearity,
-                         output_w_init=self._output_w_init,
-                         output_b_init=self._output_b_init,
-                         layer_normalization=self._layer_normalization)
+        super().__init__(
+            name=name,
+            input_dim=self._obs_dim,
+            filters=self._filters,
+            strides=self._strides,
+            hidden_sizes=self._hidden_sizes,
+            action_merge_layer=self._action_merge_layer,
+            padding=self._padding,
+            max_pooling=self._max_pooling,
+            pool_strides=self._pool_strides,
+            pool_shapes=self._pool_shapes,
+            cnn_hidden_nonlinearity=self._cnn_hidden_nonlinearity,
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            output_nonlinearity=self._output_nonlinearity,
+            output_w_init=self._output_w_init,
+            output_b_init=self._output_b_init,
+            layer_normalization=self._layer_normalization,
+        )
 
         self._initialize()
 
     def _initialize(self):
-
-        action_ph = tf.compat.v1.placeholder(tf.float32,
-                                             (None, ) + self._action_dim,
-                                             name='action')
+        action_ph = tf.compat.v1.placeholder(
+            tf.float32, (None,) + self._action_dim, name="action"
+        )
         if isinstance(self._env_spec.observation_space, akro.Image):
-            obs_ph = tf.compat.v1.placeholder(tf.uint8,
-                                              (None, ) + self._obs_dim,
-                                              name='state')
+            obs_ph = tf.compat.v1.placeholder(
+                tf.uint8, (None,) + self._obs_dim, name="state"
+            )
             augmented_obs_ph = tf.cast(obs_ph, tf.float32) / 255.0
         else:
-            obs_ph = tf.compat.v1.placeholder(tf.float32,
-                                              (None, ) + self._obs_dim,
-                                              name='state')
+            obs_ph = tf.compat.v1.placeholder(
+                tf.float32, (None,) + self._obs_dim, name="state"
+            )
             augmented_obs_ph = obs_ph
         outputs = super().build(augmented_obs_ph, action_ph).outputs
         self._f_qval = tf.compat.v1.get_default_session().make_callable(
-            outputs, feed_list=[obs_ph, action_ph])
+            outputs, feed_list=[obs_ph, action_ph]
+        )
 
         self._obs_input = obs_ph
         self._act_input = action_ph
@@ -187,8 +196,7 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
 
         """
         if len(observation[0].shape) < len(self._obs_dim):
-            observation = self._env_spec.observation_space.unflatten_n(
-                observation)
+            observation = self._env_spec.observation_space.unflatten_n(observation)
 
         return self._f_qval(observation, action)
 
@@ -210,8 +218,7 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
         augmented_state_input = state_input
         if isinstance(self._env_spec.observation_space, akro.Image):
             augmented_state_input = tf.cast(state_input, tf.float32) / 255.0
-        return super().build(augmented_state_input, action_input,
-                             name=name).outputs
+        return super().build(augmented_state_input, action_input, name=name).outputs
 
     def clone(self, name):
         """Return a clone of the Q-function.
@@ -243,7 +250,8 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
             output_nonlinearity=self._output_nonlinearity,
             output_w_init=self._output_w_init,
             output_b_init=self._output_b_init,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_qf.parameters = self.parameters
         return new_qf
 
@@ -255,9 +263,9 @@ class ContinuousCNNQFunction(CNNMLPMergeModel):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_qval']
-        del new_dict['_obs_input']
-        del new_dict['_act_input']
+        del new_dict["_f_qval"]
+        del new_dict["_obs_input"]
+        del new_dict["_act_input"]
         return new_dict
 
     def __setstate__(self, state):

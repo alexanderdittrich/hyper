@@ -32,22 +32,26 @@ def reps_gym_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v0')
+        env = GymEnv("CartPole-v0")
 
         policy = CategoricalMLPPolicy(env_spec=env.spec, hidden_sizes=[32, 32])
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = REPS(env_spec=env.spec,
-                    policy=policy,
-                    baseline=baseline,
-                    sampler=sampler,
-                    discount=0.99)
+        algo = REPS(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=4000, plot=False)

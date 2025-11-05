@@ -32,7 +32,9 @@ class Box(gym.Space):
         return prng.np_random.uniform(low=self.low, high=self.high, size=self.low.shape)
 
     def contains(self, x):
-        return x.shape == self.shape and (x >= self.low).all() and (x <= self.high).all()
+        return (
+            x.shape == self.shape and (x >= self.low).all() and (x <= self.high).all()
+        )
 
     def to_jsonable(self, sample_n):
         return np.array(sample_n).tolist()

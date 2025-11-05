@@ -43,9 +43,11 @@ class HalfCheetahHopEnv(HalfCheetahEnv):
         reward = vertical_reward - ctrl_cost
         reward *= 10
         done = False
-        infos = dict(vertical_reward=vertical_reward,
-                     reward_ctrl=-ctrl_cost,
-                     task=self.get_task())
+        infos = dict(
+            vertical_reward=vertical_reward,
+            reward_ctrl=-ctrl_cost,
+            task=self.get_task(),
+        )
         return observation, reward, done, infos
 
     def debug_prints(self):
@@ -62,7 +64,7 @@ class HalfCheetahHopEnv(HalfCheetahEnv):
         return np.array([self.goal_z])
 
     def sample_tasks(self, n_tasks):
-        return [random.uniform(0.3, 2.) for _ in range(n_tasks)]
+        return [random.uniform(0.3, 2.0) for _ in range(n_tasks)]
 
     def reset_task(self, task):
         if task is None:
@@ -71,24 +73,24 @@ class HalfCheetahHopEnv(HalfCheetahEnv):
         # self.reset()
 
     @staticmethod
-    def visualise_behaviour(env,
-                            args,
-                            policy,
-                            iter_idx,
-                            encoder=None,
-                            image_folder=None,
-                            return_pos=False,
-                            **kwargs,
-                            ):
-        return HalfCheetahEnv.visualise_behaviour(env,
-                                    args,
-                                    policy,
-                                    iter_idx,
-                                    encoder=encoder,
-                                    image_folder=image_folder,
-                                    return_pos=return_pos,
-                                    plot_z=True,
-                                    **kwargs,
-                                    )
-
-
+    def visualise_behaviour(
+        env,
+        args,
+        policy,
+        iter_idx,
+        encoder=None,
+        image_folder=None,
+        return_pos=False,
+        **kwargs,
+    ):
+        return HalfCheetahEnv.visualise_behaviour(
+            env,
+            args,
+            policy,
+            iter_idx,
+            encoder=encoder,
+            image_folder=image_folder,
+            return_pos=return_pos,
+            plot_z=True,
+            **kwargs,
+        )

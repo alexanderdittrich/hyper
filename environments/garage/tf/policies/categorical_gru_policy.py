@@ -3,6 +3,7 @@
 A policy represented by a Categorical distribution
 which is parameterized by a Gated Recurrent Unit (GRU).
 """
+
 # pylint: disable=wrong-import-order
 import akro
 import numpy as np
@@ -61,28 +62,34 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 name='CategoricalGRUPolicy',
-                 hidden_dim=32,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 state_include_action=True,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        env_spec,
+        name="CategoricalGRUPolicy",
+        hidden_dim=32,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        state_include_action=True,
+        layer_normalization=False,
+    ):
         if not isinstance(env_spec.action_space, akro.Discrete):
-            raise ValueError('CategoricalGRUPolicy only works'
-                             'with akro.Discrete action space.')
+            raise ValueError(
+                "CategoricalGRUPolicy only workswith akro.Discrete action space."
+            )
 
         self._env_spec = env_spec
         self._obs_dim = env_spec.observation_space.flat_dim
@@ -123,7 +130,8 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
             output_nonlinearity=output_nonlinearity,
             output_w_init=output_w_init,
             output_b_init=output_b_init,
-            layer_normalization=layer_normalization)
+            layer_normalization=layer_normalization,
+        )
 
         self._prev_actions = None
         self._prev_hiddens = None
@@ -133,25 +141,22 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
 
     def _initialize_policy(self):
         """Initialize policy."""
-        state_input = tf.compat.v1.placeholder(shape=(None, None,
-                                                      self._input_dim),
-                                               name='state_input',
-                                               dtype=tf.float32)
-        step_input_var = tf.compat.v1.placeholder(shape=(None,
-                                                         self._input_dim),
-                                                  name='step_input',
-                                                  dtype=tf.float32)
-        step_hidden_var = tf.compat.v1.placeholder(shape=(None,
-                                                          self._hidden_dim),
-                                                   name='step_hidden_input',
-                                                   dtype=tf.float32)
-        (_, step_out, step_hidden,
-         self._init_hidden) = super().build(state_input, step_input_var,
-                                            step_hidden_var).outputs
+        state_input = tf.compat.v1.placeholder(
+            shape=(None, None, self._input_dim), name="state_input", dtype=tf.float32
+        )
+        step_input_var = tf.compat.v1.placeholder(
+            shape=(None, self._input_dim), name="step_input", dtype=tf.float32
+        )
+        step_hidden_var = tf.compat.v1.placeholder(
+            shape=(None, self._hidden_dim), name="step_hidden_input", dtype=tf.float32
+        )
+        (_, step_out, step_hidden, self._init_hidden) = (
+            super().build(state_input, step_input_var, step_hidden_var).outputs
+        )
 
         self._f_step_prob = tf.compat.v1.get_default_session().make_callable(
-            [step_out, step_hidden],
-            feed_list=[step_input_var, step_hidden_var])
+            [step_out, step_hidden], feed_list=[step_input_var, step_hidden_var]
+        )
 
     # pylint: disable=arguments-differ
     def build(self, state_input, name=None):
@@ -170,10 +175,7 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
 
         """
         _, step_input_var, step_hidden_var = self.inputs
-        return super().build(state_input,
-                             step_input_var,
-                             step_hidden_var,
-                             name=name)
+        return super().build(state_input, step_input_var, step_hidden_var, name=name)
 
     @property
     def input_dim(self):
@@ -195,13 +197,11 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
         if do_resets is None:
             do_resets = [True]
         do_resets = np.asarray(do_resets)
-        if self._prev_actions is None or len(do_resets) != len(
-                self._prev_actions):
-            self._prev_actions = np.zeros(
-                (len(do_resets), self.action_space.flat_dim))
+        if self._prev_actions is None or len(do_resets) != len(self._prev_actions):
+            self._prev_actions = np.zeros((len(do_resets), self.action_space.flat_dim))
             self._prev_hiddens = np.zeros((len(do_resets), self._hidden_dim))
 
-        self._prev_actions[do_resets] = 0.
+        self._prev_actions[do_resets] = 0.0
         self._prev_hiddens[do_resets] = self._init_hidden.eval()
 
     def get_action(self, observation):
@@ -229,13 +229,14 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
-        if not isinstance(observations[0],
-                          np.ndarray) or len(observations[0].shape) > 1:
+        if (
+            not isinstance(observations[0], np.ndarray)
+            or len(observations[0].shape) > 1
+        ):
             observations = self.observation_space.flatten_n(observations)
         if self._state_include_action:
             assert self._prev_actions is not None
-            all_input = np.concatenate([observations, self._prev_actions],
-                                       axis=-1)
+            all_input = np.concatenate([observations, self._prev_actions], axis=-1)
         else:
             all_input = observations
         probs, hidden_vec = self._f_step_prob(all_input, self._prev_hiddens)
@@ -245,7 +246,7 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
         self._prev_hiddens = hidden_vec
         agent_info = dict(prob=probs)
         if self._state_include_action:
-            agent_info['prev_action'] = np.copy(prev_actions)
+            agent_info["prev_action"] = np.copy(prev_actions)
         return actions, agent_info
 
     @property
@@ -269,7 +270,7 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
         """
         if self._state_include_action:
             return [
-                ('prev_action', (self._action_dim, )),
+                ("prev_action", (self._action_dim,)),
             ]
         return []
 
@@ -302,7 +303,8 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
             hidden_state_init=self._hidden_state_init,
             hidden_state_init_trainable=self._hidden_state_init_trainable,
             state_include_action=self._state_include_action,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_policy.parameters = self.parameters
         return new_policy
 
@@ -314,8 +316,8 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_step_prob']
-        del new_dict['_init_hidden']
+        del new_dict["_f_step_prob"]
+        del new_dict["_init_hidden"]
         return new_dict
 
     def __setstate__(self, state):

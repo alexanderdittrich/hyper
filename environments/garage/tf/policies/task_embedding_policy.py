@@ -1,4 +1,5 @@
 """Policy class for Task Embedding envs."""
+
 import abc
 
 from environments.garage.tf.policies.policy import Policy

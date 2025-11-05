@@ -1,4 +1,5 @@
 """Base class for policies in TensorFlow."""
+
 import abc
 
 from environments.garage.np.policies import Policy as BasePolicy

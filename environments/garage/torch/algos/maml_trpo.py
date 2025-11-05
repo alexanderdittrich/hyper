@@ -1,11 +1,14 @@
 """Model-Agnostic Meta-Learning (MAML) algorithm applied to TRPO."""
+
 import torch
 
 from environments.garage import _Default
 from environments.garage.torch.algos import VPG
 from environments.garage.torch.algos.maml import MAML
-from environments.garage.torch.optimizers import (ConjugateGradientOptimizer,
-                                     OptimizerWrapper)
+from environments.garage.torch.optimizers import (
+    ConjugateGradientOptimizer,
+    OptimizerWrapper,
+)
 
 
 class MAMLTRPO(MAML):
@@ -49,61 +52,70 @@ class MAMLTRPO(MAML):
 
     """
 
-    def __init__(self,
-                 env,
-                 policy,
-                 value_function,
-                 sampler,
-                 task_sampler,
-                 inner_lr=_Default(1e-2),
-                 outer_lr=1e-3,
-                 max_kl_step=0.01,
-                 discount=0.99,
-                 gae_lambda=1,
-                 center_adv=True,
-                 positive_adv=False,
-                 policy_ent_coeff=0.0,
-                 use_softplus_entropy=False,
-                 stop_entropy_gradient=False,
-                 entropy_method='no_entropy',
-                 meta_batch_size=40,
-                 num_grad_updates=1,
-                 meta_evaluator=None,
-                 evaluate_every_n_epochs=1):
-
+    def __init__(
+        self,
+        env,
+        policy,
+        value_function,
+        sampler,
+        task_sampler,
+        inner_lr=_Default(1e-2),
+        outer_lr=1e-3,
+        max_kl_step=0.01,
+        discount=0.99,
+        gae_lambda=1,
+        center_adv=True,
+        positive_adv=False,
+        policy_ent_coeff=0.0,
+        use_softplus_entropy=False,
+        stop_entropy_gradient=False,
+        entropy_method="no_entropy",
+        meta_batch_size=40,
+        num_grad_updates=1,
+        meta_evaluator=None,
+        evaluate_every_n_epochs=1,
+    ):
         policy_optimizer = OptimizerWrapper(
-            (torch.optim.Adam, dict(lr=inner_lr)), policy)
-        vf_optimizer = OptimizerWrapper((torch.optim.Adam, dict(lr=inner_lr)),
-                                        value_function)
+            (torch.optim.Adam, dict(lr=inner_lr)), policy
+        )
+        vf_optimizer = OptimizerWrapper(
+            (torch.optim.Adam, dict(lr=inner_lr)), value_function
+        )
 
-        inner_algo = VPG(env.spec,
-                         policy,
-                         value_function,
-                         None,
-                         policy_optimizer=policy_optimizer,
-                         vf_optimizer=vf_optimizer,
-                         num_train_per_epoch=1,
-                         discount=discount,
-                         gae_lambda=gae_lambda,
-                         center_adv=center_adv,
-                         positive_adv=positive_adv,
-                         policy_ent_coeff=policy_ent_coeff,
-                         use_softplus_entropy=use_softplus_entropy,
-                         stop_entropy_gradient=stop_entropy_gradient,
-                         entropy_method=entropy_method)
+        inner_algo = VPG(
+            env.spec,
+            policy,
+            value_function,
+            None,
+            policy_optimizer=policy_optimizer,
+            vf_optimizer=vf_optimizer,
+            num_train_per_epoch=1,
+            discount=discount,
+            gae_lambda=gae_lambda,
+            center_adv=center_adv,
+            positive_adv=positive_adv,
+            policy_ent_coeff=policy_ent_coeff,
+            use_softplus_entropy=use_softplus_entropy,
+            stop_entropy_gradient=stop_entropy_gradient,
+            entropy_method=entropy_method,
+        )
 
-        meta_optimizer = (ConjugateGradientOptimizer,
-                          dict(max_constraint_value=max_kl_step))
+        meta_optimizer = (
+            ConjugateGradientOptimizer,
+            dict(max_constraint_value=max_kl_step),
+        )
 
-        super().__init__(inner_algo=inner_algo,
-                         env=env,
-                         policy=policy,
-                         sampler=sampler,
-                         task_sampler=task_sampler,
-                         meta_optimizer=meta_optimizer,
-                         meta_batch_size=meta_batch_size,
-                         inner_lr=inner_lr,
-                         outer_lr=outer_lr,
-                         num_grad_updates=num_grad_updates,
-                         meta_evaluator=meta_evaluator,
-                         evaluate_every_n_epochs=evaluate_every_n_epochs)
+        super().__init__(
+            inner_algo=inner_algo,
+            env=env,
+            policy=policy,
+            sampler=sampler,
+            task_sampler=task_sampler,
+            meta_optimizer=meta_optimizer,
+            meta_batch_size=meta_batch_size,
+            inner_lr=inner_lr,
+            outer_lr=outer_lr,
+            num_grad_updates=num_grad_updates,
+            meta_evaluator=meta_evaluator,
+            evaluate_every_n_epochs=evaluate_every_n_epochs,
+        )

@@ -1,9 +1,12 @@
 """Gaussian exploration strategy."""
+
 import akro
 from dowel import tabular
 import numpy as np
 
-from environments.garage.np.exploration_policies.exploration_policy import ExplorationPolicy
+from environments.garage.np.exploration_policies.exploration_policy import (
+    ExplorationPolicy,
+)
 
 
 class AddGaussianNoise(ExplorationPolicy):
@@ -22,13 +25,15 @@ class AddGaussianNoise(ExplorationPolicy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 total_timesteps,
-                 max_sigma=1.0,
-                 min_sigma=0.1,
-                 decay_ratio=1.0):
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        total_timesteps,
+        max_sigma=1.0,
+        min_sigma=0.1,
+        decay_ratio=1.0,
+    ):
         assert isinstance(env_spec.action_space, akro.Box)
         assert len(env_spec.action_space.shape) == 1
         super().__init__(policy)
@@ -36,8 +41,7 @@ class AddGaussianNoise(ExplorationPolicy):
         self._min_sigma = min_sigma
         self._decay_period = int(total_timesteps * decay_ratio)
         self._action_space = env_spec.action_space
-        self._decrement = (self._max_sigma -
-                           self._min_sigma) / self._decay_period
+        self._decrement = (self._max_sigma - self._min_sigma) / self._decay_period
         self._total_env_steps = 0
         self._last_total_env_steps = 0
 
@@ -55,7 +59,9 @@ class AddGaussianNoise(ExplorationPolicy):
         action, agent_info = self.policy.get_action(observation)
         action = np.clip(
             action + np.random.normal(size=action.shape) * self._sigma(),
-            self._action_space.low, self._action_space.high)
+            self._action_space.low,
+            self._action_space.high,
+        )
         self._total_env_steps += 1
         return action, agent_info
 
@@ -73,9 +79,11 @@ class AddGaussianNoise(ExplorationPolicy):
         actions, agent_infos = self.policy.get_actions(observations)
         for itr, _ in enumerate(actions):
             actions[itr] = np.clip(
-                actions[itr] +
-                np.random.normal(size=actions[itr].shape) * self._sigma(),
-                self._action_space.low, self._action_space.high)
+                actions[itr]
+                + np.random.normal(size=actions[itr].shape) * self._sigma(),
+                self._action_space.low,
+                self._action_space.high,
+            )
             self._total_env_steps += 1
         return actions, agent_infos
 
@@ -98,10 +106,11 @@ class AddGaussianNoise(ExplorationPolicy):
                 were sampled with this policy active.
 
         """
-        self._total_env_steps = (self._last_total_env_steps +
-                                 np.sum(episode_batch.lengths))
+        self._total_env_steps = self._last_total_env_steps + np.sum(
+            episode_batch.lengths
+        )
         self._last_total_env_steps = self._total_env_steps
-        tabular.record('AddGaussianNoise/Sigma', self._sigma())
+        tabular.record("AddGaussianNoise/Sigma", self._sigma())
 
     def get_param_values(self):
         """Get parameter values.
@@ -111,8 +120,8 @@ class AddGaussianNoise(ExplorationPolicy):
 
         """
         return {
-            'total_env_steps': self._total_env_steps,
-            'inner_params': self.policy.get_param_values()
+            "total_env_steps": self._total_env_steps,
+            "inner_params": self.policy.get_param_values(),
         }
 
     def set_param_values(self, params):
@@ -122,6 +131,6 @@ class AddGaussianNoise(ExplorationPolicy):
             params (np.ndarray): A numpy array of parameter values.
 
         """
-        self._total_env_steps = params['total_env_steps']
-        self.policy.set_param_values(params['inner_params'])
+        self._total_env_steps = params["total_env_steps"]
+        self.policy.set_param_values(params["inner_params"])
         self._last_total_env_steps = self._total_env_steps

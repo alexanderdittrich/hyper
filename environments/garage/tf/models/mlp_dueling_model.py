@@ -1,4 +1,5 @@
 """MLP Dueling Model."""
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -37,19 +38,23 @@ class MLPDuelingModel(Model):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 name=None,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        name=None,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._output_dim = output_dim
         self._hidden_sizes = hidden_sizes
@@ -76,28 +81,32 @@ class MLPDuelingModel(Model):
 
         """
         del name
-        action_out = mlp(input_var=state_input,
-                         output_dim=self._output_dim,
-                         hidden_sizes=self._hidden_sizes,
-                         name='action_value',
-                         hidden_nonlinearity=self._hidden_nonlinearity,
-                         hidden_w_init=self._hidden_w_init,
-                         hidden_b_init=self._hidden_b_init,
-                         output_nonlinearity=self._output_nonlinearity,
-                         output_w_init=self._output_w_init,
-                         output_b_init=self._output_b_init,
-                         layer_normalization=self._layer_normalization)
-        state_out = mlp(input_var=state_input,
-                        output_dim=1,
-                        hidden_sizes=self._hidden_sizes,
-                        name='state_value',
-                        hidden_nonlinearity=self._hidden_nonlinearity,
-                        hidden_w_init=self._hidden_w_init,
-                        hidden_b_init=self._hidden_b_init,
-                        output_nonlinearity=self._output_nonlinearity,
-                        output_w_init=self._output_w_init,
-                        output_b_init=self._output_b_init,
-                        layer_normalization=self._layer_normalization)
+        action_out = mlp(
+            input_var=state_input,
+            output_dim=self._output_dim,
+            hidden_sizes=self._hidden_sizes,
+            name="action_value",
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            output_nonlinearity=self._output_nonlinearity,
+            output_w_init=self._output_w_init,
+            output_b_init=self._output_b_init,
+            layer_normalization=self._layer_normalization,
+        )
+        state_out = mlp(
+            input_var=state_input,
+            output_dim=1,
+            hidden_sizes=self._hidden_sizes,
+            name="state_value",
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            output_nonlinearity=self._output_nonlinearity,
+            output_w_init=self._output_w_init,
+            output_b_init=self._output_b_init,
+            layer_normalization=self._layer_normalization,
+        )
 
         action_out_mean = tf.reduce_mean(action_out, 1)
         # calculate the advantage of performing certain action

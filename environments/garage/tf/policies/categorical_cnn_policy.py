@@ -4,6 +4,7 @@ A policy represented by a Categorical distribution
 which is parameterized by a convolutional neural network (CNN)
 followed a multilayer perceptron (MLP).
 """
+
 # pylint: disable=wrong-import-order
 import akro
 import numpy as np
@@ -62,28 +63,33 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 filters,
-                 strides,
-                 padding,
-                 name='CategoricalCNNPolicy',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
+    def __init__(
+        self,
+        env_spec,
+        filters,
+        strides,
+        padding,
+        name="CategoricalCNNPolicy",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         assert isinstance(env_spec.action_space, akro.Discrete), (
-            'CategoricalCNNPolicy only works with akro.Discrete action '
-            'space.')
+            "CategoricalCNNPolicy only works with akro.Discrete action space."
+        )
         if isinstance(env_spec.observation_space, akro.Dict):
-            raise ValueError('CNN policies do not support'
-                             'with akro.Dict observation spaces.')
+            raise ValueError(
+                "CNN policies do not supportwith akro.Dict observation spaces."
+            )
 
         self._env_spec = env_spec
         self._obs_dim = env_spec.observation_space.shape
@@ -104,29 +110,30 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
 
         is_image = isinstance(self.env_spec.observation_space, akro.Image)
 
-        super().__init__(input_dim=self._obs_dim,
-                         output_dim=self._action_dim,
-                         filters=filters,
-                         strides=strides,
-                         padding=padding,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         layer_normalization=layer_normalization,
-                         name=name,
-                         is_image=is_image)
+        super().__init__(
+            input_dim=self._obs_dim,
+            output_dim=self._action_dim,
+            filters=filters,
+            strides=strides,
+            padding=padding,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+            name=name,
+            is_image=is_image,
+        )
 
         self._initialize()
 
     def _initialize(self):
         """Initialize policy."""
         flat_dim = np.prod(self._obs_dim)
-        state_input = tf.compat.v1.placeholder(tf.float32,
-                                               shape=(None, None, flat_dim))
+        state_input = tf.compat.v1.placeholder(tf.float32, shape=(None, None, flat_dim))
         if isinstance(self.env_spec.observation_space, akro.Image):
             augmented_state_input = tf.cast(state_input, tf.float32)
             augmented_state_input /= 255.0
@@ -135,10 +142,11 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
         dist = self.build(augmented_state_input).outputs
         self._f_prob = tf.compat.v1.get_default_session().make_callable(
             [
-                tf.argmax(dist.sample(seed=deterministic.get_tf_seed_stream()),
-                          -1), dist.probs
+                tf.argmax(dist.sample(seed=deterministic.get_tf_seed_stream()), -1),
+                dist.probs,
             ],
-            feed_list=[state_input])
+            feed_list=[state_input],
+        )
 
     @property
     def input_dim(self):
@@ -170,8 +178,10 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
-        if not isinstance(observations[0],
-                          np.ndarray) or len(observations[0].shape) > 1:
+        if (
+            not isinstance(observations[0], np.ndarray)
+            or len(observations[0].shape) > 1
+        ):
             observations = self.observation_space.flatten_n(observations)
         samples, probs = self._f_prob(np.expand_dims(observations, 1))
         return np.squeeze(samples), dict(prob=np.squeeze(probs, axis=1))
@@ -213,7 +223,8 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
             output_nonlinearity=self._output_nonlinearity,
             output_w_init=self._output_w_init,
             output_b_init=self._output_b_init,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_policy.parameters = self.parameters
         return new_policy
 
@@ -225,7 +236,7 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_prob']
+        del new_dict["_f_prob"]
         return new_dict
 
     def __setstate__(self, state):

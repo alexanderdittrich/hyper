@@ -1,4 +1,5 @@
 """Worker that "vectorizes" environments."""
+
 import collections
 import copy
 
@@ -29,15 +30,14 @@ class VecWorker(DefaultWorker):
 
     DEFAULT_N_ENVS = 8
 
-    def __init__(self,
-                 *,
-                 seed,
-                 max_episode_length,
-                 worker_number,
-                 n_envs=DEFAULT_N_ENVS):
-        super().__init__(seed=seed,
-                         max_episode_length=max_episode_length,
-                         worker_number=worker_number)
+    def __init__(
+        self, *, seed, max_episode_length, worker_number, n_envs=DEFAULT_N_ENVS
+    ):
+        super().__init__(
+            seed=seed,
+            max_episode_length=max_episode_length,
+            worker_number=worker_number,
+        )
         self._n_envs = n_envs
         self._completed_episodes = []
         self._needs_agent_reset = True
@@ -89,19 +89,19 @@ class VecWorker(DefaultWorker):
         """
         if isinstance(env_update, list):
             if len(env_update) != self._n_envs:
-                raise ValueError('If separate environments are passed for '
-                                 'each worker, there must be exactly n_envs '
-                                 '({}) environments, but received {} '
-                                 'environments.'.format(
-                                     self._n_envs, len(env_update)))
+                raise ValueError(
+                    "If separate environments are passed for "
+                    "each worker, there must be exactly n_envs "
+                    "({}) environments, but received {} "
+                    "environments.".format(self._n_envs, len(env_update))
+                )
         elif env_update is not None:
-            env_update = [
-                copy.deepcopy(env_update) for _ in range(self._n_envs)
-            ]
+            env_update = [copy.deepcopy(env_update) for _ in range(self._n_envs)]
         if env_update:
             for env_index, env_up in enumerate(env_update):
                 self._envs[env_index], up = _apply_env_update(
-                    self._envs[env_index], env_up)
+                    self._envs[env_index], env_up
+                )
                 self._needs_env_reset |= up
 
     def start_episode(self):
@@ -130,15 +130,12 @@ class VecWorker(DefaultWorker):
             self._rewards = [[] for _ in range(n)]
             self._step_types = [[] for _ in range(n)]
             self._env_infos = [collections.defaultdict(list) for _ in range(n)]
-            self._agent_infos = [
-                collections.defaultdict(list) for _ in range(n)
-            ]
+            self._agent_infos = [collections.defaultdict(list) for _ in range(n)]
             self._needs_agent_reset = False
             self._needs_env_reset = False
 
     def _gather_episode(self, episode_number, last_observation):
-        assert 0 < self._episode_lengths[
-            episode_number] <= self._max_episode_length
+        assert 0 < self._episode_lengths[episode_number] <= self._max_episode_length
         env_infos = self._env_infos[episode_number]
         agent_infos = self._agent_infos[episode_number]
         episode_infos = self._episode_infos[episode_number]
@@ -155,12 +152,11 @@ class VecWorker(DefaultWorker):
             last_observations=np.asarray([last_observation]),
             actions=np.asarray(self._actions[episode_number]),
             rewards=np.asarray(self._rewards[episode_number]),
-            step_types=np.asarray(self._step_types[episode_number],
-                                  dtype=StepType),
+            step_types=np.asarray(self._step_types[episode_number], dtype=StepType),
             env_infos=dict(env_infos),
             agent_infos=dict(agent_infos),
-            lengths=np.asarray([self._episode_lengths[episode_number]],
-                               dtype='l'))
+            lengths=np.asarray([self._episode_lengths[episode_number]], dtype="l"),
+        )
 
         self._completed_episodes.append(eps)
         self._observations[episode_number] = []

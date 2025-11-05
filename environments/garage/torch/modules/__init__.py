@@ -1,4 +1,5 @@
 """PyTorch Modules."""
+
 # yapf: disable
 # isort:skip_file
 from environments.garage.torch.modules.categorical_cnn_module import CategoricalCNNModule
@@ -17,13 +18,13 @@ from environments.garage.torch.modules.discrete_dueling_cnn_module import (
 # yapf: enable
 
 __all__ = [
-    'CategoricalCNNModule',
-    'CNNModule',
-    'DiscreteCNNModule',
-    'DiscreteDuelingCNNModule',
-    'MLPModule',
-    'MultiHeadedMLPModule',
-    'GaussianMLPModule',
-    'GaussianMLPIndependentStdModule',
-    'GaussianMLPTwoHeadedModule',
+    "CategoricalCNNModule",
+    "CNNModule",
+    "DiscreteCNNModule",
+    "DiscreteDuelingCNNModule",
+    "MLPModule",
+    "MultiHeadedMLPModule",
+    "GaussianMLPModule",
+    "GaussianMLPIndependentStdModule",
+    "GaussianMLPTwoHeadedModule",
 ]

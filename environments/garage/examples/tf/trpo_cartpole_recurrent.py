@@ -9,6 +9,7 @@ Results:
     AverageReturn: 100
     RiseTime: itr 13
 """
+
 # pylint: disable=no-value-for-parameter
 import click
 
@@ -18,17 +19,19 @@ from environments.garage.experiment.deterministic import set_seed
 from environments.garage.np.baselines import LinearFeatureBaseline
 from environments.garage.sampler import RaySampler
 from environments.garage.tf.algos import TRPO
-from environments.garage.tf.optimizers import (ConjugateGradientOptimizer,
-                                  FiniteDifferenceHVP)
+from environments.garage.tf.optimizers import (
+    ConjugateGradientOptimizer,
+    FiniteDifferenceHVP,
+)
 from environments.garage.tf.policies import CategoricalLSTMPolicy
 from environments.garage.trainer import TFTrainer
 
 
 @click.command()
-@click.option('--seed', default=1)
-@click.option('--n_epochs', default=100)
-@click.option('--batch_size', default=4000)
-@click.option('--plot', default=False)
+@click.option("--seed", default=1)
+@click.option("--n_epochs", default=100)
+@click.option("--batch_size", default=4000)
+@click.option("--plot", default=False)
 @wrap_experiment
 def trpo_cartpole_recurrent(ctxt, seed, n_epochs, batch_size, plot):
     """Train TRPO with a recurrent policy on CartPole.
@@ -45,26 +48,29 @@ def trpo_cartpole_recurrent(ctxt, seed, n_epochs, batch_size, plot):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v1', max_episode_length=100)
+        env = GymEnv("CartPole-v1", max_episode_length=100)
 
-        policy = CategoricalLSTMPolicy(name='policy', env_spec=env.spec)
+        policy = CategoricalLSTMPolicy(name="policy", env_spec=env.spec)
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = TRPO(env_spec=env.spec,
-                    policy=policy,
-                    baseline=baseline,
-                    sampler=sampler,
-                    discount=0.99,
-                    max_kl_step=0.01,
-                    optimizer=ConjugateGradientOptimizer,
-                    optimizer_args=dict(hvp_approach=FiniteDifferenceHVP(
-                        base_eps=1e-5)))
+        algo = TRPO(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+            max_kl_step=0.01,
+            optimizer=ConjugateGradientOptimizer,
+            optimizer_args=dict(hvp_approach=FiniteDifferenceHVP(base_eps=1e-5)),
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=n_epochs, batch_size=batch_size, plot=plot)

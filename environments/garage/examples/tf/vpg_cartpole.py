@@ -7,6 +7,7 @@ Results:
     AverageReturn: 100
     RiseTime: itr 16
 """
+
 from environments.garage import wrap_experiment
 from environments.garage.envs import GymEnv
 from environments.garage.experiment.deterministic import set_seed
@@ -30,25 +31,31 @@ def vpg_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
 
-        policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      hidden_sizes=(32, 32))
+        policy = CategoricalMLPPolicy(
+            name="policy", env_spec=env.spec, hidden_sizes=(32, 32)
+        )
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = VPG(env_spec=env.spec,
-                   policy=policy,
-                   baseline=baseline,
-                   sampler=sampler,
-                   discount=0.99,
-                   optimizer_args=dict(learning_rate=0.01, ))
+        algo = VPG(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+            optimizer_args=dict(
+                learning_rate=0.01,
+            ),
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=10000)

@@ -1,13 +1,13 @@
 from environments.mujoco.rand_param_envs import gym
 
-__all__ = ['SkipWrapper']
+__all__ = ["SkipWrapper"]
 
 
 def SkipWrapper(repeat_count):
     class SkipWrapper(gym.Wrapper):
         """
-            Generic common frame skipping wrapper
-            Will perform action for `x` additional steps
+        Generic common frame skipping wrapper
+        Will perform action for `x` additional steps
         """
 
         def __init__(self, env):
@@ -24,10 +24,12 @@ def SkipWrapper(repeat_count):
                 obs, reward, done, info = self.env.step(action)
                 total_reward += reward
                 current_step += 1
-            if 'skip.stepcount' in info:
-                raise gym.error.Error('Key "skip.stepcount" already in info. Make sure you are not stacking ' \
-                                      'the SkipWrapper wrappers.')
-            info['skip.stepcount'] = self.stepcount
+            if "skip.stepcount" in info:
+                raise gym.error.Error(
+                    'Key "skip.stepcount" already in info. Make sure you are not stacking '
+                    "the SkipWrapper wrappers."
+                )
+            info["skip.stepcount"] = self.stepcount
             return obs, total_reward, done, info
 
         def _reset(self):

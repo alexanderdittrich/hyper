@@ -9,6 +9,7 @@ This collection of functions can be used to manage the following:
         - Converting Tensors into `numpy.ndarray` format and vice versa
     - Updating model parameters
 """
+
 import copy
 import dataclasses
 
@@ -24,8 +25,7 @@ _DEVICE = None
 _GPU_ID = 0
 
 
-def compute_advantages(discount, gae_lambda, max_episode_length, baselines,
-                       rewards):
+def compute_advantages(discount, gae_lambda, max_episode_length, baselines, rewards):
     """Calculate advantages.
 
     Advantages are a discounted cumulative sum.
@@ -74,14 +74,13 @@ def compute_advantages(discount, gae_lambda, max_episode_length, baselines,
             in that episode should be set to 0.
 
     """
-    adv_filter = torch.full((1, 1, 1, max_episode_length - 1),
-                            discount * gae_lambda,
-                            dtype=torch.float)
+    adv_filter = torch.full(
+        (1, 1, 1, max_episode_length - 1), discount * gae_lambda, dtype=torch.float
+    )
     adv_filter = torch.cumprod(F.pad(adv_filter, (1, 0), value=1), dim=-1)
 
-    deltas = (rewards + discount * F.pad(baselines, (0, 1))[:, 1:] - baselines)
-    deltas = F.pad(deltas,
-                   (0, max_episode_length - 1)).unsqueeze(0).unsqueeze(0)
+    deltas = rewards + discount * F.pad(baselines, (0, 1))[:, 1:] - baselines
+    deltas = F.pad(deltas, (0, max_episode_length - 1)).unsqueeze(0).unsqueeze(0)
 
     advantages = F.conv2d(deltas, adv_filter, stride=1).reshape(rewards.shape)
     return advantages
@@ -109,8 +108,7 @@ def pad_to_last(nums, total_length, axis=-1, val=0):
     axis = (axis + len(tensor.shape)) if axis < 0 else axis
 
     if len(tensor.shape) <= axis:
-        raise IndexError('axis {} is out of range {}'.format(
-            axis, tensor.shape))
+        raise IndexError("axis {} is out of range {}".format(axis, tensor.shape))
 
     padding_config = [0, 0] * len(tensor.shape)
     padding_idx = abs(axis - len(tensor.shape)) * 2 - 1
@@ -193,7 +191,7 @@ def flatten_batch(tensor):
         torch.Tensor: Flattened tensor.
 
     """
-    return tensor.reshape((-1, ) + tensor.shape[2:])
+    return tensor.reshape((-1,) + tensor.shape[2:])
 
 
 def flatten_to_single_vector(tensor):
@@ -237,8 +235,8 @@ def update_module_params(module, new_params):  # noqa: D202
     named_modules = dict(module.named_modules())
 
     for name, new_param in new_params.items():
-        if '.' in name:
-            module_name, param_name = tuple(name.rsplit('.', 1))
+        if "." in name:
+            module_name, param_name = tuple(name.rsplit(".", 1))
             if module_name in named_modules:
                 update(named_modules[module_name], param_name, new_param)
         else:
@@ -261,10 +259,10 @@ def soft_update_model(target_model, source_model, tau):
             soft target update.
 
     """
-    for target_param, param in zip(target_model.parameters(),
-                                   source_model.parameters()):
-        target_param.data.copy_(target_param.data * (1.0 - tau) +
-                                param.data * tau)
+    for target_param, param in zip(
+        target_model.parameters(), source_model.parameters()
+    ):
+        target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
 
 def set_gpu_mode(mode, gpu_id=0):
@@ -281,7 +279,7 @@ def set_gpu_mode(mode, gpu_id=0):
     global _DEVICE
     _GPU_ID = gpu_id
     _USE_GPU = mode
-    _DEVICE = torch.device(('cuda:' + str(_GPU_ID)) if _USE_GPU else 'cpu')
+    _DEVICE = torch.device(("cuda:" + str(_GPU_ID)) if _USE_GPU else "cpu")
 
 
 def prefer_gpu():
@@ -325,7 +323,7 @@ def product_of_gaussians(mus, sigmas_squared):
 
     """
     sigmas_squared = torch.clamp(sigmas_squared, min=1e-7)
-    sigma_squared = 1. / torch.sum(torch.reciprocal(sigmas_squared), dim=0)
+    sigma_squared = 1.0 / torch.sum(torch.reciprocal(sigmas_squared), dim=0)
     mu = sigma_squared * torch.sum(mus / sigmas_squared, dim=0)
     return mu, sigma_squared
 
@@ -349,7 +347,8 @@ class NonLinearity(nn.Module):
             self.module = copy.deepcopy(non_linear)
         else:
             raise ValueError(
-                'Non linear function {} is not supported'.format(non_linear))
+                "Non linear function {} is not supported".format(non_linear)
+            )
 
     # pylint: disable=arguments-differ
     def forward(self, input_value):

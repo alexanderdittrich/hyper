@@ -1,4 +1,5 @@
 """This modules creates a DDPG model in PyTorch."""
+
 import collections
 import copy
 
@@ -61,30 +62,31 @@ class DQN(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf,
-            replay_buffer,
-            sampler,
-            exploration_policy=None,
-            eval_env=None,
-            double_q=True,
-            qf_optimizer=torch.optim.Adam,
-            *,  # Everything after this is numbers.
-            steps_per_epoch=20,
-            n_train_steps=50,
-            max_episode_length_eval=None,
-            deterministic_eval=False,
-            buffer_batch_size=64,
-            min_buffer_size=int(1e4),
-            num_eval_episodes=10,
-            discount=0.99,
-            qf_lr=_Default(1e-3),
-            clip_rewards=None,
-            clip_gradient=10,
-            target_update_freq=5,
-            reward_scale=1.):
+        self,
+        env_spec,
+        policy,
+        qf,
+        replay_buffer,
+        sampler,
+        exploration_policy=None,
+        eval_env=None,
+        double_q=True,
+        qf_optimizer=torch.optim.Adam,
+        *,  # Everything after this is numbers.
+        steps_per_epoch=20,
+        n_train_steps=50,
+        max_episode_length_eval=None,
+        deterministic_eval=False,
+        buffer_batch_size=64,
+        min_buffer_size=int(1e4),
+        num_eval_episodes=10,
+        discount=0.99,
+        qf_lr=_Default(1e-3),
+        clip_rewards=None,
+        clip_gradient=10,
+        target_update_freq=5,
+        reward_scale=1.0,
+    ):
         self._clip_reward = clip_rewards
         self._clip_grad = clip_gradient
 
@@ -107,8 +109,9 @@ class DQN(RLAlgorithm):
         self._discount = discount
         self._reward_scale = reward_scale
         self.max_episode_length = env_spec.max_episode_length
-        self._max_episode_length_eval = (max_episode_length_eval
-                                         or self.max_episode_length)
+        self._max_episode_length_eval = (
+            max_episode_length_eval or self.max_episode_length
+        )
         self._episode_reward_mean = collections.deque(maxlen=100)
         self._num_eval_episodes = num_eval_episodes
         self._deterministic_eval = deterministic_eval
@@ -119,9 +122,7 @@ class DQN(RLAlgorithm):
         self.exploration_policy = exploration_policy
 
         self._target_qf = copy.deepcopy(self._qf)
-        self._qf_optimizer = make_optimizer(qf_optimizer,
-                                            module=self._qf,
-                                            lr=qf_lr)
+        self._qf_optimizer = make_optimizer(qf_optimizer, module=self._qf, lr=qf_lr)
         self._eval_env = eval_env
 
         self._sampler = sampler
@@ -138,40 +139,46 @@ class DQN(RLAlgorithm):
         """
         if not self._eval_env:
             self._eval_env = trainer.get_env_copy()
-        last_returns = [float('nan')]
+        last_returns = [float("nan")]
 
         if self._min_buffer_size > self.replay_buffer.n_transitions_stored:
-            num_warmup_steps = (self._min_buffer_size -
-                                self.replay_buffer.n_transitions_stored)
+            num_warmup_steps = (
+                self._min_buffer_size - self.replay_buffer.n_transitions_stored
+            )
             self.replay_buffer.add_episode_batch(
-                trainer.obtain_episodes(0, num_warmup_steps))
+                trainer.obtain_episodes(0, num_warmup_steps)
+            )
 
         trainer.enable_logging = True
 
         for _ in trainer.step_epochs():
-            if (self.replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                logger.log('Evaluating policy')
+            if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                logger.log("Evaluating policy")
 
                 params_before = self.exploration_policy.get_param_values()
                 eval_eps = obtain_evaluation_episodes(
-                    (self.exploration_policy
-                     if not self._deterministic_eval else self.policy),
+                    (
+                        self.exploration_policy
+                        if not self._deterministic_eval
+                        else self.policy
+                    ),
                     self._eval_env,
                     num_eps=self._num_eval_episodes,
-                    max_episode_length=self._max_episode_length_eval)
+                    max_episode_length=self._max_episode_length_eval,
+                )
                 self.exploration_policy.set_param_values(params_before)
 
-                last_returns = log_performance(trainer.step_itr,
-                                               eval_eps,
-                                               discount=self._discount)
+                last_returns = log_performance(
+                    trainer.step_itr, eval_eps, discount=self._discount
+                )
                 self._episode_reward_mean.extend(last_returns)
-                tabular.record('Evaluation/100EpRewardMean',
-                               np.mean(self._episode_reward_mean))
+                tabular.record(
+                    "Evaluation/100EpRewardMean", np.mean(self._episode_reward_mean)
+                )
 
             for _ in range(self._steps_per_epoch):
                 trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-                if hasattr(self.exploration_policy, 'update'):
+                if hasattr(self.exploration_policy, "update"):
                     self.exploration_policy.update(trainer.step_path)
 
                 self._train_once(trainer.step_itr, trainer.step_path)
@@ -192,12 +199,11 @@ class DQN(RLAlgorithm):
         epoch = itr / self._steps_per_epoch
 
         for _ in range(self._n_train_steps):
-            if (self.replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                timesteps = self.replay_buffer.sample_timesteps(
-                    self._buffer_batch_size)
-                qf_loss, y, q = tuple(v.cpu().numpy()
-                                      for v in self._optimize_qf(timesteps))
+            if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                timesteps = self.replay_buffer.sample_timesteps(self._buffer_batch_size)
+                qf_loss, y, q = tuple(
+                    v.cpu().numpy() for v in self._optimize_qf(timesteps)
+                )
 
                 self._episode_qf_losses.append(qf_loss)
                 self._epoch_ys.append(y)
@@ -215,20 +221,19 @@ class DQN(RLAlgorithm):
         Args:
             epoch (int): Current epoch.
         """
-        logger.log('Training finished')
+        logger.log("Training finished")
 
         if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
-            tabular.record('Epoch', epoch)
-            tabular.record('QFunction/AverageQFunctionLoss',
-                           np.mean(self._episode_qf_losses))
-            tabular.record('QFunction/AverageQ', np.mean(self._epoch_qs))
-            tabular.record('QFunction/MaxQ', np.max(self._epoch_qs))
-            tabular.record('QFunction/AverageAbsQ',
-                           np.mean(np.abs(self._epoch_qs)))
-            tabular.record('QFunction/AverageY', np.mean(self._epoch_ys))
-            tabular.record('QFunction/MaxY', np.max(self._epoch_ys))
-            tabular.record('QFunction/AverageAbsY',
-                           np.mean(np.abs(self._epoch_ys)))
+            tabular.record("Epoch", epoch)
+            tabular.record(
+                "QFunction/AverageQFunctionLoss", np.mean(self._episode_qf_losses)
+            )
+            tabular.record("QFunction/AverageQ", np.mean(self._epoch_qs))
+            tabular.record("QFunction/MaxQ", np.max(self._epoch_qs))
+            tabular.record("QFunction/AverageAbsQ", np.mean(np.abs(self._epoch_qs)))
+            tabular.record("QFunction/AverageY", np.mean(self._epoch_ys))
+            tabular.record("QFunction/MaxY", np.max(self._epoch_ys))
+            tabular.record("QFunction/AverageAbsY", np.mean(np.abs(self._epoch_ys)))
 
     def _optimize_qf(self, timesteps):
         """Perform algorithm optimizing.
@@ -257,9 +262,9 @@ class DQN(RLAlgorithm):
                 selected_actions = torch.argmax(self._qf(next_inputs), axis=1)
                 # use target qf to get Q values for those actions
                 selected_actions = selected_actions.long().unsqueeze(1)
-                best_qvals = torch.gather(self._target_qf(next_inputs),
-                                          dim=1,
-                                          index=selected_actions)
+                best_qvals = torch.gather(
+                    self._target_qf(next_inputs), dim=1, index=selected_actions
+                )
             else:
                 target_qvals = self._target_qf(next_inputs)
                 best_qvals, _ = torch.max(target_qvals, 1)
@@ -267,10 +272,10 @@ class DQN(RLAlgorithm):
 
         rewards_clipped = rewards
         if self._clip_reward is not None:
-            rewards_clipped = torch.clamp(rewards, -1 * self._clip_reward,
-                                          self._clip_reward)
-        y_target = (rewards_clipped +
-                    (1.0 - terminals) * self._discount * best_qvals)
+            rewards_clipped = torch.clamp(
+                rewards, -1 * self._clip_reward, self._clip_reward
+            )
+        y_target = rewards_clipped + (1.0 - terminals) * self._discount * best_qvals
         y_target = y_target.squeeze(1)
 
         # optimize qf
@@ -283,8 +288,7 @@ class DQN(RLAlgorithm):
 
         # optionally clip the gradients
         if self._clip_grad is not None:
-            torch.nn.utils.clip_grad_norm_(self.policy.parameters(),
-                                           self._clip_grad)
+            torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self._clip_grad)
         self._qf_optimizer.step()
 
         return (qval_loss.detach(), y_target, selected_qs.detach())
@@ -298,6 +302,6 @@ class DQN(RLAlgorithm):
         """
         if device is None:
             device = global_device()
-        logger.log('Using device: ' + str(device))
+        logger.log("Using device: " + str(device))
         self._qf = self._qf.to(device)
         self._target_qf = self._target_qf.to(device)

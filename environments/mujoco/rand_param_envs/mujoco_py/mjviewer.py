@@ -14,11 +14,10 @@ mjCAT_ALL = 7
 
 
 def _glfw_error_callback(e, d):
-    logger.error('GLFW error: %s, desc: %s', e, d)
+    logger.error("GLFW error: %s, desc: %s", e, d)
 
 
 class MjViewer(object):
-
     def __init__(self, visible=True, init_width=500, init_height=500, go_fast=False):
         """
         Set go_fast=True to run at full speed instead of waiting for the 60 Hz monitor refresh
@@ -95,15 +94,31 @@ class MjViewer(object):
         rect = self.get_rect()
         arr = (ctypes.c_double * 3)(0, 0, 0)
 
-        mjlib.mjv_makeGeoms(self.model.ptr, self.data.ptr, byref(self.objects), byref(self.vopt), mjCAT_ALL, 0, None,
-                            None, ctypes.cast(arr, ctypes.POINTER(ctypes.c_double)))
+        mjlib.mjv_makeGeoms(
+            self.model.ptr,
+            self.data.ptr,
+            byref(self.objects),
+            byref(self.vopt),
+            mjCAT_ALL,
+            0,
+            None,
+            None,
+            ctypes.cast(arr, ctypes.POINTER(ctypes.c_double)),
+        )
         mjlib.mjv_makeLights(self.model.ptr, self.data.ptr, byref(self.objects))
 
         mjlib.mjv_setCamera(self.model.ptr, self.data.ptr, byref(self.cam))
 
         mjlib.mjv_updateCameraPose(byref(self.cam), rect.width * 1.0 / rect.height)
 
-        mjlib.mjr_render(0, rect, byref(self.objects), byref(self.ropt), byref(self.cam.pose), byref(self.con))
+        mjlib.mjr_render(
+            0,
+            rect,
+            byref(self.objects),
+            byref(self.ropt),
+            byref(self.cam.pose),
+            byref(self.con),
+        )
 
         self.gui_lock.release()
 
@@ -140,13 +155,11 @@ class MjViewer(object):
         rbo = gl.glGenRenderbuffers(1)
         gl.glBindRenderbuffer(gl.GL_RENDERBUFFER, rbo)
         gl.glRenderbufferStorage(
-            gl.GL_RENDERBUFFER,
-            gl.GL_RGBA,
-            self.init_width,
-            self.init_height
+            gl.GL_RENDERBUFFER, gl.GL_RGBA, self.init_width, self.init_height
         )
         gl.glFramebufferRenderbuffer(
-            gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_RENDERBUFFER, rbo)
+            gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_RENDERBUFFER, rbo
+        )
         gl.glBindRenderbuffer(gl.GL_RENDERBUFFER, 0)
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         fbo_status = gl.glCheckFramebufferStatus(gl.GL_FRAMEBUFFER)
@@ -154,25 +167,25 @@ class MjViewer(object):
         if fbo_status != gl.GL_FRAMEBUFFER_COMPLETE:
             gl.glDeleteFramebuffers([fbo])
             glfw.terminate()
-            raise Exception('Framebuffer failed status check: %s' % fbo_status)
+            raise Exception("Framebuffer failed status check: %s" % fbo_status)
 
         self._fbo = fbo
         self._rbo = rbo
 
     def start(self):
-        logger.info('initializing glfw@%s', glfw.get_version())
+        logger.info("initializing glfw@%s", glfw.get_version())
 
         glfw.set_error_callback(_glfw_error_callback)
 
         if not glfw.init():
-            raise Exception('glfw failed to initialize')
+            raise Exception("glfw failed to initialize")
 
         window = None
         if self.visible:
             glfw.window_hint(glfw.SAMPLES, 4)
-            glfw.window_hint(glfw.VISIBLE, 1);
+            glfw.window_hint(glfw.VISIBLE, 1)
         else:
-            glfw.window_hint(glfw.VISIBLE, 0);
+            glfw.window_hint(glfw.VISIBLE, 0)
 
         # try stereo if refresh rate is at least 100Hz
         stereo_available = False
@@ -181,7 +194,8 @@ class MjViewer(object):
         if refresh_rate >= 100:
             glfw.window_hint(glfw.STEREO, 1)
             window = glfw.create_window(
-                self.init_width, self.init_height, "Simulate", None, None)
+                self.init_width, self.init_height, "Simulate", None, None
+            )
             if window:
                 stereo_available = True
 
@@ -189,7 +203,8 @@ class MjViewer(object):
         if not window:
             glfw.window_hint(glfw.STEREO, 0)
             window = glfw.create_window(
-                self.init_width, self.init_height, "Simulate", None, None)
+                self.init_width, self.init_height, "Simulate", None, None
+            )
 
         if not window:
             glfw.terminate()
@@ -232,9 +247,11 @@ class MjViewer(object):
 
     def handle_mouse_move(self, window, xpos, ypos):
         # no buttons down: nothing to do
-        if not self._button_left_pressed \
-                and not self._button_middle_pressed \
-                and not self._button_right_pressed:
+        if (
+            not self._button_left_pressed
+            and not self._button_middle_pressed
+            and not self._button_right_pressed
+        ):
             return
 
         # compute mouse displacement, save
@@ -251,15 +268,19 @@ class MjViewer(object):
         width, height = glfw.get_framebuffer_size(self.window)
 
         # get shift key state
-        mod_shift = glfw.get_key(window, glfw.KEY_LEFT_SHIFT) == glfw.PRESS \
-                    or glfw.get_key(window, glfw.KEY_RIGHT_SHIFT) == glfw.PRESS
+        mod_shift = (
+            glfw.get_key(window, glfw.KEY_LEFT_SHIFT) == glfw.PRESS
+            or glfw.get_key(window, glfw.KEY_RIGHT_SHIFT) == glfw.PRESS
+        )
 
         # determine action based on mouse button
         action = None
         if self._button_right_pressed:
             action = mjconstants.MOUSE_MOVE_H if mod_shift else mjconstants.MOUSE_MOVE_V
         elif self._button_left_pressed:
-            action = mjconstants.MOUSE_ROTATE_H if mod_shift else mjconstants.MOUSE_ROTATE_V
+            action = (
+                mjconstants.MOUSE_ROTATE_H if mod_shift else mjconstants.MOUSE_ROTATE_V
+            )
         else:
             action = mjconstants.MOUSE_ZOOM
 
@@ -271,12 +292,15 @@ class MjViewer(object):
 
     def handle_mouse_button(self, window, button, act, mods):
         # update button state
-        self._button_left_pressed = \
+        self._button_left_pressed = (
             glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS
-        self._button_middle_pressed = \
+        )
+        self._button_middle_pressed = (
             glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_MIDDLE) == glfw.PRESS
-        self._button_right_pressed = \
+        )
+        self._button_right_pressed = (
             glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_RIGHT) == glfw.PRESS
+        )
 
         # update mouse position
         x, y = glfw.get_cursor_pos(window)
@@ -305,7 +329,9 @@ class MjViewer(object):
 
         # scroll
         self.gui_lock.acquire()
-        mjlib.mjv_moveCamera(mjconstants.MOUSE_ZOOM, 0, (-20 * y_offset), byref(self.cam), width, height)
+        mjlib.mjv_moveCamera(
+            mjconstants.MOUSE_ZOOM, 0, (-20 * y_offset), byref(self.cam), width, height
+        )
         self.gui_lock.release()
 
     def should_stop(self):

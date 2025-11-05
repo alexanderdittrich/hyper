@@ -1,6 +1,7 @@
 """
 Taken from https://github.com/openai/baselines
 """
+
 import numpy as np
 from abc import ABC, abstractmethod
 
@@ -34,7 +35,7 @@ class AlreadySteppingError(Exception):
     """
 
     def __init__(self):
-        msg = 'already running an async step'
+        msg = "already running an async step"
         Exception.__init__(self, msg)
 
 
@@ -45,7 +46,7 @@ class NotSteppingError(Exception):
     """
 
     def __init__(self):
-        msg = 'not running an async step'
+        msg = "not running an async step"
         Exception.__init__(self, msg)
 
 
@@ -56,6 +57,7 @@ class VecEnv(ABC):
     each observation becomes an batch of observations, and expected action is a batch of actions to
     be applied per-environment.
     """
+
     closed = False
     viewer = None
 
@@ -126,13 +128,13 @@ class VecEnv(ABC):
         self.step_async(actions)
         return self.step_wait()
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
         imgs = self.get_images()
         bigimg = tile_images(imgs)
-        if mode == 'human':
+        if mode == "human":
             self.get_viewer().imshow(bigimg)
             return self.get_viewer().isopen
-        elif mode == 'rgb_array':
+        elif mode == "rgb_array":
             return bigimg
         else:
             raise NotImplementedError
@@ -152,8 +154,19 @@ class VecEnv(ABC):
 
     def get_viewer(self):
         if self.viewer is None:
-            from gym.envs.classic_control import rendering
-            self.viewer = rendering.SimpleImageViewer()
+            try:
+                # Try gymnasium first
+                from gymnasium.envs.classic_control import rendering
+
+                self.viewer = rendering.SimpleImageViewer()
+            except ImportError:
+                # Fallback to gym for compatibility
+                try:
+                    from gym.envs.classic_control import rendering
+
+                    self.viewer = rendering.SimpleImageViewer()
+                except ImportError:
+                    raise ImportError("Neither gymnasium nor gym rendering available")
         return self.viewer
 
 
@@ -165,10 +178,12 @@ class VecEnvWrapper(VecEnv):
 
     def __init__(self, venv, observation_space=None, action_space=None):
         self.venv = venv
-        VecEnv.__init__(self,
-                        num_envs=venv.num_envs,
-                        observation_space=observation_space or venv.observation_space,
-                        action_space=action_space or venv.action_space)
+        VecEnv.__init__(
+            self,
+            num_envs=venv.num_envs,
+            observation_space=observation_space or venv.observation_space,
+            action_space=action_space or venv.action_space,
+        )
 
     def step_async(self, actions):
         self.venv.step_async(actions)
@@ -184,7 +199,7 @@ class VecEnvWrapper(VecEnv):
     def close(self):
         return self.venv.close()
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
         return self.venv.render(mode=mode)
 
     def get_images(self):
@@ -201,8 +216,10 @@ class CloudpickleWrapper(object):
 
     def __getstate__(self):
         import cloudpickle
+
         return cloudpickle.dumps(self.x)
 
     def __setstate__(self, ob):
         import pickle
+
         self.x = pickle.loads(ob)

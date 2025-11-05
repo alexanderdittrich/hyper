@@ -1,4 +1,5 @@
 """Model-Agnostic Meta-Learning (MAML) algorithm implementation for RL."""
+
 # yapf: disable
 import collections
 import copy
@@ -42,19 +43,21 @@ class MAML:
 
     """
 
-    def __init__(self,
-                 inner_algo,
-                 env,
-                 policy,
-                 sampler,
-                 task_sampler,
-                 meta_optimizer,
-                 meta_batch_size=40,
-                 inner_lr=0.1,
-                 outer_lr=1e-3,
-                 num_grad_updates=1,
-                 meta_evaluator=None,
-                 evaluate_every_n_epochs=1):
+    def __init__(
+        self,
+        inner_algo,
+        env,
+        policy,
+        sampler,
+        task_sampler,
+        meta_optimizer,
+        meta_batch_size=40,
+        inner_lr=0.1,
+        outer_lr=1e-3,
+        num_grad_updates=1,
+        meta_evaluator=None,
+        evaluate_every_n_epochs=1,
+    ):
         self._sampler = sampler
 
         self.max_episode_length = inner_algo.max_episode_length
@@ -69,10 +72,9 @@ class MAML:
         self._meta_batch_size = meta_batch_size
         self._inner_algo = inner_algo
         self._inner_optimizer = DifferentiableSGD(self._policy, lr=inner_lr)
-        self._meta_optimizer = make_optimizer(meta_optimizer,
-                                              module=policy,
-                                              lr=_Default(outer_lr),
-                                              eps=_Default(1e-5))
+        self._meta_optimizer = make_optimizer(
+            meta_optimizer, module=policy, lr=_Default(outer_lr), eps=_Default(1e-5)
+        )
         self._evaluate_every_n_epochs = evaluate_every_n_epochs
 
     def train(self, trainer):
@@ -115,9 +117,7 @@ class MAML:
         itr = trainer.step_itr
         old_theta = dict(self._policy.named_parameters())
 
-        kl_before = self._compute_kl_constraint(all_samples,
-                                                all_params,
-                                                set_grad=False)
+        kl_before = self._compute_kl_constraint(all_samples, all_params, set_grad=False)
 
         meta_objective = self._compute_meta_loss(all_samples, all_params)
 
@@ -127,20 +127,22 @@ class MAML:
         self._meta_optimize(all_samples, all_params)
 
         # Log
-        loss_after = self._compute_meta_loss(all_samples,
-                                             all_params,
-                                             set_grad=False)
-        kl_after = self._compute_kl_constraint(all_samples,
-                                               all_params,
-                                               set_grad=False)
+        loss_after = self._compute_meta_loss(all_samples, all_params, set_grad=False)
+        kl_after = self._compute_kl_constraint(all_samples, all_params, set_grad=False)
 
         with torch.no_grad():
             policy_entropy = self._compute_policy_entropy(
-                [task_samples[0] for task_samples in all_samples])
+                [task_samples[0] for task_samples in all_samples]
+            )
             average_return = self._log_performance(
-                itr, all_samples, meta_objective.item(), loss_after.item(),
-                kl_before.item(), kl_after.item(),
-                policy_entropy.mean().item())
+                itr,
+                all_samples,
+                meta_objective.item(),
+                loss_after.item(),
+                kl_before.item(),
+                kl_after.item(),
+                policy_entropy.mean().item(),
+            )
 
         if self._meta_evaluator and itr % self._evaluate_every_n_epochs == 0:
             self._meta_evaluator.evaluate(self)
@@ -163,8 +165,8 @@ class MAML:
         # MAML resets a value function to its initial state before training.
         self._value_function.load_state_dict(self._initial_vf_state)
 
-        obs = np.concatenate([path['observations'] for path in paths], axis=0)
-        returns = np.concatenate([path['returns'] for path in paths])
+        obs = np.concatenate([path["observations"] for path in paths], axis=0)
+        returns = np.concatenate([path["returns"] for path in paths])
         obs = torch.Tensor(obs)
         returns = torch.Tensor(returns)
 
@@ -197,10 +199,8 @@ class MAML:
         theta = dict(self._policy.named_parameters())
 
         for i, env_up in enumerate(tasks):
-
             for j in range(self._num_grad_updates + 1):
-                episodes = trainer.obtain_episodes(trainer.step_itr,
-                                                   env_update=env_up)
+                episodes = trainer.obtain_episodes(trainer.step_itr, env_update=env_up)
                 batch_samples = self._process_samples(episodes)
                 all_samples[i].append(batch_samples)
 
@@ -242,12 +242,16 @@ class MAML:
         if isinstance(self._meta_optimizer, ConjugateGradientOptimizer):
             self._meta_optimizer.step(
                 f_loss=lambda: self._compute_meta_loss(
-                    all_samples, all_params, set_grad=False),
+                    all_samples, all_params, set_grad=False
+                ),
                 f_constraint=lambda: self._compute_kl_constraint(
-                    all_samples, all_params))
+                    all_samples, all_params
+                ),
+            )
         else:
-            self._meta_optimizer.step(lambda: self._compute_meta_loss(
-                all_samples, all_params, set_grad=False))
+            self._meta_optimizer.step(
+                lambda: self._compute_meta_loss(all_samples, all_params, set_grad=False)
+            )
 
     def _compute_meta_loss(self, all_samples, all_params, set_grad=True):
         """Compute loss to meta-optimize.
@@ -318,7 +322,8 @@ class MAML:
             with torch.set_grad_enabled(set_grad):
                 # pylint: disable=protected-access
                 kl = self._inner_algo._compute_kl_constraint(
-                    task_samples[-1].observations)
+                    task_samples[-1].observations
+                )
             kls.append(kl)
 
             update_module_params(self._policy, theta)
@@ -376,8 +381,9 @@ class MAML:
         """
         paths = episodes.to_list()
         for path in paths:
-            path['returns'] = discount_cumsum(
-                path['rewards'], self._inner_algo.discount).copy()
+            path["returns"] = discount_cumsum(
+                path["rewards"], self._inner_algo.discount
+            ).copy()
 
         self._train_value_function(paths)
 
@@ -389,11 +395,11 @@ class MAML:
             # pylint: disable=protected-access
             baselines = self._inner_algo._value_function(obs)
 
-        return _MAMLEpisodeBatch(paths, obs, actions, rewards, valids,
-                                 baselines)
+        return _MAMLEpisodeBatch(paths, obs, actions, rewards, valids, baselines)
 
-    def _log_performance(self, itr, all_samples, loss_before, loss_after,
-                         kl_before, kl, policy_entropy):
+    def _log_performance(
+        self, itr, all_samples, loss_before, loss_after, kl_before, kl, policy_entropy
+    ):
         """Evaluate performance of this batch.
 
         Args:
@@ -411,10 +417,10 @@ class MAML:
             float: The average return in last epoch cycle.
 
         """
-        tabular.record('Iteration', itr)
+        tabular.record("Iteration", itr)
 
         name_map = None
-        if hasattr(self._env, 'all_task_names'):
+        if hasattr(self._env, "all_task_names"):
             names = self._env.all_task_names
             name_map = dict(zip(names, names))
 
@@ -423,19 +429,22 @@ class MAML:
             EpisodeBatch.from_list(
                 env_spec=self._env.spec,
                 paths=[
-                    path for task_paths in all_samples
+                    path
+                    for task_paths in all_samples
                     for path in task_paths[self._num_grad_updates].paths
-                ]),
+                ],
+            ),
             discount=self._inner_algo.discount,
-            name_map=name_map)
+            name_map=name_map,
+        )
 
-        with tabular.prefix(self._policy.name + '/'):
-            tabular.record('LossBefore', loss_before)
-            tabular.record('LossAfter', loss_after)
-            tabular.record('dLoss', loss_before - loss_after)
-            tabular.record('KLBefore', kl_before)
-            tabular.record('KLAfter', kl)
-            tabular.record('Entropy', policy_entropy)
+        with tabular.prefix(self._policy.name + "/"):
+            tabular.record("LossBefore", loss_before)
+            tabular.record("LossAfter", loss_after)
+            tabular.record("dLoss", loss_before - loss_after)
+            tabular.record("KLBefore", kl_before)
+            tabular.record("KLAfter", kl)
+            tabular.record("Entropy", policy_entropy)
 
         return np.mean(rtns)
 
@@ -483,10 +492,11 @@ class MAML:
 
 
 class _MAMLEpisodeBatch(
-        collections.namedtuple('_MAMLEpisodeBatch', [
-            'paths', 'observations', 'actions', 'rewards', 'valids',
-            'baselines'
-        ])):
+    collections.namedtuple(
+        "_MAMLEpisodeBatch",
+        ["paths", "observations", "actions", "rewards", "valids", "baselines"],
+    )
+):
     r"""A tuple representing a batch of whole episodes in MAML.
 
     A :class:`_MAMLEpisodeBatch` represents a batch of whole episodes

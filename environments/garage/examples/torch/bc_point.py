@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Example of using Behavioral Cloning."""
+
 import click
 import numpy as np
 
@@ -24,7 +25,7 @@ class OptimalPolicy(Policy):
     # pylint: disable=abstract-method
 
     def __init__(self, env_spec, goal):
-        super().__init__(env_spec, 'OptimalPolicy')
+        super().__init__(env_spec, "OptimalPolicy")
         self.goal = goal
 
     def get_action(self, observation):
@@ -60,14 +61,16 @@ class OptimalPolicy(Policy):
                 * dict[str, np.ndarray]: Agent info (empty).
 
         """
-        return (self.goal[np.newaxis, :].repeat(len(observations), axis=0) -
-                observations[:, :2]), {}
+        return (
+            self.goal[np.newaxis, :].repeat(len(observations), axis=0)
+            - observations[:, :2]
+        ), {}
 
 
 @click.command()
-@click.option('--loss', type=str, default='log_prob')
+@click.option("--loss", type=str, default="log_prob")
 @wrap_experiment
-def bc_point(ctxt=None, loss='log_prob'):
+def bc_point(ctxt=None, loss="log_prob"):
     """Run Behavioral Cloning on garage.envs.PointEnv.
 
     Args:
@@ -76,21 +79,23 @@ def bc_point(ctxt=None, loss='log_prob'):
 
     """
     trainer = Trainer(ctxt)
-    goal = np.array([1., 1.])
+    goal = np.array([1.0, 1.0])
     env = PointEnv(goal=goal, max_episode_length=200)
     expert = OptimalPolicy(env.spec, goal=goal)
     policy = GaussianMLPPolicy(env.spec, [8, 8])
     batch_size = 1000
-    sampler = RaySampler(agents=expert,
-                         envs=env,
-                         max_episode_length=env.spec.max_episode_length)
-    algo = BC(env.spec,
-              policy,
-              batch_size=batch_size,
-              source=expert,
-              sampler=sampler,
-              policy_lr=1e-2,
-              loss=loss)
+    sampler = RaySampler(
+        agents=expert, envs=env, max_episode_length=env.spec.max_episode_length
+    )
+    algo = BC(
+        env.spec,
+        policy,
+        batch_size=batch_size,
+        source=expert,
+        sampler=sampler,
+        policy_lr=1e-2,
+        loss=loss,
+    )
     trainer.setup(algo, env)
     trainer.train(100, batch_size=batch_size)
 

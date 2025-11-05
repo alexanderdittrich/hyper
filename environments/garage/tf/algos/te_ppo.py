@@ -1,4 +1,5 @@
 """Proximal Policy Optimization with Task Embedding."""
+
 from environments.garage.tf.algos.te_npo import TENPO
 from environments.garage.tf.optimizers import FirstOrderOptimizer
 
@@ -56,59 +57,62 @@ class TEPPO(TENPO):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 baseline,
-                 sampler,
-                 scope=None,
-                 discount=0.99,
-                 gae_lambda=0.98,
-                 center_adv=True,
-                 positive_adv=False,
-                 fixed_horizon=False,
-                 lr_clip_range=0.01,
-                 max_kl_step=0.01,
-                 optimizer=None,
-                 optimizer_args=None,
-                 policy_ent_coeff=1e-3,
-                 encoder_ent_coeff=1e-3,
-                 use_softplus_entropy=False,
-                 stop_ce_gradient=False,
-                 inference=None,
-                 inference_optimizer=None,
-                 inference_optimizer_args=None,
-                 inference_ce_coeff=1e-3,
-                 name='PPOTaskEmbedding'):
-
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        baseline,
+        sampler,
+        scope=None,
+        discount=0.99,
+        gae_lambda=0.98,
+        center_adv=True,
+        positive_adv=False,
+        fixed_horizon=False,
+        lr_clip_range=0.01,
+        max_kl_step=0.01,
+        optimizer=None,
+        optimizer_args=None,
+        policy_ent_coeff=1e-3,
+        encoder_ent_coeff=1e-3,
+        use_softplus_entropy=False,
+        stop_ce_gradient=False,
+        inference=None,
+        inference_optimizer=None,
+        inference_optimizer_args=None,
+        inference_ce_coeff=1e-3,
+        name="PPOTaskEmbedding",
+    ):
         optimizer = optimizer or FirstOrderOptimizer
-        optimizer_args = optimizer_args or dict(batch_size=32,
-                                                max_episode_length=10)
+        optimizer_args = optimizer_args or dict(batch_size=32, max_episode_length=10)
 
         inference_optimizer = inference_optimizer or FirstOrderOptimizer
         inference_optimizer_args = inference_optimizer_args or dict(
-            batch_size=32, max_optimization_epochs=10)
+            batch_size=32, max_optimization_epochs=10
+        )
 
-        super().__init__(env_spec=env_spec,
-                         policy=policy,
-                         baseline=baseline,
-                         sampler=sampler,
-                         scope=scope,
-                         discount=discount,
-                         gae_lambda=gae_lambda,
-                         center_adv=center_adv,
-                         positive_adv=positive_adv,
-                         fixed_horizon=fixed_horizon,
-                         lr_clip_range=lr_clip_range,
-                         max_kl_step=max_kl_step,
-                         optimizer=optimizer,
-                         optimizer_args=optimizer_args,
-                         policy_ent_coeff=policy_ent_coeff,
-                         encoder_ent_coeff=encoder_ent_coeff,
-                         use_softplus_entropy=use_softplus_entropy,
-                         stop_ce_gradient=stop_ce_gradient,
-                         inference=inference,
-                         inference_optimizer=inference_optimizer,
-                         inference_optimizer_args=inference_optimizer_args,
-                         inference_ce_coeff=inference_ce_coeff,
-                         name=name)
+        super().__init__(
+            env_spec=env_spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            scope=scope,
+            discount=discount,
+            gae_lambda=gae_lambda,
+            center_adv=center_adv,
+            positive_adv=positive_adv,
+            fixed_horizon=fixed_horizon,
+            lr_clip_range=lr_clip_range,
+            max_kl_step=max_kl_step,
+            optimizer=optimizer,
+            optimizer_args=optimizer_args,
+            policy_ent_coeff=policy_ent_coeff,
+            encoder_ent_coeff=encoder_ent_coeff,
+            use_softplus_entropy=use_softplus_entropy,
+            stop_ce_gradient=stop_ce_gradient,
+            inference=inference,
+            inference_optimizer=inference_optimizer,
+            inference_optimizer_args=inference_optimizer_args,
+            inference_ce_coeff=inference_ce_coeff,
+            name=name,
+        )

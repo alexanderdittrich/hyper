@@ -3,6 +3,7 @@
 A model composed of one or more models which are connected sequential,
 according to the insertion order.
 """
+
 from environments.garage.tf.models.model import Model
 
 
@@ -72,8 +73,8 @@ class Sequential(Model):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_first_network']
-        del new_dict['_last_network']
+        del new_dict["_first_network"]
+        del new_dict["_last_network"]
         return new_dict
 
     def __setstate__(self, state):

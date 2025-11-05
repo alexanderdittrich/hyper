@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to add a simple VPG algorithm."""
+
 import numpy as np
 import tensorflow as tf
 
@@ -34,22 +35,22 @@ class SimpleVPG:
         """Initialize optimizer and build computation graph."""
         observation_dim = self.policy.observation_space.flat_dim
         action_dim = self.policy.action_space.flat_dim
-        with tf.name_scope('inputs'):
+        with tf.name_scope("inputs"):
             self._observation = tf.compat.v1.placeholder(
-                tf.float32, shape=[None, observation_dim], name='observation')
-            self._action = tf.compat.v1.placeholder(tf.float32,
-                                                    shape=[None, action_dim],
-                                                    name='action')
-            self._returns = tf.compat.v1.placeholder(tf.float32,
-                                                     shape=[None],
-                                                     name='return')
-        policy_dist = self.policy.build(self._observation, name='policy').dist
-        with tf.name_scope('loss'):
-            ll = policy_dist.log_prob(self._action, name='log_likelihood')
+                tf.float32, shape=[None, observation_dim], name="observation"
+            )
+            self._action = tf.compat.v1.placeholder(
+                tf.float32, shape=[None, action_dim], name="action"
+            )
+            self._returns = tf.compat.v1.placeholder(
+                tf.float32, shape=[None], name="return"
+            )
+        policy_dist = self.policy.build(self._observation, name="policy").dist
+        with tf.name_scope("loss"):
+            ll = policy_dist.log_prob(self._action, name="log_likelihood")
             loss = -tf.reduce_mean(ll * self._returns)
-        with tf.name_scope('train'):
-            self._train_op = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(
-                loss)
+        with tf.name_scope("train"):
+            self._train_op = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(loss)
 
     def train(self, trainer):
         """Obtain samplers and start actual training for each epoch.
@@ -60,9 +61,9 @@ class SimpleVPG:
         """
         for epoch in trainer.step_epochs():
             samples = trainer.obtain_samples(epoch)
-            log_performance(epoch,
-                            EpisodeBatch.from_list(self.env_spec, samples),
-                            self._discount)
+            log_performance(
+                epoch, EpisodeBatch.from_list(self.env_spec, samples), self._discount
+            )
             self._train_once(samples)
 
     def _train_once(self, samples):
@@ -75,19 +76,21 @@ class SimpleVPG:
             numpy.float64: Average return.
 
         """
-        obs = np.concatenate([path['observations'] for path in samples])
-        actions = np.concatenate([path['actions'] for path in samples])
+        obs = np.concatenate([path["observations"] for path in samples])
+        actions = np.concatenate([path["actions"] for path in samples])
         returns = []
         for path in samples:
-            returns.append(discount_cumsum(path['rewards'], self._discount))
+            returns.append(discount_cumsum(path["rewards"], self._discount))
         returns = np.concatenate(returns)
         sess = tf.compat.v1.get_default_session()
-        sess.run(self._train_op,
-                 feed_dict={
-                     self._observation: obs,
-                     self._action: actions,
-                     self._returns: returns,
-                 })
+        sess.run(
+            self._train_op,
+            feed_dict={
+                self._observation: obs,
+                self._action: actions,
+                self._returns: returns,
+            },
+        )
         return np.mean(returns)
 
     def __getstate__(self):
@@ -98,10 +101,10 @@ class SimpleVPG:
 
         """
         data = self.__dict__.copy()
-        del data['_observation']
-        del data['_action']
-        del data['_returns']
-        del data['_train_op']
+        del data["_observation"]
+        del data["_action"]
+        del data["_returns"]
+        del data["_train_op"]
         return data
 
     def __setstate__(self, state):
@@ -128,10 +131,12 @@ def tutorial_vpg(ctxt=None):
     with TFTrainer(ctxt) as trainer:
         env = PointEnv(max_episode_length=200)
         policy = GaussianMLPPolicy(env.spec)
-        sampler = LocalSampler(agents=policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True)
+        sampler = LocalSampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
         algo = SimpleVPG(env.spec, policy, sampler)
         trainer.setup(algo, env)
         trainer.train(n_epochs=200, batch_size=4000)

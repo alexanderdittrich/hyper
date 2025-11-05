@@ -1,4 +1,5 @@
 """A value function (baseline) based on a GaussianMLP model."""
+
 from dowel import tabular
 import numpy as np
 import tensorflow as tf
@@ -8,7 +9,8 @@ from environments.garage.experiment import deterministic
 from environments.garage.np.baselines import Baseline
 from environments.garage.tf import compile_function
 from environments.garage.tf.baselines.gaussian_mlp_baseline_model import (
-    GaussianMLPBaselineModel)
+    GaussianMLPBaselineModel,
+)
 from environments.garage.tf.optimizers import LBFGSOptimizer, PenaltyLBFGSOptimizer
 
 
@@ -72,33 +74,37 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 num_seq_inputs=1,
-                 name='GaussianMLPBaseline',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 optimizer=None,
-                 optimizer_args=None,
-                 use_trust_region=True,
-                 max_kl_step=0.01,
-                 learn_std=True,
-                 init_std=1.0,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 std_hidden_sizes=(32, 32),
-                 std_nonlinearity=None,
-                 layer_normalization=False,
-                 normalize_inputs=True,
-                 normalize_outputs=True,
-                 subsample_factor=1.0):
+    def __init__(
+        self,
+        env_spec,
+        num_seq_inputs=1,
+        name="GaussianMLPBaseline",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        optimizer=None,
+        optimizer_args=None,
+        use_trust_region=True,
+        max_kl_step=0.01,
+        learn_std=True,
+        init_std=1.0,
+        adaptive_std=False,
+        std_share_network=False,
+        std_hidden_sizes=(32, 32),
+        std_nonlinearity=None,
+        layer_normalization=False,
+        normalize_inputs=True,
+        normalize_outputs=True,
+        subsample_factor=1.0,
+    ):
         self._env_spec = env_spec
         self._num_seq_inputs = num_seq_inputs
         self._use_trust_region = use_trust_region
@@ -111,38 +117,39 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             optimizer_args = dict()
         if optimizer is None:
             if use_trust_region:
-                self._optimizer = make_optimizer(PenaltyLBFGSOptimizer,
-                                                 **optimizer_args)
+                self._optimizer = make_optimizer(
+                    PenaltyLBFGSOptimizer, **optimizer_args
+                )
             else:
-                self._optimizer = make_optimizer(LBFGSOptimizer,
-                                                 **optimizer_args)
+                self._optimizer = make_optimizer(LBFGSOptimizer, **optimizer_args)
         else:
             self._optimizer = make_optimizer(optimizer, **optimizer_args)
 
-        super().__init__(name=name,
-                         input_shape=(env_spec.observation_space.flat_dim *
-                                      num_seq_inputs, ),
-                         output_dim=1,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         learn_std=learn_std,
-                         adaptive_std=adaptive_std,
-                         std_share_network=std_share_network,
-                         init_std=init_std,
-                         min_std=None,
-                         max_std=None,
-                         std_hidden_sizes=std_hidden_sizes,
-                         std_hidden_nonlinearity=std_nonlinearity,
-                         std_output_nonlinearity=None,
-                         std_parameterization='exp',
-                         layer_normalization=layer_normalization)
+        super().__init__(
+            name=name,
+            input_shape=(env_spec.observation_space.flat_dim * num_seq_inputs,),
+            output_dim=1,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            learn_std=learn_std,
+            adaptive_std=adaptive_std,
+            std_share_network=std_share_network,
+            init_std=init_std,
+            min_std=None,
+            max_std=None,
+            std_hidden_sizes=std_hidden_sizes,
+            std_hidden_nonlinearity=std_nonlinearity,
+            std_output_nonlinearity=None,
+            std_parameterization="exp",
+            layer_normalization=layer_normalization,
+        )
         # model for old distribution, used when trusted region is on
-        self._old_model = self.clone_model(name=name + '_old_model')
+        self._old_model = self.clone_model(name=name + "_old_model")
         self._x_mean = None
         self._x_std = None
         self._y_mean = None
@@ -152,17 +159,26 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
         self._initialize()
 
     def _initialize(self):
-        input_var = tf.compat.v1.placeholder(tf.float32,
-                                             shape=(None, ) +
-                                             self._input_shape)
-        ys_var = tf.compat.v1.placeholder(dtype=tf.float32,
-                                          name='ys',
-                                          shape=(None, self._output_dim))
+        input_var = tf.compat.v1.placeholder(
+            tf.float32, shape=(None,) + self._input_shape
+        )
+        ys_var = tf.compat.v1.placeholder(
+            dtype=tf.float32, name="ys", shape=(None, self._output_dim)
+        )
 
         self._old_network = self._old_model.build(input_var)
-        (norm_dist, norm_mean, norm_log_std, _, mean, _, self._x_mean,
-         self._x_std, self._y_mean,
-         self._y_std) = self.build(input_var).outputs
+        (
+            norm_dist,
+            norm_mean,
+            norm_log_std,
+            _,
+            mean,
+            _,
+            self._x_mean,
+            self._x_std,
+            self._y_mean,
+            self._y_std,
+        ) = self.build(input_var).outputs
 
         normalized_ys_var = (ys_var - self._y_mean) / self._y_std
         old_normalized_dist = self._old_network.normalized_dist
@@ -176,9 +192,9 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             network_outputs=[norm_mean, norm_log_std],
         )
         if self._use_trust_region:
-            optimizer_args['leq_constraint'] = (mean_kl, self._max_kl_step)
-        optimizer_args['inputs'] = [input_var, ys_var]
-        with tf.name_scope('update_opt'):
+            optimizer_args["leq_constraint"] = (mean_kl, self._max_kl_step)
+        optimizer_args["inputs"] = [input_var, ys_var]
+        with tf.name_scope("update_opt"):
             self._optimizer.update_opt(**optimizer_args)
 
     # pylint: disable=unsubscriptable-object
@@ -189,17 +205,17 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             paths (list[dict]): Sample paths.
 
         """
-        xs = np.concatenate([p['observations'] for p in paths])
+        xs = np.concatenate([p["observations"] for p in paths])
         if not isinstance(xs, np.ndarray) or len(xs.shape) > 2:
             xs = self._env_spec.observation_space.flatten_n(xs)
-        ys = np.concatenate([p['returns'] for p in paths])
+        ys = np.concatenate([p["returns"] for p in paths])
         ys = ys.reshape((-1, 1))
 
         if self._subsample_factor < 1:
             num_samples_tot = xs.shape[0]
             idx = np.random.randint(
-                0, num_samples_tot,
-                int(num_samples_tot * self._subsample_factor))
+                0, num_samples_tot, int(num_samples_tot * self._subsample_factor)
+            )
             xs, ys = xs[idx], ys[idx]
 
         if self._normalize_inputs:
@@ -207,25 +223,24 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             self._x_mean.load(np.mean(xs, axis=0, keepdims=True))
             self._x_std.load(np.std(xs, axis=0, keepdims=True) + 1e-8)
             self._old_network.x_mean.load(np.mean(xs, axis=0, keepdims=True))
-            self._old_network.x_std.load(
-                np.std(xs, axis=0, keepdims=True) + 1e-8)
+            self._old_network.x_std.load(np.std(xs, axis=0, keepdims=True) + 1e-8)
         if self._normalize_outputs:
             # recompute normalizing constants for outputs
             self._y_mean.load(np.mean(ys, axis=0, keepdims=True))
             self._y_std.load(np.std(ys, axis=0, keepdims=True) + 1e-8)
             self._old_network.y_mean.load(np.mean(ys, axis=0, keepdims=True))
-            self._old_network.y_std.load(
-                np.std(ys, axis=0, keepdims=True) + 1e-8)
+            self._old_network.y_std.load(np.std(ys, axis=0, keepdims=True) + 1e-8)
         inputs = [xs, ys]
         loss_before = self._optimizer.loss(inputs)
-        tabular.record('{}/LossBefore'.format(self._name), loss_before)
+        tabular.record("{}/LossBefore".format(self._name), loss_before)
         self._optimizer.optimize(inputs)
         loss_after = self._optimizer.loss(inputs)
-        tabular.record('{}/LossAfter'.format(self._name), loss_after)
+        tabular.record("{}/LossAfter".format(self._name), loss_after)
         if self._use_trust_region:
-            tabular.record('{}/MeanKL'.format(self._name),
-                           self._optimizer.constraint_val(inputs))
-        tabular.record('{}/dLoss'.format(self._name), loss_before - loss_after)
+            tabular.record(
+                "{}/MeanKL".format(self._name), self._optimizer.constraint_val(inputs)
+            )
+        tabular.record("{}/dLoss".format(self._name), loss_before - loss_after)
         self._old_model.parameters = self.parameters
 
     def predict(self, paths):
@@ -238,7 +253,7 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             numpy.ndarray: Predicted value.
 
         """
-        xs = paths['observations']
+        xs = paths["observations"]
         if not isinstance(xs, np.ndarray) or len(xs.shape) > 2:
             xs = self._env_spec.observation_space.flatten_n(xs)
         return self._f_predict(xs).flatten()
@@ -259,8 +274,9 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
         """
         new_baseline = GaussianMLPBaselineModel(
             name=name,
-            input_shape=(self._env_spec.observation_space.flat_dim *
-                         self._num_seq_inputs, ),
+            input_shape=(
+                self._env_spec.observation_space.flat_dim * self._num_seq_inputs,
+            ),
             output_dim=1,
             hidden_sizes=self._hidden_sizes,
             hidden_nonlinearity=self._hidden_nonlinearity,
@@ -278,8 +294,9 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
             std_hidden_sizes=self._std_hidden_sizes,
             std_hidden_nonlinearity=self._std_hidden_nonlinearity,
             std_output_nonlinearity=None,
-            std_parameterization='exp',
-            layer_normalization=self._layer_normalization)
+            std_parameterization="exp",
+            layer_normalization=self._layer_normalization,
+        )
         new_baseline.parameters = self.parameters
         return new_baseline
 
@@ -306,12 +323,12 @@ class GaussianMLPBaseline(GaussianMLPBaselineModel, Baseline):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_predict']
-        del new_dict['_x_mean']
-        del new_dict['_x_std']
-        del new_dict['_y_mean']
-        del new_dict['_y_std']
-        del new_dict['_old_network']
+        del new_dict["_f_predict"]
+        del new_dict["_x_mean"]
+        del new_dict["_x_std"]
+        del new_dict["_y_mean"]
+        del new_dict["_y_std"]
+        del new_dict["_old_network"]
         return new_dict
 
     def __setstate__(self, state):

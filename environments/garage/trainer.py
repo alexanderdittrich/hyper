@@ -1,4 +1,5 @@
 """Provides algorithms with access to most of garage's features."""
+
 import copy
 import os
 import time
@@ -53,8 +54,9 @@ class TrainArgs:
 
     """
 
-    def __init__(self, n_epochs, batch_size, plot, store_episodes,
-                 pause_for_plot, start_epoch):
+    def __init__(
+        self, n_epochs, batch_size, plot, store_episodes, pause_for_plot, start_epoch
+    ):
         self.n_epochs = n_epochs
         self.batch_size = batch_size
         self.plot = plot
@@ -103,19 +105,20 @@ class Trainer:
     """
 
     def __init__(self, snapshot_config):
-        self._snapshotter = Snapshotter(snapshot_config.snapshot_dir,
-                                        snapshot_config.snapshot_mode,
-                                        snapshot_config.snapshot_gap)
+        self._snapshotter = Snapshotter(
+            snapshot_config.snapshot_dir,
+            snapshot_config.snapshot_mode,
+            snapshot_config.snapshot_gap,
+        )
 
         self._has_setup = False
         self._plot = False
 
         self._seed = None
         self._train_args = None
-        self._stats = ExperimentStats(total_itr=0,
-                                      total_env_steps=0,
-                                      total_epoch=0,
-                                      last_episode=None)
+        self._stats = ExperimentStats(
+            total_itr=0, total_env_steps=0, total_epoch=0, last_episode=None
+        )
 
         self._algo = None
         self._env = None
@@ -155,7 +158,7 @@ class Trainer:
 
         self._seed = get_seed()
 
-        if hasattr(self._algo, '_sampler'):
+        if hasattr(self._algo, "_sampler"):
             # pylint: disable=protected-access
             self._sampler = self._algo._sampler
 
@@ -166,6 +169,7 @@ class Trainer:
         if self._plot:
             # pylint: disable=import-outside-toplevel
             from environments.garage.plotter import Plotter
+
             self._plotter = Plotter()
             self._plotter.init_plot(self.get_env_copy(), self._algo.policy)
 
@@ -176,11 +180,7 @@ class Trainer:
         if self._plot:
             self._plotter.close()
 
-    def obtain_episodes(self,
-                        itr,
-                        batch_size=None,
-                        agent_update=None,
-                        env_update=None):
+    def obtain_episodes(self, itr, batch_size=None, agent_update=None, env_update=None):
         """Obtain one batch of episodes.
 
         Args:
@@ -205,34 +205,35 @@ class Trainer:
 
         """
         if self._sampler is None:
-            raise ValueError('trainer was not initialized with `sampler`. '
-                             'the algo should have a `_sampler` field when'
-                             '`setup()` is called')
+            raise ValueError(
+                "trainer was not initialized with `sampler`. "
+                "the algo should have a `_sampler` field when"
+                "`setup()` is called"
+            )
         if batch_size is None and self._train_args.batch_size is None:
             raise ValueError(
-                'trainer was not initialized with `batch_size`. '
-                'Either provide `batch_size` to trainer.train, '
-                ' or pass `batch_size` to trainer.obtain_samples.')
+                "trainer was not initialized with `batch_size`. "
+                "Either provide `batch_size` to trainer.train, "
+                " or pass `batch_size` to trainer.obtain_samples."
+            )
         episodes = None
         if agent_update is None:
-            policy = getattr(self._algo, 'exploration_policy', None)
+            policy = getattr(self._algo, "exploration_policy", None)
             if policy is None:
                 # This field should exist, since self.make_sampler would have
                 # failed otherwise.
                 policy = self._algo.policy
             agent_update = policy.get_param_values()
         episodes = self._sampler.obtain_samples(
-            itr, (batch_size or self._train_args.batch_size),
+            itr,
+            (batch_size or self._train_args.batch_size),
             agent_update=agent_update,
-            env_update=env_update)
+            env_update=env_update,
+        )
         self._stats.total_env_steps += sum(episodes.lengths)
         return episodes
 
-    def obtain_samples(self,
-                       itr,
-                       batch_size=None,
-                       agent_update=None,
-                       env_update=None):
+    def obtain_samples(self, itr, batch_size=None, agent_update=None, env_update=None):
         """Obtain one batch of samples.
 
         Args:
@@ -271,28 +272,28 @@ class Trainer:
 
         """
         if not self._has_setup:
-            raise NotSetupError('Use setup() to setup trainer before saving.')
+            raise NotSetupError("Use setup() to setup trainer before saving.")
 
-        logger.log('Saving snapshot...')
+        logger.log("Saving snapshot...")
 
         params = dict()
         # Save arguments
-        params['seed'] = self._seed
-        params['train_args'] = self._train_args
-        params['stats'] = self._stats
+        params["seed"] = self._seed
+        params["train_args"] = self._train_args
+        params["stats"] = self._stats
 
         # Save states
-        params['env'] = self._env
-        params['algo'] = self._algo
-        params['n_workers'] = self._n_workers
-        params['worker_class'] = self._worker_class
-        params['worker_args'] = self._worker_args
+        params["env"] = self._env
+        params["algo"] = self._algo
+        params["n_workers"] = self._n_workers
+        params["worker_class"] = self._worker_class
+        params["worker_args"] = self._worker_args
 
         self._snapshotter.save_itr_params(epoch, params)
 
-        logger.log('Saved')
+        logger.log("Saved")
 
-    def restore(self, from_dir, from_epoch='last'):
+    def restore(self, from_dir, from_epoch="last"):
         """Restore experiment from snapshot.
 
         Args:
@@ -308,13 +309,13 @@ class Trainer:
         """
         saved = self._snapshotter.load(from_dir, from_epoch)
 
-        self._seed = saved['seed']
-        self._train_args = saved['train_args']
-        self._stats = saved['stats']
+        self._seed = saved["seed"]
+        self._train_args = saved["train_args"]
+        self._stats = saved["stats"]
 
         set_seed(self._seed)
 
-        self.setup(env=saved['env'], algo=saved['algo'])
+        self.setup(env=saved["env"], algo=saved["algo"])
 
         n_epochs = self._train_args.n_epochs
         last_epoch = self._stats.total_epoch
@@ -324,18 +325,17 @@ class Trainer:
         store_episodes = self._train_args.store_episodes
         pause_for_plot = self._train_args.pause_for_plot
 
-        fmt = '{:<20} {:<15}'
-        logger.log('Restore from snapshot saved in %s' %
-                   self._snapshotter.snapshot_dir)
-        logger.log(fmt.format('-- Train Args --', '-- Value --'))
-        logger.log(fmt.format('n_epochs', n_epochs))
-        logger.log(fmt.format('last_epoch', last_epoch))
-        logger.log(fmt.format('batch_size', batch_size))
-        logger.log(fmt.format('store_episodes', store_episodes))
-        logger.log(fmt.format('pause_for_plot', pause_for_plot))
-        logger.log(fmt.format('-- Stats --', '-- Value --'))
-        logger.log(fmt.format('last_itr', last_itr))
-        logger.log(fmt.format('total_env_steps', total_env_steps))
+        fmt = "{:<20} {:<15}"
+        logger.log("Restore from snapshot saved in %s" % self._snapshotter.snapshot_dir)
+        logger.log(fmt.format("-- Train Args --", "-- Value --"))
+        logger.log(fmt.format("n_epochs", n_epochs))
+        logger.log(fmt.format("last_epoch", last_epoch))
+        logger.log(fmt.format("batch_size", batch_size))
+        logger.log(fmt.format("store_episodes", store_episodes))
+        logger.log(fmt.format("pause_for_plot", pause_for_plot))
+        logger.log(fmt.format("-- Stats --", "-- Value --"))
+        logger.log(fmt.format("last_itr", last_itr))
+        logger.log(fmt.format("total_env_steps", total_env_steps))
 
         self._train_args.start_epoch = last_epoch + 1
         return copy.copy(self._train_args)
@@ -347,23 +347,24 @@ class Trainer:
             pause_for_plot (bool): Pause for plot.
 
         """
-        logger.log('Time %.2f s' % (time.time() - self._start_time))
-        logger.log('EpochTime %.2f s' % (time.time() - self._itr_start_time))
-        tabular.record('TotalEnvSteps', self._stats.total_env_steps)
+        logger.log("Time %.2f s" % (time.time() - self._start_time))
+        logger.log("EpochTime %.2f s" % (time.time() - self._itr_start_time))
+        tabular.record("TotalEnvSteps", self._stats.total_env_steps)
         logger.log(tabular)
 
         if self._plot:
-            self._plotter.update_plot(self._algo.policy,
-                                      self._algo.max_episode_length)
+            self._plotter.update_plot(self._algo.policy, self._algo.max_episode_length)
             if pause_for_plot:
                 input('Plotting evaluation run: Press Enter to " "continue...')
 
-    def train(self,
-              n_epochs,
-              batch_size=None,
-              plot=False,
-              store_episodes=False,
-              pause_for_plot=False):
+    def train(
+        self,
+        n_epochs,
+        batch_size=None,
+        plot=False,
+        store_episodes=False,
+        pause_for_plot=False,
+    ):
         """Start training.
 
         Args:
@@ -381,22 +382,23 @@ class Trainer:
 
         """
         if not self._has_setup:
-            raise NotSetupError(
-                'Use setup() to setup trainer before training.')
+            raise NotSetupError("Use setup() to setup trainer before training.")
 
         # Save arguments for restore
-        self._train_args = TrainArgs(n_epochs=n_epochs,
-                                     batch_size=batch_size,
-                                     plot=plot,
-                                     store_episodes=store_episodes,
-                                     pause_for_plot=pause_for_plot,
-                                     start_epoch=0)
+        self._train_args = TrainArgs(
+            n_epochs=n_epochs,
+            batch_size=batch_size,
+            plot=plot,
+            store_episodes=store_episodes,
+            pause_for_plot=pause_for_plot,
+            start_epoch=0,
+        )
 
         self._plot = plot
         self._start_worker()
 
         log_dir = self._snapshotter.snapshot_dir
-        summary_file = os.path.join(log_dir, 'experiment.json')
+        summary_file = os.path.join(log_dir, "experiment.json")
         dump_json(summary_file, self)
 
         average_return = self._algo.train(self)
@@ -431,17 +433,18 @@ class Trainer:
 
         # Used by integration tests to ensure examples can run one epoch.
         n_epochs = int(
-            os.environ.get('GARAGE_EXAMPLE_TEST_N_EPOCHS',
-                           self._train_args.n_epochs))
+            os.environ.get("GARAGE_EXAMPLE_TEST_N_EPOCHS", self._train_args.n_epochs)
+        )
 
-        logger.log('Obtaining samples...')
+        logger.log("Obtaining samples...")
 
         for epoch in range(self._train_args.start_epoch, n_epochs):
             self._itr_start_time = time.time()
-            with logger.prefix('epoch #%d | ' % epoch):
+            with logger.prefix("epoch #%d | " % epoch):
                 yield epoch
-                save_episode = (self.step_episode
-                                if self._train_args.store_episodes else None)
+                save_episode = (
+                    self.step_episode if self._train_args.store_episodes else None
+                )
 
                 self._stats.last_episode = save_episode
                 self._stats.total_epoch = epoch
@@ -454,12 +457,14 @@ class Trainer:
                     logger.dump_all(self.step_itr)
                     tabular.clear()
 
-    def resume(self,
-               n_epochs=None,
-               batch_size=None,
-               plot=None,
-               store_episodes=None,
-               pause_for_plot=None):
+    def resume(
+        self,
+        n_epochs=None,
+        batch_size=None,
+        plot=None,
+        store_episodes=None,
+        pause_for_plot=None,
+    ):
         """Resume from restored experiment.
 
         This method provides the same interface as train().
@@ -482,7 +487,7 @@ class Trainer:
 
         """
         if self._train_args is None:
-            raise NotSetupError('You must call restore() before resume().')
+            raise NotSetupError("You must call restore() before resume().")
 
         self._train_args.n_epochs = n_epochs or self._train_args.n_epochs
         self._train_args.batch_size = batch_size or self._train_args.batch_size
@@ -615,8 +620,7 @@ class TFTrainer(Trainer):
             exc_tb (object): Traceback.
 
         """
-        if tf.compat.v1.get_default_session(
-        ) is self.sess and self.sess_entered:
+        if tf.compat.v1.get_default_session() is self.sess and self.sess_entered:
             self.sess.__exit__(exc_type, exc_val, exc_tb)
             self.sess_entered = False
 
@@ -646,23 +650,30 @@ class TFTrainer(Trainer):
         if self._plot:
             # pylint: disable=import-outside-toplevel
             from environments.garage.tf.plotter import Plotter
-            self._plotter = Plotter(self.get_env_copy(),
-                                    self._algo.policy,
-                                    sess=tf.compat.v1.get_default_session())
+
+            self._plotter = Plotter(
+                self.get_env_copy(),
+                self._algo.policy,
+                sess=tf.compat.v1.get_default_session(),
+            )
             self._plotter.start()
 
     def initialize_tf_vars(self):
         """Initialize all uninitialized variables in session."""
-        with tf.name_scope('initialize_tf_vars'):
+        with tf.name_scope("initialize_tf_vars"):
             uninited_set = [
-                e.decode() for e in self.sess.run(
-                    tf.compat.v1.report_uninitialized_variables())
+                e.decode()
+                for e in self.sess.run(tf.compat.v1.report_uninitialized_variables())
             ]
             self.sess.run(
-                tf.compat.v1.variables_initializer([
-                    v for v in tf.compat.v1.global_variables()
-                    if v.name.split(':')[0] in uninited_set
-                ]))
+                tf.compat.v1.variables_initializer(
+                    [
+                        v
+                        for v in tf.compat.v1.global_variables()
+                        if v.name.split(":")[0] in uninited_set
+                    ]
+                )
+            )
 
 
 class __FakeTFTrainer:
@@ -671,8 +682,8 @@ class __FakeTFTrainer:
 
     def __init__(*args, **kwargs):
         raise ImportError(
-            'TFTrainer requires TensorFlow. To use it, please install '
-            'TensorFlow.')
+            "TFTrainer requires TensorFlow. To use it, please install TensorFlow."
+        )
 
 
 if not tf:

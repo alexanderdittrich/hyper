@@ -41,20 +41,29 @@ class DiscreteMLPQFunction(MLPModule):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 hidden_sizes,
-                 hidden_nonlinearity=F.relu,
-                 hidden_w_init=nn.init.xavier_normal_,
-                 hidden_b_init=nn.init.zeros_,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_normal_,
-                 output_b_init=nn.init.zeros_,
-                 layer_normalization=False):
-
+    def __init__(
+        self,
+        env_spec,
+        hidden_sizes,
+        hidden_nonlinearity=F.relu,
+        hidden_w_init=nn.init.xavier_normal_,
+        hidden_b_init=nn.init.zeros_,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_normal_,
+        output_b_init=nn.init.zeros_,
+        layer_normalization=False,
+    ):
         input_dim = env_spec.observation_space.flat_dim
         output_dim = env_spec.action_space.flat_dim
-        super().__init__(input_dim, output_dim, hidden_sizes,
-                         hidden_nonlinearity, hidden_w_init, hidden_b_init,
-                         output_nonlinearity, output_w_init, output_b_init,
-                         layer_normalization)
+        super().__init__(
+            input_dim,
+            output_dim,
+            hidden_sizes,
+            hidden_nonlinearity,
+            hidden_w_init,
+            hidden_b_init,
+            output_nonlinearity,
+            output_w_init,
+            output_b_init,
+            layer_normalization,
+        )

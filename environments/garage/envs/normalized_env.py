@@ -1,4 +1,5 @@
 """An environment wrapper that normalizes action, observation and reward."""
+
 import akro
 import numpy as np
 
@@ -29,10 +30,10 @@ class NormalizedEnv(Wrapper):
     def __init__(
         self,
         env,
-        scale_reward=1.,
+        scale_reward=1.0,
         normalize_obs=False,
         normalize_reward=False,
-        expected_action_scale=1.,
+        expected_action_scale=1.0,
         flatten_obs=True,
         obs_alpha=0.001,
         reward_alpha=0.001,
@@ -51,8 +52,8 @@ class NormalizedEnv(Wrapper):
         self._obs_var = np.ones(flat_obs_dim)
 
         self._reward_alpha = reward_alpha
-        self._reward_mean = 0.
-        self._reward_var = 1.
+        self._reward_mean = 0.0
+        self._reward_var = 1.0
 
     def reset(self):
         """Call reset on wrapped env.
@@ -92,7 +93,8 @@ class NormalizedEnv(Wrapper):
             lb, ub = self.action_space.low, self.action_space.high
             if np.all(lb != -np.inf) and np.all(ub != -np.inf):
                 scaled_action = lb + (action + self._expected_action_scale) * (
-                    0.5 * (ub - lb) / self._expected_action_scale)
+                    0.5 * (ub - lb) / self._expected_action_scale
+                )
                 scaled_action = np.clip(scaled_action, lb, ub)
             else:
                 scaled_action = action
@@ -108,28 +110,33 @@ class NormalizedEnv(Wrapper):
         if self._normalize_reward:
             reward = self._apply_normalize_reward(reward)
 
-        return EnvStep(env_spec=es.env_spec,
-                       action=action,
-                       reward=reward * self._scale_reward,
-                       observation=next_obs,
-                       env_info=es.env_info,
-                       step_type=es.step_type)
+        return EnvStep(
+            env_spec=es.env_spec,
+            action=action,
+            reward=reward * self._scale_reward,
+            observation=next_obs,
+            env_info=es.env_info,
+            step_type=es.step_type,
+        )
 
     def _update_obs_estimate(self, obs):
         flat_obs = self._env.observation_space.flatten(obs)
         self._obs_mean = (
-            1 - self._obs_alpha) * self._obs_mean + self._obs_alpha * flat_obs
+            1 - self._obs_alpha
+        ) * self._obs_mean + self._obs_alpha * flat_obs
         self._obs_var = (
-            1 - self._obs_alpha) * self._obs_var + self._obs_alpha * np.square(
-                flat_obs - self._obs_mean)
+            1 - self._obs_alpha
+        ) * self._obs_var + self._obs_alpha * np.square(flat_obs - self._obs_mean)
 
     def _update_reward_estimate(self, reward):
-        self._reward_mean = (1 - self._reward_alpha) * \
-            self._reward_mean + self._reward_alpha * reward
+        self._reward_mean = (
+            1 - self._reward_alpha
+        ) * self._reward_mean + self._reward_alpha * reward
         self._reward_var = (
             1 - self._reward_alpha
         ) * self._reward_var + self._reward_alpha * np.square(
-            reward - self._reward_mean)
+            reward - self._reward_mean
+        )
 
     def _apply_normalize_obs(self, obs):
         """Compute normalized observation.
@@ -143,11 +150,11 @@ class NormalizedEnv(Wrapper):
         """
         self._update_obs_estimate(obs)
         flat_obs = self._env.observation_space.flatten(obs)
-        normalized_obs = (flat_obs -
-                          self._obs_mean) / (np.sqrt(self._obs_var) + 1e-8)
+        normalized_obs = (flat_obs - self._obs_mean) / (np.sqrt(self._obs_var) + 1e-8)
         if not self._flatten_obs:
             normalized_obs = self._env.observation_space.unflatten(
-                self._env.observation_space, normalized_obs)
+                self._env.observation_space, normalized_obs
+            )
         return normalized_obs
 
     def _apply_normalize_reward(self, reward):

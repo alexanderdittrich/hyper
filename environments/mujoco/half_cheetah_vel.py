@@ -28,12 +28,14 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
         self.set_task(self.sample_tasks(1)[0])
         self._max_episode_steps = max_episode_steps
         self.task_dim = 1
+        self.num_tasks = None  # Continuous task distribution, no discrete num_tasks
         super(HalfCheetahVelEnv, self).__init__()
 
     def step(self, action):
-        xposbefore = self.sim.data.qpos[0]
+        # In gymnasium/mujoco, data is accessed via self.data instead of self.sim.data
+        xposbefore = self.data.qpos[0]
         self.do_simulation(action, self.frame_skip)
-        xposafter = self.sim.data.qpos[0]
+        xposafter = self.data.qpos[0]
 
         forward_vel = (xposafter - xposbefore) / self.dt
         forward_reward = -1.0 * abs(forward_vel - self.goal_velocity)
@@ -41,11 +43,12 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
 
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
-        done = False
-        infos = dict(reward_forward=forward_reward,
-                     reward_ctrl=-ctrl_cost,
-                     task=self.get_task())
-        return observation, reward, done, infos
+        terminated = False
+        truncated = False
+        infos = dict(
+            reward_forward=forward_reward, reward_ctrl=-ctrl_cost, task=self.get_task()
+        )
+        return observation, reward, terminated, truncated, infos
 
     def set_task(self, task):
         self.goal_velocity = task
@@ -64,11 +67,13 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
 
 
 class HalfCheetahRandVelOracleEnv(HalfCheetahVelEnv):
-
     def _get_obs(self):
-        return np.concatenate([
-            self.sim.data.qpos.flat[1:],
-            self.sim.data.qvel.flat,
-            self.get_body_com("torso").flat,
-            [self.goal_velocity]
-        ])
+        # In gymnasium/mujoco, data is accessed via self.data instead of self.sim.data
+        return np.concatenate(
+            [
+                self.data.qpos.flat[1:],
+                self.data.qvel.flat,
+                self.get_body_com("torso").flat,
+                [self.goal_velocity],
+            ]
+        )

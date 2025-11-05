@@ -1,4 +1,5 @@
 """Implementation of Behavioral Cloning in PyTorch."""
+
 # yapf: disable
 import itertools
 
@@ -58,16 +59,16 @@ class BC(RLAlgorithm):
         sampler=None,
         policy_optimizer=torch.optim.Adam,
         policy_lr=_Default(1e-3),
-        loss='log_prob',
+        loss="log_prob",
         minibatches_per_epoch=16,
-        name='BC',
+        name="BC",
     ):
         self._source = source
         self.learner = learner
-        self._optimizer = make_optimizer(policy_optimizer,
-                                         module=self.learner,
-                                         lr=policy_lr)
-        if loss not in ('log_prob', 'mse'):
+        self._optimizer = make_optimizer(
+            policy_optimizer, module=self.learner, lr=policy_lr
+        )
+        if loss not in ("log_prob", "mse"):
             raise ValueError('Loss should be either "log_prob" or "mse".')
         self._loss = loss
         self._minibatches_per_epoch = minibatches_per_epoch
@@ -88,7 +89,7 @@ class BC(RLAlgorithm):
             self.exploration_policy = self._source
             self._source = source
             if not isinstance(self._sampler, Sampler):
-                raise TypeError('Source is a policy. Missing a sampler.')
+                raise TypeError("Source is a policy. Missing a sampler.")
         else:
             self._source = itertools.cycle(iter(source))
 
@@ -104,14 +105,15 @@ class BC(RLAlgorithm):
             self._eval_env = trainer.get_env_copy()
         for epoch in trainer.step_epochs():
             if self._eval_env is not None:
-                log_performance(epoch,
-                                obtain_evaluation_episodes(
-                                    self.learner, self._eval_env),
-                                discount=1.0)
+                log_performance(
+                    epoch,
+                    obtain_evaluation_episodes(self.learner, self._eval_env),
+                    discount=1.0,
+                )
             losses = self._train_once(trainer, epoch)
-            with tabular.prefix(self._name + '/'):
-                tabular.record('MeanLoss', np.mean(losses))
-                tabular.record('StdLoss', np.std(losses))
+            with tabular.prefix(self._name + "/"):
+                tabular.record("MeanLoss", np.mean(losses))
+                tabular.record("StdLoss", np.std(losses))
 
     def _train_once(self, trainer, epoch):
         """Obtain samplers and train for one epoch.
@@ -153,12 +155,11 @@ class BC(RLAlgorithm):
         """
         if isinstance(self._source, Policy):
             batch = trainer.obtain_episodes(epoch)
-            log_performance(epoch, batch, 1.0, prefix='Expert')
+            log_performance(epoch, batch, 1.0, prefix="Expert")
             return batch
         else:
             batches = []
-            while (sum(len(batch.actions)
-                       for batch in batches) < self._batch_size):
+            while sum(len(batch.actions) for batch in batches) < self._batch_size:
                 batches.append(next(self._source))
             return TimeStepBatch.concatenate(*batches)
 
@@ -179,7 +180,7 @@ class BC(RLAlgorithm):
 
         """
         learner_output = self.learner(observations)
-        if self._loss == 'mse':
+        if self._loss == "mse":
             if isinstance(learner_output, torch.Tensor):
                 # We must have a deterministic policy as the learner.
                 learner_actions = learner_output
@@ -187,9 +188,9 @@ class BC(RLAlgorithm):
                 # We must have a StochasticPolicy as the learner.
                 action_dist, _ = learner_output
                 learner_actions = action_dist.rsample()
-            return torch.mean((expert_actions - learner_actions)**2)
+            return torch.mean((expert_actions - learner_actions) ** 2)
         else:
-            assert self._loss == 'log_prob'
+            assert self._loss == "log_prob"
             # We already checked that we have a StochasticPolicy as the learner
             action_dist, _ = learner_output
             return -torch.mean(action_dist.log_prob(expert_actions))

@@ -3,6 +3,7 @@
 See `~TaskOnehotWrapper.wrap_env_list` for the main way of using this module.
 
 """
+
 import akro
 import numpy as np
 
@@ -33,12 +34,13 @@ class TaskOnehotWrapper(Wrapper):
         one_hot_lb = np.zeros(self._n_total_tasks)
 
         self._observation_space = akro.Box(
-            np.concatenate([env_lb, one_hot_lb]),
-            np.concatenate([env_ub, one_hot_ub]))
+            np.concatenate([env_lb, one_hot_lb]), np.concatenate([env_ub, one_hot_ub])
+        )
         self._spec = EnvSpec(
             action_space=self.action_space,
             observation_space=self.observation_space,
-            max_episode_length=self._env.spec.max_episode_length)
+            max_episode_length=self._env.spec.max_episode_length,
+        )
 
     @property
     def observation_space(self):
@@ -90,14 +92,16 @@ class TaskOnehotWrapper(Wrapper):
 
         env_info = es.env_info
 
-        env_info['task_id'] = self._task_index
+        env_info["task_id"] = self._task_index
 
-        return EnvStep(env_spec=self.spec,
-                       action=action,
-                       reward=es.reward,
-                       observation=oh_obs,
-                       env_info=env_info,
-                       step_type=es.step_type)
+        return EnvStep(
+            env_spec=self.spec,
+            action=action,
+            reward=es.reward,
+            observation=oh_obs,
+            env_info=env_info,
+            step_type=es.step_type,
+        )
 
     def _obs_with_one_hot(self, obs):
         """Concatenate observation and task one-hot.
@@ -184,6 +188,9 @@ class TaskOnehotWrapper(Wrapper):
         wrapped = []
         for i, con in enumerate(env_cons):
             # Manually capture this value of i by introducing a new scope.
-            wrapped.append(lambda i=i, con=con: cls(
-                con(), task_index=i, n_total_tasks=n_total_tasks))
+            wrapped.append(
+                lambda i=i, con=con: cls(
+                    con(), task_index=i, n_total_tasks=n_total_tasks
+                )
+            )
         return wrapped

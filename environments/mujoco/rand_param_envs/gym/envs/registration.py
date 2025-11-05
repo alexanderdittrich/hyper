@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 #
 # 2016-10-31: We're experimentally expanding the environment ID format
 # to include an optional username.
-env_id_re = re.compile(r'^(?:[\w:-]+\/)?([\w:.-]+)-v(\d+)$')
+env_id_re = re.compile(r"^(?:[\w:-]+\/)?([\w:.-]+)-v(\d+)$")
 
 
 def load(name):
-    entry_point = pkg_resources.EntryPoint.parse('x={}'.format(name))
+    entry_point = pkg_resources.EntryPoint.parse("x={}".format(name))
     result = entry_point.load(False)
     return result
 
@@ -39,9 +39,20 @@ class EnvSpec(object):
         trials (int): The number of trials run in official evaluation
     """
 
-    def __init__(self, id, entry_point=None, trials=100, reward_threshold=None, local_only=False, kwargs=None,
-                 nondeterministic=False, tags=None, max_episode_steps=None, max_episode_seconds=None,
-                 timestep_limit=None):
+    def __init__(
+        self,
+        id,
+        entry_point=None,
+        trials=100,
+        reward_threshold=None,
+        local_only=False,
+        kwargs=None,
+        nondeterministic=False,
+        tags=None,
+        max_episode_steps=None,
+        max_episode_seconds=None,
+        timestep_limit=None,
+    ):
         self.id = id
         # Evaluation parameters
         self.trials = trials
@@ -54,12 +65,12 @@ class EnvSpec(object):
         self.tags = tags
 
         # BACKWARDS COMPAT 2017/1/18
-        if tags.get('wrapper_config.TimeLimit.max_episode_steps'):
-            max_episode_steps = tags.get('wrapper_config.TimeLimit.max_episode_steps')
+        if tags.get("wrapper_config.TimeLimit.max_episode_steps"):
+            max_episode_steps = tags.get("wrapper_config.TimeLimit.max_episode_steps")
             # TODO: Add the following deprecation warning after 2017/02/18
             # warnings.warn("DEPRECATION WARNING wrapper_config.TimeLimit has been deprecated. Replace any calls to `register(tags={'wrapper_config.TimeLimit.max_episode_steps': 200)}` with `register(max_episode_steps=200)`. This change was made 2017/1/31 and is included in gym version 0.8.0. If you are getting many of these warnings, you may need to update universe past version 0.21.3")
 
-        tags['wrapper_config.TimeLimit.max_episode_steps'] = max_episode_steps
+        tags["wrapper_config.TimeLimit.max_episode_steps"] = max_episode_steps
         ######
 
         # BACKWARDS COMPAT 2017/1/31
@@ -77,8 +88,10 @@ class EnvSpec(object):
         match = env_id_re.search(id)
         if not match:
             raise error.Error(
-                'Attempted to register malformed environment ID: {}. (Currently all IDs must be of the form {}.)'.format(
-                    id, env_id_re.pattern))
+                "Attempted to register malformed environment ID: {}. (Currently all IDs must be of the form {}.)".format(
+                    id, env_id_re.pattern
+                )
+            )
         self._env_name = match.group(1)
         self._entry_point = entry_point
         self._local_only = local_only
@@ -88,8 +101,10 @@ class EnvSpec(object):
         """Instantiates an instance of the environment with appropriate kwargs"""
         if self._entry_point is None:
             raise error.Error(
-                'Attempting to make deprecated env {}. (HINT: is there a newer registered version of this env?)'.format(
-                    self.id))
+                "Attempting to make deprecated env {}. (HINT: is there a newer registered version of this env?)".format(
+                    self.id
+                )
+            )
 
         cls = load(self._entry_point)
         env = cls(**self._kwargs)
@@ -126,11 +141,16 @@ class EnvRegistry(object):
         # logger.info('Making new env: %s', id)
         spec = self.spec(id)
         env = spec.make()
-        if (env.spec.timestep_limit is not None) and not spec.tags.get('vnc'):
-            from environments.mujoco.rand_param_envs.gym.wrappers.time_limit import TimeLimit
-            env = TimeLimit(env,
-                            max_episode_steps=env.spec.max_episode_steps,
-                            max_episode_seconds=env.spec.max_episode_seconds)
+        if (env.spec.timestep_limit is not None) and not spec.tags.get("vnc"):
+            from environments.mujoco.rand_param_envs.gym.wrappers.time_limit import (
+                TimeLimit,
+            )
+
+            env = TimeLimit(
+                env,
+                max_episode_steps=env.spec.max_episode_steps,
+                max_episode_seconds=env.spec.max_episode_seconds,
+            )
         return env
 
     def all(self):
@@ -140,8 +160,10 @@ class EnvRegistry(object):
         match = env_id_re.search(id)
         if not match:
             raise error.Error(
-                'Attempted to look up malformed environment ID: {}. (Currently all IDs must be of the form {}.)'.format(
-                    id.encode('utf-8'), env_id_re.pattern))
+                "Attempted to look up malformed environment ID: {}. (Currently all IDs must be of the form {}.)".format(
+                    id.encode("utf-8"), env_id_re.pattern
+                )
+            )
 
         try:
             return self.env_specs[id]
@@ -149,16 +171,23 @@ class EnvRegistry(object):
             # Parse the env name and check to see if it matches the non-version
             # part of a valid env (could also check the exact number here)
             env_name = match.group(1)
-            matching_envs = [valid_env_name for valid_env_name, valid_env_spec in self.env_specs.items()
-                             if env_name == valid_env_spec._env_name]
+            matching_envs = [
+                valid_env_name
+                for valid_env_name, valid_env_spec in self.env_specs.items()
+                if env_name == valid_env_spec._env_name
+            ]
             if matching_envs:
-                raise error.DeprecatedEnv('Env {} not found (valid versions include {})'.format(id, matching_envs))
+                raise error.DeprecatedEnv(
+                    "Env {} not found (valid versions include {})".format(
+                        id, matching_envs
+                    )
+                )
             else:
-                raise error.UnregisteredEnv('No registered env with id: {}'.format(id))
+                raise error.UnregisteredEnv("No registered env with id: {}".format(id))
 
     def register(self, id, **kwargs):
         if id in self.env_specs:
-            raise error.Error('Cannot re-register id: {}'.format(id))
+            raise error.Error("Cannot re-register id: {}".format(id))
         self.env_specs[id] = EnvSpec(id, **kwargs)
 
 

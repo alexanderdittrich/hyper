@@ -1,4 +1,5 @@
 """A value function based on a GaussianMLP model."""
+
 import torch
 from torch import nn
 
@@ -43,19 +44,21 @@ class GaussianMLPValueFunction(ValueFunction):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=torch.tanh,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 learn_std=True,
-                 init_std=1.0,
-                 layer_normalization=False,
-                 name='GaussianMLPValueFunction'):
+    def __init__(
+        self,
+        env_spec,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=torch.tanh,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        learn_std=True,
+        init_std=1.0,
+        layer_normalization=False,
+        name="GaussianMLPValueFunction",
+    ):
         super(GaussianMLPValueFunction, self).__init__(env_spec, name)
 
         input_dim = env_spec.observation_space.flat_dim
@@ -75,8 +78,9 @@ class GaussianMLPValueFunction(ValueFunction):
             init_std=init_std,
             min_std=None,
             max_std=None,
-            std_parameterization='exp',
-            layer_normalization=layer_normalization)
+            std_parameterization="exp",
+            layer_normalization=layer_normalization,
+        )
 
     def compute_loss(self, obs, returns):
         r"""Compute mean value of loss.

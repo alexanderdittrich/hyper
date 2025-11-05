@@ -1,4 +1,5 @@
 """Renders rollouts of the policy as it trains."""
+
 import atexit
 from collections import namedtuple
 from enum import Enum
@@ -11,17 +12,18 @@ import tensorflow as tf
 
 from environments.garage import rollout as default_rollout
 
-__all__ = ['Plotter']
+__all__ = ["Plotter"]
 
 
 class Op(Enum):
     """Message types."""
+
     STOP = 0
     UPDATE = 1
     DEMO = 2
 
 
-Message = namedtuple('Message', ['op', 'args', 'kwargs'])
+Message = namedtuple("Message", ["op", "args", "kwargs"])
 
 
 class Plotter:
@@ -45,29 +47,22 @@ class Plotter:
     # List containing all plotters instantiated in the process
     __plotters = []
 
-    def __init__(self,
-                 env,
-                 policy,
-                 sess=None,
-                 graph=None,
-                 rollout=default_rollout):
+    def __init__(self, env, policy, sess=None, graph=None, rollout=default_rollout):
         Plotter.__plotters.append(self)
         self._env = env
         self.sess = tf.compat.v1.Session() if sess is None else sess
-        self.graph = tf.compat.v1.get_default_graph(
-        ) if graph is None else graph
+        self.graph = tf.compat.v1.get_default_graph() if graph is None else graph
         with self.sess.as_default(), self.graph.as_default():
-            self._policy = policy.clone('plotter_policy')
+            self._policy = policy.clone("plotter_policy")
         self.rollout = rollout
         self.worker_thread = Thread(target=self._start_worker, daemon=True)
         self.queue = Queue()
 
         # Needed in order to draw glfw window on the main thread
-        if 'Darwin' in platform.platform():
-            self.rollout(self._env,
-                         self._policy,
-                         max_episode_length=np.inf,
-                         animated=True)
+        if "Darwin" in platform.platform():
+            self.rollout(
+                self._env, self._policy, max_episode_length=np.inf, animated=True
+            )
 
     def _start_worker(self):
         max_length = None
@@ -102,17 +97,21 @@ class Plotter:
                         param_values, max_length = msgs[Op.DEMO].args
                         self._policy.set_param_values(param_values)
                         initial_rollout = False
-                        self.rollout(self._env,
-                                     self._policy,
-                                     max_episode_length=max_length,
-                                     animated=True)
+                        self.rollout(
+                            self._env,
+                            self._policy,
+                            max_episode_length=max_length,
+                            animated=True,
+                        )
                         self.queue.task_done()
                     else:
                         if max_length:
-                            self.rollout(self._env,
-                                         self._policy,
-                                         max_episode_length=max_length,
-                                         animated=True)
+                            self.rollout(
+                                self._env,
+                                self._policy,
+                                max_episode_length=max_length,
+                                animated=True,
+                            )
         except KeyboardInterrupt:
             pass
 
@@ -142,9 +141,8 @@ class Plotter:
             tf.compat.v1.get_variable_scope().reuse_variables()
             self.worker_thread.start()
             self.queue.put(
-                Message(op=Op.UPDATE,
-                        args=(self._env, self._policy),
-                        kwargs=None))
+                Message(op=Op.UPDATE, args=(self._env, self._policy), kwargs=None)
+            )
             atexit.register(self.close)
 
     def update_plot(self, policy, max_length=np.inf):
@@ -158,6 +156,9 @@ class Plotter:
         """
         if self.worker_thread.is_alive():
             self.queue.put(
-                Message(op=Op.DEMO,
-                        args=(policy.get_param_values(), max_length),
-                        kwargs=None))
+                Message(
+                    op=Op.DEMO,
+                    args=(policy.get_param_values(), max_length),
+                    kwargs=None,
+                )
+            )

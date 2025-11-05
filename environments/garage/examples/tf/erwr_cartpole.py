@@ -7,6 +7,7 @@ Results:
     AverageReturn: 100
     RiseTime: itr 34
 """
+
 from environments.garage import wrap_experiment
 from environments.garage.envs import GymEnv
 from environments.garage.experiment.deterministic import set_seed
@@ -30,24 +31,28 @@ def erwr_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
 
-        policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      hidden_sizes=(32, 32))
+        policy = CategoricalMLPPolicy(
+            name="policy", env_spec=env.spec, hidden_sizes=(32, 32)
+        )
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = ERWR(env_spec=env.spec,
-                    policy=policy,
-                    baseline=baseline,
-                    sampler=sampler,
-                    discount=0.99)
+        algo = ERWR(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+        )
 
         trainer.setup(algo=algo, env=env)
 

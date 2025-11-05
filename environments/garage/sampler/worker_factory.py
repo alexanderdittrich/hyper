@@ -1,4 +1,5 @@
 """Worker factory used by Samplers to construct Workers."""
+
 import psutil
 
 from environments.garage.experiment.deterministic import get_seed
@@ -46,14 +47,15 @@ class WorkerFactory:
     """
 
     def __init__(
-            self,
-            *,  # Require passing by keyword.
-            max_episode_length,
-            is_tf_worker=False,
-            seed=get_seed(),
-            n_workers=psutil.cpu_count(logical=False),
-            worker_class=DefaultWorker,
-            worker_args=None):
+        self,
+        *,  # Require passing by keyword.
+        max_episode_length,
+        is_tf_worker=False,
+        seed=get_seed(),
+        n_workers=psutil.cpu_count(logical=False),
+        worker_class=DefaultWorker,
+        worker_args=None,
+    ):
         self.n_workers = n_workers
         self._seed = seed
         self._max_episode_length = max_episode_length
@@ -88,8 +90,7 @@ class WorkerFactory:
         """
         if isinstance(objs, list):
             if len(objs) != self.n_workers:
-                raise ValueError(
-                    'Length of list doesn\'t match number of workers')
+                raise ValueError("Length of list doesn't match number of workers")
             return [preprocess(obj) for obj in objs]
         else:
             return [preprocess(objs) for _ in range(self.n_workers)]
@@ -109,8 +110,10 @@ class WorkerFactory:
 
         """
         if worker_number >= self.n_workers:
-            raise ValueError('Worker number is too big')
-        return self._worker_class(worker_number=worker_number,
-                                  seed=self._seed,
-                                  max_episode_length=self._max_episode_length,
-                                  **self._worker_args)
+            raise ValueError("Worker number is too big")
+        return self._worker_class(
+            worker_number=worker_number,
+            seed=self._seed,
+            max_episode_length=self._max_episode_length,
+            **self._worker_args,
+        )

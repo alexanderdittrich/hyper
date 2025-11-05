@@ -1,4 +1,5 @@
 """Wrapper for adding an environment info to track task ID."""
+
 from environments.garage import Wrapper
 
 
@@ -35,7 +36,7 @@ class TaskNameWrapper(Wrapper):
         """
         es = super().step(action)
         if self._task_name is not None:
-            es.env_info['task_name'] = self._task_name
+            es.env_info["task_name"] = self._task_name
         if self._task_id is not None:
-            es.env_info['task_id'] = self._task_id
+            es.env_info["task_id"] = self._task_id
         return es

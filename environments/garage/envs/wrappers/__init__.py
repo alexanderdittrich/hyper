@@ -8,6 +8,7 @@ Example:
     StackFrames(GrayScale(gym.make('env')))
 
 """
+
 from environments.garage.envs.wrappers.atari_env import AtariEnv
 from environments.garage.envs.wrappers.clip_reward import ClipReward
 from environments.garage.envs.wrappers.episodic_life import EpisodicLife
@@ -20,6 +21,14 @@ from environments.garage.envs.wrappers.resize import Resize
 from environments.garage.envs.wrappers.stack_frames import StackFrames
 
 __all__ = [
-    'AtariEnv', 'ClipReward', 'EpisodicLife', 'FireReset', 'Grayscale',
-    'MaxAndSkip', 'Noop', 'PixelObservationWrapper', 'Resize', 'StackFrames'
+    "AtariEnv",
+    "ClipReward",
+    "EpisodicLife",
+    "FireReset",
+    "Grayscale",
+    "MaxAndSkip",
+    "Noop",
+    "PixelObservationWrapper",
+    "Resize",
+    "StackFrames",
 ]

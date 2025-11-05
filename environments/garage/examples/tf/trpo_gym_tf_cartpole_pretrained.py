@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """An example to train a task with TRPO algorithm."""
+
 import tensorflow as tf
 
 from environments.garage import wrap_experiment
@@ -25,18 +26,20 @@ def trpo_gym_tf_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
 
-        policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      hidden_sizes=(32, 32))
+        policy = CategoricalMLPPolicy(
+            name="policy", env_spec=env.spec, hidden_sizes=(32, 32)
+        )
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
         algo = TRPO(
             env_spec=env.spec,
@@ -53,9 +56,8 @@ def trpo_gym_tf_cartpole(ctxt=None, seed=1):
 
 @wrap_experiment
 def pre_trained_trpo_cartpole(
-        ctxt=None,
-        snapshot_dir='data/local/experiment/trpo_gym_tf_cartpole',
-        seed=1):
+    ctxt=None, snapshot_dir="data/local/experiment/trpo_gym_tf_cartpole", seed=1
+):
     """Use pre-trained TRPO and reusume experiment.
 
     Args:
@@ -72,9 +74,9 @@ def pre_trained_trpo_cartpole(
         trainer.resume(n_epochs=30, batch_size=8000)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # To train a new TRPO
-    log_dir = 'data/local/experiment/trpo_gym_tf_cartpole'
+    log_dir = "data/local/experiment/trpo_gym_tf_cartpole"
     trpo_gym_tf_cartpole(dict(log_dir=log_dir, use_existing_dir=True))
 
     # Clear tensorflow graph

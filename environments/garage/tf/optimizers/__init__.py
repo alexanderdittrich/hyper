@@ -1,4 +1,5 @@
 """TensorFlow optimizers."""
+
 # yapf: disable
 from environments.garage.tf.optimizers.conjugate_gradient_optimizer import (
     ConjugateGradientOptimizer)  # noqa: E501
@@ -12,6 +13,10 @@ from environments.garage.tf.optimizers.penalty_lbfgs_optimizer import PenaltyLBF
 # yapf: enable
 
 __all__ = [
-    'ConjugateGradientOptimizer', 'PearlmutterHVP', 'FiniteDifferenceHVP',
-    'FirstOrderOptimizer', 'LBFGSOptimizer', 'PenaltyLBFGSOptimizer'
+    "ConjugateGradientOptimizer",
+    "PearlmutterHVP",
+    "FiniteDifferenceHVP",
+    "FirstOrderOptimizer",
+    "LBFGSOptimizer",
+    "PenaltyLBFGSOptimizer",
 ]

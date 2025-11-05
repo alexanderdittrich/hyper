@@ -1,4 +1,5 @@
 """CNN Model."""
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -36,16 +37,19 @@ class CNNModel(Model):
 
     """
 
-    def __init__(self,
-                 input_dim,
-                 filters,
-                 strides,
-                 padding,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer()):
+    def __init__(
+        self,
+        input_dim,
+        filters,
+        strides,
+        padding,
+        name=None,
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+    ):
         super().__init__(name)
         self._input_dim = input_dim
         self._filters = filters
@@ -70,12 +74,14 @@ class CNNModel(Model):
 
         """
         del name
-        return cnn(input_var=state_input,
-                   input_dim=self._input_dim,
-                   filters=self._filters,
-                   hidden_nonlinearity=self._hidden_nonlinearity,
-                   hidden_w_init=self._hidden_w_init,
-                   hidden_b_init=self._hidden_b_init,
-                   strides=self._strides,
-                   padding=self._padding,
-                   name='cnn')
+        return cnn(
+            input_var=state_input,
+            input_dim=self._input_dim,
+            filters=self._filters,
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            strides=self._strides,
+            padding=self._padding,
+            name="cnn",
+        )

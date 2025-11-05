@@ -1,4 +1,5 @@
 """Encoders in TensorFlow."""
+
 # pylint: disable=abstract-method
 from environments.garage.np.embeddings import Encoder as BaseEncoder
 from environments.garage.np.embeddings import StochasticEncoder as BaseStochasticEncoder

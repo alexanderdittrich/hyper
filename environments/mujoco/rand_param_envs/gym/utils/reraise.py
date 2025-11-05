@@ -23,7 +23,7 @@ def full_class_name(o):
     module = o.__class__.__module__
     if module is None or module == str.__class__.__module__:
         return o.__class__.__name__
-    return module + '.' + o.__class__.__name__
+    return module + "." + o.__class__.__name__
 
 
 class ReraisedException(Exception):
@@ -36,7 +36,7 @@ class ReraisedException(Exception):
         klass = self.old_exc.__class__
 
         orig = "%s: %s" % (full_class_name(self.old_exc), klass.__str__(self.old_exc))
-        prefixpart = suffixpart = ''
+        prefixpart = suffixpart = ""
         if self.prefix is not None:
             prefixpart = self.prefix + "\n"
         if self.suffix is not None:

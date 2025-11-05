@@ -22,9 +22,12 @@ else:
 #     rng.seed(hash_seed(seed))
 #     return rng, seed
 
+
 def np_random(seed=None):
     if seed is not None and not (isinstance(seed, integer_types) and 0 <= seed):
-        raise error.Error('Seed must be a non-negative integer or omitted, not {}'.format(seed))
+        raise error.Error(
+            "Seed must be a non-negative integer or omitted, not {}".format(seed)
+        )
 
     seed = _seed(seed)
 
@@ -54,7 +57,7 @@ def hash_seed(seed=None, max_bytes=8):
     """
     if seed is None:
         seed = _seed(max_bytes=max_bytes)
-    hash = hashlib.sha512(str(seed).encode('utf8')).digest()
+    hash = hashlib.sha512(str(seed).encode("utf8")).digest()
     return _bigint_from_bytes(hash[:max_bytes])
 
 
@@ -71,13 +74,13 @@ def _seed(a=None, max_bytes=8):
     if a is None:
         a = _bigint_from_bytes(os.urandom(max_bytes))
     elif isinstance(a, str):
-        a = a.encode('utf8')
+        a = a.encode("utf8")
         a += hashlib.sha512(a).digest()
         a = _bigint_from_bytes(a[:max_bytes])
     elif isinstance(a, integer_types):
         a = a % 2 ** (8 * max_bytes)
     else:
-        raise error.Error('Invalid type for seed: {} ({})'.format(type(a), a))
+        raise error.Error("Invalid type for seed: {} ({})".format(type(a), a))
 
     return a
 
@@ -86,7 +89,7 @@ def _seed(a=None, max_bytes=8):
 def _bigint_from_bytes(bytes):
     sizeof_int = 4
     padding = sizeof_int - len(bytes) % sizeof_int
-    bytes += b'\0' * padding
+    bytes += b"\0" * padding
     int_count = int(len(bytes) / sizeof_int)
     unpacked = struct.unpack("{}I".format(int_count), bytes)
     accum = 0
@@ -98,12 +101,12 @@ def _bigint_from_bytes(bytes):
 def _int_list_from_bigint(bigint):
     # Special case 0
     if bigint < 0:
-        raise error.Error('Seed must be non-negative, not {}'.format(bigint))
+        raise error.Error("Seed must be non-negative, not {}".format(bigint))
     elif bigint == 0:
         return [0]
 
     ints = []
     while bigint > 0:
-        bigint, mod = divmod(bigint, 2 ** 32)
+        bigint, mod = divmod(bigint, 2**32)
         ints.append(mod)
     return ints

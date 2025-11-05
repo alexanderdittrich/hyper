@@ -1,4 +1,5 @@
 """Discrete CNN Module."""
+
 import torch
 from torch import nn
 
@@ -66,66 +67,72 @@ class DiscreteCNNModule(nn.Module):
         is_image (bool): If true, the inputs are normalized by dividing by 255.
     """
 
-    def __init__(self,
-                 input_shape,
-                 output_dim,
-                 kernel_sizes,
-                 hidden_channels,
-                 strides,
-                 hidden_sizes=(32, 32),
-                 cnn_hidden_nonlinearity=nn.ReLU,
-                 mlp_hidden_nonlinearity=nn.ReLU,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 paddings=0,
-                 padding_mode='zeros',
-                 max_pool=False,
-                 pool_shape=None,
-                 pool_stride=1,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 layer_normalization=False,
-                 is_image=True):
-
+    def __init__(
+        self,
+        input_shape,
+        output_dim,
+        kernel_sizes,
+        hidden_channels,
+        strides,
+        hidden_sizes=(32, 32),
+        cnn_hidden_nonlinearity=nn.ReLU,
+        mlp_hidden_nonlinearity=nn.ReLU,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        paddings=0,
+        padding_mode="zeros",
+        max_pool=False,
+        pool_shape=None,
+        pool_stride=1,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        layer_normalization=False,
+        is_image=True,
+    ):
         super().__init__()
 
         input_var = torch.zeros(input_shape)
-        cnn_module = CNNModule(input_var=input_var,
-                               kernel_sizes=kernel_sizes,
-                               strides=strides,
-                               hidden_w_init=hidden_w_init,
-                               hidden_b_init=hidden_b_init,
-                               hidden_channels=hidden_channels,
-                               hidden_nonlinearity=cnn_hidden_nonlinearity,
-                               paddings=paddings,
-                               padding_mode=padding_mode,
-                               max_pool=max_pool,
-                               layer_normalization=layer_normalization,
-                               pool_shape=pool_shape,
-                               pool_stride=pool_stride,
-                               is_image=is_image)
+        cnn_module = CNNModule(
+            input_var=input_var,
+            kernel_sizes=kernel_sizes,
+            strides=strides,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            hidden_channels=hidden_channels,
+            hidden_nonlinearity=cnn_hidden_nonlinearity,
+            paddings=paddings,
+            padding_mode=padding_mode,
+            max_pool=max_pool,
+            layer_normalization=layer_normalization,
+            pool_shape=pool_shape,
+            pool_stride=pool_stride,
+            is_image=is_image,
+        )
 
         with torch.no_grad():
             cnn_out = cnn_module(input_var)
         flat_dim = torch.flatten(cnn_out, start_dim=1).shape[1]
 
-        mlp_module = MLPModule(flat_dim,
-                               output_dim,
-                               hidden_sizes,
-                               hidden_nonlinearity=mlp_hidden_nonlinearity,
-                               hidden_w_init=hidden_w_init,
-                               hidden_b_init=hidden_b_init,
-                               output_nonlinearity=output_nonlinearity,
-                               output_w_init=output_w_init,
-                               output_b_init=output_b_init,
-                               layer_normalization=layer_normalization)
+        mlp_module = MLPModule(
+            flat_dim,
+            output_dim,
+            hidden_sizes,
+            hidden_nonlinearity=mlp_hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+        )
 
         if mlp_hidden_nonlinearity is None:
             self._module = nn.Sequential(cnn_module, nn.Flatten(), mlp_module)
         else:
-            self._module = nn.Sequential(cnn_module, mlp_hidden_nonlinearity(),
-                                         nn.Flatten(), mlp_module)
+            self._module = nn.Sequential(
+                cnn_module, mlp_hidden_nonlinearity(), nn.Flatten(), mlp_module
+            )
 
     # pylint: disable=arguments-differ
     def forward(self, inputs):

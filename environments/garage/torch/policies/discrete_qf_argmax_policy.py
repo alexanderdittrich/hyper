@@ -2,6 +2,7 @@
 
 This policy chooses the action that yields to the largest Q-value.
 """
+
 import numpy as np
 import torch
 
@@ -21,7 +22,7 @@ class DiscreteQFArgmaxPolicy(Policy):
         name (str): Name of this policy.
     """
 
-    def __init__(self, qf, env_spec, name='DiscreteQFArgmaxPolicy'):
+    def __init__(self, qf, env_spec, name="DiscreteQFArgmaxPolicy"):
         super().__init__(env_spec, name)
         self._qf = qf
 

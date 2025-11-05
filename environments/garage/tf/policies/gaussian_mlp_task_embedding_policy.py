@@ -1,4 +1,5 @@
 """GaussianMLPTaskEmbeddingPolicy."""
+
 # pylint: disable=wrong-import-order
 import akro
 import numpy as np
@@ -66,37 +67,42 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 encoder,
-                 name='GaussianMLPTaskEmbeddingPolicy',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 learn_std=True,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_hidden_sizes=(32, 32),
-                 std_hidden_nonlinearity=tf.nn.tanh,
-                 std_output_nonlinearity=None,
-                 std_parameterization='exp',
-                 layer_normalization=False):
+    def __init__(
+        self,
+        env_spec,
+        encoder,
+        name="GaussianMLPTaskEmbeddingPolicy",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        learn_std=True,
+        adaptive_std=False,
+        std_share_network=False,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_hidden_sizes=(32, 32),
+        std_hidden_nonlinearity=tf.nn.tanh,
+        std_output_nonlinearity=None,
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
         assert isinstance(env_spec.action_space, akro.Box)
         assert not isinstance(env_spec.observation_space, akro.Dict)
         self._env_spec = env_spec
         self._name = name
         self._encoder = encoder
         self._augmented_observation_space = akro.concat(
-            self._env_spec.observation_space, self.task_space)
+            self._env_spec.observation_space, self.task_space
+        )
         self._hidden_sizes = hidden_sizes
         self._hidden_nonlinearity = hidden_nonlinearity
         self._hidden_w_init = hidden_w_init
@@ -119,26 +125,28 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
         self.obs_dim = env_spec.observation_space.flat_dim
         self.action_dim = env_spec.action_space.flat_dim
 
-        super().__init__(output_dim=self.action_dim,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         learn_std=learn_std,
-                         adaptive_std=adaptive_std,
-                         std_share_network=std_share_network,
-                         init_std=init_std,
-                         min_std=min_std,
-                         max_std=max_std,
-                         std_hidden_sizes=std_hidden_sizes,
-                         std_hidden_nonlinearity=std_hidden_nonlinearity,
-                         std_output_nonlinearity=std_output_nonlinearity,
-                         std_parameterization=std_parameterization,
-                         layer_normalization=layer_normalization,
-                         name=name)
+        super().__init__(
+            output_dim=self.action_dim,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            learn_std=learn_std,
+            adaptive_std=adaptive_std,
+            std_share_network=std_share_network,
+            init_std=init_std,
+            min_std=min_std,
+            max_std=max_std,
+            std_hidden_sizes=std_hidden_sizes,
+            std_hidden_nonlinearity=std_hidden_nonlinearity,
+            std_output_nonlinearity=std_output_nonlinearity,
+            std_parameterization=std_parameterization,
+            layer_normalization=layer_normalization,
+            name=name,
+        )
 
         self._initialize()
 
@@ -148,46 +156,58 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
         After build, get_action_*() methods will be available.
 
         """
-        obs_input = tf.compat.v1.placeholder(tf.float32,
-                                             shape=(None, None, self.obs_dim))
+        obs_input = tf.compat.v1.placeholder(
+            tf.float32, shape=(None, None, self.obs_dim)
+        )
         encoder_input = tf.compat.v1.placeholder(
-            tf.float32, shape=(None, None, self._encoder.input_dim))
+            tf.float32, shape=(None, None, self._encoder.input_dim)
+        )
         latent_input = tf.compat.v1.placeholder(
-            tf.float32, shape=(None, None, self._encoder.output_dim))
+            tf.float32, shape=(None, None, self._encoder.output_dim)
+        )
 
         with tf.compat.v1.variable_scope(self._encoder.name):
-            encoder_dist = self._encoder.build(encoder_input,
-                                               name='encoder').dist
+            encoder_dist = self._encoder.build(encoder_input, name="encoder").dist
 
-        with tf.compat.v1.variable_scope('concat_obs_latent'):
+        with tf.compat.v1.variable_scope("concat_obs_latent"):
             obs_latent_input = tf.concat([obs_input, latent_input], -1)
 
-        dist, mean_var, log_std_var = super().build(
-            obs_latent_input,
-            # Must named 'default' to
-            # compensate tf default worker
-            name='default').outputs
+        dist, mean_var, log_std_var = (
+            super()
+            .build(
+                obs_latent_input,
+                # Must named 'default' to
+                # compensate tf default worker
+                name="default",
+            )
+            .outputs
+        )
 
-        embed_state_input = tf.concat([
-            obs_input,
-            encoder_dist.sample(seed=deterministic.get_tf_seed_stream())
-        ], -1)
-        dist_given_task, mean_g_t, log_std_g_t = super().build(
-            embed_state_input, name='given_task').outputs
+        embed_state_input = tf.concat(
+            [obs_input, encoder_dist.sample(seed=deterministic.get_tf_seed_stream())],
+            -1,
+        )
+        dist_given_task, mean_g_t, log_std_g_t = (
+            super().build(embed_state_input, name="given_task").outputs
+        )
 
-        self._f_dist_obs_latent = tf.compat.v1.get_default_session(
-        ).make_callable([
-            dist.sample(seed=deterministic.get_tf_seed_stream()), mean_var,
-            log_std_var
-        ],
-                        feed_list=[obs_input, latent_input])
+        self._f_dist_obs_latent = tf.compat.v1.get_default_session().make_callable(
+            [
+                dist.sample(seed=deterministic.get_tf_seed_stream()),
+                mean_var,
+                log_std_var,
+            ],
+            feed_list=[obs_input, latent_input],
+        )
 
-        self._f_dist_obs_task = tf.compat.v1.get_default_session(
-        ).make_callable([
-            dist_given_task.sample(seed=deterministic.get_tf_seed_stream()),
-            mean_g_t, log_std_g_t
-        ],
-                        feed_list=[obs_input, encoder_input])
+        self._f_dist_obs_task = tf.compat.v1.get_default_session().make_callable(
+            [
+                dist_given_task.sample(seed=deterministic.get_tf_seed_stream()),
+                mean_g_t,
+                log_std_g_t,
+            ],
+            feed_list=[obs_input, encoder_input],
+        )
 
     # pylint: disable=arguments-differ
     def build(self, obs_input, task_input, name=None):
@@ -203,7 +223,7 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
             namedtuple: Encoder network.
 
         """
-        name = name or 'additional'
+        name = name or "additional"
         # Encoder should be outside policy scope
         with tf.compat.v1.variable_scope(self._encoder.name):
             enc_net = self._encoder.build(task_input, name=name)
@@ -257,10 +277,9 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
                     environment steps, Z is the dimension of action.
 
         """
-        obses, tasks = zip(*[
-            self.split_augmented_observation(aug_obs)
-            for aug_obs in observations
-        ])
+        obses, tasks = zip(
+            *[self.split_augmented_observation(aug_obs) for aug_obs in observations]
+        )
         return self.get_actions_given_tasks(np.array(obses), np.array(tasks))
 
     def get_action_given_latent(self, observation, latent):
@@ -323,8 +342,7 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
         flat_latents = self.latent_space.flatten_n(latents)
         flat_latents = np.expand_dims(flat_latents, 1)
 
-        samples, means, log_stds = self._f_dist_obs_latent(
-            flat_obses, flat_latents)
+        samples, means, log_stds = self._f_dist_obs_latent(flat_obses, flat_latents)
         samples = self.action_space.unflatten_n(np.squeeze(samples, 1))
         means = self.action_space.unflatten_n(np.squeeze(means, 1))
         log_stds = self.action_space.unflatten_n(np.squeeze(log_stds, 1))
@@ -404,8 +422,10 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
                 variable scope.
 
         """
-        return (self._variable_scope.trainable_variables() +
-                self.encoder.get_trainable_vars())
+        return (
+            self._variable_scope.trainable_variables()
+            + self.encoder.get_trainable_vars()
+        )
 
     def get_global_vars(self):
         """Get global variables.
@@ -418,8 +438,7 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
                 variable scope.
 
         """
-        return (self._variable_scope.global_variables() +
-                self.encoder.get_global_vars())
+        return self._variable_scope.global_variables() + self.encoder.get_global_vars()
 
     @property
     def env_spec(self):
@@ -457,7 +476,7 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
         """
         new_policy = self.__class__(
             env_spec=self.env_spec,
-            encoder=self.encoder.clone('{}_encoder'.format(name)),
+            encoder=self.encoder.clone("{}_encoder".format(name)),
             name=name,
             hidden_sizes=self._hidden_sizes,
             hidden_nonlinearity=self._hidden_nonlinearity,
@@ -476,7 +495,8 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
             std_hidden_nonlinearity=self._std_hidden_nonlinearity,
             std_output_nonlinearity=self._std_output_nonlinearity,
             std_parameterization=self._std_parameterization,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_policy.parameters = self.parameters
         return new_policy
 
@@ -488,8 +508,8 @@ class GaussianMLPTaskEmbeddingPolicy(GaussianMLPModel, TaskEmbeddingPolicy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_dist_obs_latent']
-        del new_dict['_f_dist_obs_task']
+        del new_dict["_f_dist_obs_latent"]
+        del new_dict["_f_dist_obs_task"]
         return new_dict
 
     def __setstate__(self, state):

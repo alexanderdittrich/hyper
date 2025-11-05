@@ -1,4 +1,5 @@
 """A multiprocessing sampler which avoids waiting as much as possible."""
+
 from collections import defaultdict
 import itertools
 import multiprocessing as mp
@@ -50,21 +51,24 @@ class MultiprocessingSampler(Sampler):
     """
 
     def __init__(
-            self,
-            agents,
-            envs,
-            *,  # After this require passing by keyword.
-            worker_factory=None,
-            max_episode_length=None,
-            is_tf_worker=False,
-            seed=get_seed(),
-            n_workers=psutil.cpu_count(logical=False),
-            worker_class=DefaultWorker,
-            worker_args=None):
+        self,
+        agents,
+        envs,
+        *,  # After this require passing by keyword.
+        worker_factory=None,
+        max_episode_length=None,
+        is_tf_worker=False,
+        seed=get_seed(),
+        n_workers=psutil.cpu_count(logical=False),
+        worker_class=DefaultWorker,
+        worker_args=None,
+    ):
         # pylint: disable=super-init-not-called
         if worker_factory is None and max_episode_length is None:
-            raise TypeError('Must construct a sampler from WorkerFactory or'
-                            'parameters (at least max_episode_length)')
+            raise TypeError(
+                "Must construct a sampler from WorkerFactory or"
+                "parameters (at least max_episode_length)"
+            )
         if isinstance(worker_factory, WorkerFactory):
             self._factory = worker_factory
         else:
@@ -74,10 +78,10 @@ class MultiprocessingSampler(Sampler):
                 seed=seed,
                 n_workers=n_workers,
                 worker_class=worker_class,
-                worker_args=worker_args)
+                worker_args=worker_args,
+            )
 
-        self._agents = self._factory.prepare_worker_messages(
-            agents, cloudpickle.dumps)
+        self._agents = self._factory.prepare_worker_messages(agents, cloudpickle.dumps)
         self._envs = self._factory.prepare_worker_messages(envs)
         self._to_sampler = mp.Queue(2 * self._factory.n_workers)
         self._to_worker = [mp.Queue(1) for _ in range(self._factory.n_workers)]
@@ -88,16 +92,18 @@ class MultiprocessingSampler(Sampler):
         for q in self._to_worker:
             q.cancel_join_thread()
         self._workers = [
-            mp.Process(target=run_worker,
-                       kwargs=dict(
-                           factory=self._factory,
-                           to_sampler=self._to_sampler,
-                           to_worker=self._to_worker[worker_number],
-                           worker_number=worker_number,
-                           agent=self._agents[worker_number],
-                           env=self._envs[worker_number],
-                       ),
-                       daemon=False)
+            mp.Process(
+                target=run_worker,
+                kwargs=dict(
+                    factory=self._factory,
+                    to_sampler=self._to_sampler,
+                    to_worker=self._to_worker[worker_number],
+                    worker_number=worker_number,
+                    agent=self._agents[worker_number],
+                    env=self._envs[worker_number],
+                ),
+                daemon=False,
+            )
             for worker_number in range(self._factory.n_workers)
         ]
         self._agent_version = 0
@@ -149,14 +155,21 @@ class MultiprocessingSampler(Sampler):
         for worker_number, q in enumerate(self._to_worker):
             if worker_number in updated_workers:
                 try:
-                    q.put_nowait(('continue', ()))
+                    q.put_nowait(("continue", ()))
                 except queue.Full:
                     pass
             else:
                 try:
-                    q.put_nowait(('start', (agent_updates[worker_number],
-                                            env_updates[worker_number],
-                                            self._agent_version)))
+                    q.put_nowait(
+                        (
+                            "start",
+                            (
+                                agent_updates[worker_number],
+                                env_updates[worker_number],
+                                self._agent_version,
+                            ),
+                        )
+                    )
                     updated_workers.add(worker_number)
                 except queue.Full:
                     pass
@@ -191,16 +204,17 @@ class MultiprocessingSampler(Sampler):
         self._agent_version += 1
         updated_workers = set()
         agent_ups = self._factory.prepare_worker_messages(
-            agent_update, cloudpickle.dumps)
+            agent_update, cloudpickle.dumps
+        )
         env_ups = self._factory.prepare_worker_messages(env_update)
 
-        with click.progressbar(length=num_samples, label='Sampling') as pbar:
+        with click.progressbar(length=num_samples, label="Sampling") as pbar:
             while completed_samples < num_samples:
                 self._push_updates(updated_workers, agent_ups, env_ups)
                 for _ in range(self._factory.n_workers):
                     try:
                         tag, contents = self._to_sampler.get_nowait()
-                        if tag == 'episode':
+                        if tag == "episode":
                             batch, version, worker_n = contents
                             del worker_n
                             if version == self._agent_version:
@@ -215,13 +229,13 @@ class MultiprocessingSampler(Sampler):
                                 pass
                         else:
                             raise AssertionError(
-                                'Unknown tag {} with contents {}'.format(
-                                    tag, contents))
+                                "Unknown tag {} with contents {}".format(tag, contents)
+                            )
                     except queue.Empty:
                         pass
             for q in self._to_worker:
                 try:
-                    q.put_nowait(('stop', ()))
+                    q.put_nowait(("stop", ()))
                 except queue.Full:
                     pass
 
@@ -229,10 +243,7 @@ class MultiprocessingSampler(Sampler):
         self.total_env_steps += sum(samples.lengths)
         return samples
 
-    def obtain_exact_episodes(self,
-                              n_eps_per_worker,
-                              agent_update,
-                              env_update=None):
+    def obtain_exact_episodes(self, n_eps_per_worker, agent_update, env_update=None):
         """Sample an exact number of episodes per worker.
 
         Args:
@@ -259,19 +270,22 @@ class MultiprocessingSampler(Sampler):
         self._agent_version += 1
         updated_workers = set()
         agent_ups = self._factory.prepare_worker_messages(
-            agent_update, cloudpickle.dumps)
+            agent_update, cloudpickle.dumps
+        )
         env_ups = self._factory.prepare_worker_messages(env_update)
         episodes = defaultdict(list)
 
-        with click.progressbar(length=self._factory.n_workers,
-                               label='Sampling') as pbar:
+        with click.progressbar(
+            length=self._factory.n_workers, label="Sampling"
+        ) as pbar:
             while any(
-                    len(episodes[i]) < n_eps_per_worker
-                    for i in range(self._factory.n_workers)):
+                len(episodes[i]) < n_eps_per_worker
+                for i in range(self._factory.n_workers)
+            ):
                 self._push_updates(updated_workers, agent_ups, env_ups)
                 tag, contents = self._to_sampler.get()
 
-                if tag == 'episode':
+                if tag == "episode":
                     batch, version, worker_n = contents
 
                     if version == self._agent_version:
@@ -281,38 +295,37 @@ class MultiprocessingSampler(Sampler):
                         if len(episodes[worker_n]) == n_eps_per_worker:
                             pbar.update(1)
                             try:
-                                self._to_worker[worker_n].put_nowait(
-                                    ('stop', ()))
+                                self._to_worker[worker_n].put_nowait(("stop", ()))
                             except queue.Full:
                                 pass
                 else:
                     raise AssertionError(
-                        'Unknown tag {} with contents {}'.format(
-                            tag, contents))
+                        "Unknown tag {} with contents {}".format(tag, contents)
+                    )
 
             for q in self._to_worker:
                 try:
-                    q.put_nowait(('stop', ()))
+                    q.put_nowait(("stop", ()))
                 except queue.Full:
                     pass
 
         ordered_episodes = list(
-            itertools.chain(
-                *[episodes[i] for i in range(self._factory.n_workers)]))
+            itertools.chain(*[episodes[i] for i in range(self._factory.n_workers)])
+        )
         samples = EpisodeBatch.concatenate(*ordered_episodes)
         self.total_env_steps += sum(samples.lengths)
         return samples
 
     def shutdown_worker(self):
         """Shutdown the workers."""
-        for (q, w) in zip(self._to_worker, self._workers):
+        for q, w in zip(self._to_worker, self._workers):
             # Loop until either the exit message is accepted or the process has
             # closed.  These might cause us to block, but ensures that the
             # workers are closed.
             while True:
                 try:
                     # Set a timeout in case the child process crashed.
-                    q.put(('exit', ()), timeout=1)
+                    q.put(("exit", ()), timeout=1)
                     break
                 except queue.Full:
                     # If the child process has crashed, we're done here.
@@ -337,7 +350,8 @@ class MultiprocessingSampler(Sampler):
         return dict(
             factory=self._factory,
             agents=[cloudpickle.loads(agent) for agent in self._agents],
-            envs=self._envs)
+            envs=self._envs,
+        )
 
     def __setstate__(self, state):
         """Unpickle the state.
@@ -346,9 +360,7 @@ class MultiprocessingSampler(Sampler):
             state (dict): Unpickled state.
 
         """
-        self.__init__(state['agents'],
-                      state['envs'],
-                      worker_factory=state['factory'])
+        self.__init__(state["agents"], state["envs"], worker_factory=state["factory"])
 
 
 def run_worker(factory, to_worker, to_sampler, worker_number, agent, env):
@@ -412,36 +424,36 @@ def run_worker(factory, to_worker, to_sampler, worker_number, agent, env):
             try:
                 tag, contents = to_worker.get_nowait()
             except queue.Empty:
-                tag = 'continue'
+                tag = "continue"
                 contents = None
         else:
             # We're not streaming anymore, so wait for a message.
             tag, contents = to_worker.get()
 
-        if tag == 'start':
+        if tag == "start":
             # Update env and policy.
             agent_update, env_update, version = contents
             inner_worker.update_agent(cloudpickle.loads(agent_update))
             inner_worker.update_env(env_update)
             streaming_samples = True
-        elif tag == 'stop':
+        elif tag == "stop":
             streaming_samples = False
-        elif tag == 'continue':
+        elif tag == "continue":
             batch = inner_worker.rollout()
             try:
-                to_sampler.put_nowait(
-                    ('episode', (batch, version, worker_number)))
+                to_sampler.put_nowait(("episode", (batch, version, worker_number)))
             except queue.Full:
                 # Either the sampler has fallen far behind the workers, or we
                 # missed a "stop" message. Either way, stop streaming.
                 # If the queue becomes empty again, the sampler will send a
                 # continue (or some other) message.
                 streaming_samples = False
-        elif tag == 'exit':
+        elif tag == "exit":
             to_worker.close()
             to_sampler.close()
             inner_worker.shutdown()
             return
         else:
-            raise AssertionError('Unknown tag {} with contents {}'.format(
-                tag, contents))
+            raise AssertionError(
+                "Unknown tag {} with contents {}".format(tag, contents)
+            )

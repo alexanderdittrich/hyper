@@ -4,6 +4,7 @@ TD3, or Twin Delayed Deep Deterministic Policy Gradient, uses actor-critic
 method to optimize the policy and reward prediction. Notably, it uses the
 minimum value of two critics instead of one to limit overestimation.
 """
+
 # yapf: disable
 from dowel import logger, tabular
 import numpy as np
@@ -67,36 +68,37 @@ class TD3(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf,
-            qf2,
-            replay_buffer,
-            sampler,
-            *,  # Everything after this is numbers.
-            target_update_tau=0.01,
-            policy_weight_decay=0,
-            qf_weight_decay=0,
-            policy_optimizer=tf.compat.v1.train.AdamOptimizer,
-            qf_optimizer=tf.compat.v1.train.AdamOptimizer,
-            policy_lr=_Default(1e-4),
-            qf_lr=_Default(1e-3),
-            clip_pos_returns=False,
-            clip_return=np.inf,
-            discount=0.99,
-            max_episode_length_eval=None,
-            max_action=None,
-            name='TD3',
-            steps_per_epoch=20,
-            n_train_steps=50,
-            buffer_batch_size=64,
-            min_buffer_size=1e4,
-            reward_scale=1.,
-            exploration_policy_sigma=0.2,
-            actor_update_period=2,
-            exploration_policy_clip=0.5,
-            exploration_policy=None):
+        self,
+        env_spec,
+        policy,
+        qf,
+        qf2,
+        replay_buffer,
+        sampler,
+        *,  # Everything after this is numbers.
+        target_update_tau=0.01,
+        policy_weight_decay=0,
+        qf_weight_decay=0,
+        policy_optimizer=tf.compat.v1.train.AdamOptimizer,
+        qf_optimizer=tf.compat.v1.train.AdamOptimizer,
+        policy_lr=_Default(1e-4),
+        qf_lr=_Default(1e-3),
+        clip_pos_returns=False,
+        clip_return=np.inf,
+        discount=0.99,
+        max_episode_length_eval=None,
+        max_action=None,
+        name="TD3",
+        steps_per_epoch=20,
+        n_train_steps=50,
+        buffer_batch_size=64,
+        min_buffer_size=1e4,
+        reward_scale=1.0,
+        exploration_policy_sigma=0.2,
+        actor_update_period=2,
+        exploration_policy_clip=0.5,
+        exploration_policy=None,
+    ):
         action_bound = env_spec.action_space.high
         self._max_action = action_bound if max_action is None else max_action
         self._tau = target_update_tau
@@ -111,8 +113,8 @@ class TD3(RLAlgorithm):
         self._epoch_ys = []
         self._epoch_qs = []
 
-        self._target_policy = policy.clone('target_policy')
-        self._target_qf = qf.clone('target_qf')
+        self._target_policy = policy.clone("target_policy")
+        self._target_qf = qf.clone("target_qf")
 
         self.qf2 = qf2
         self.qf = qf
@@ -122,7 +124,7 @@ class TD3(RLAlgorithm):
         self._actor_update_period = actor_update_period
         self._action_loss = None
 
-        self._target_qf2 = qf2.clone('target_qf2')
+        self._target_qf2 = qf2.clone("target_qf2")
         self._policy_optimizer = policy_optimizer
         self._qf_optimizer = qf_optimizer
         self._policy_lr = policy_lr
@@ -156,98 +158,106 @@ class TD3(RLAlgorithm):
         """Build the loss function and init the optimizer."""
         with tf.name_scope(self._name):
             # Create target policy (actor) and qf (critic) networks
-            with tf.name_scope('inputs'):
+            with tf.name_scope("inputs"):
                 obs_dim = self._env_spec.observation_space.flat_dim
-                y = tf.compat.v1.placeholder(tf.float32,
-                                             shape=(None, 1),
-                                             name='input_y')
-                obs = tf.compat.v1.placeholder(tf.float32,
-                                               shape=(None, obs_dim),
-                                               name='input_observation')
+                y = tf.compat.v1.placeholder(
+                    tf.float32, shape=(None, 1), name="input_y"
+                )
+                obs = tf.compat.v1.placeholder(
+                    tf.float32, shape=(None, obs_dim), name="input_observation"
+                )
                 actions = tf.compat.v1.placeholder(
                     tf.float32,
                     shape=(None, self._env_spec.action_space.flat_dim),
-                    name='input_action')
+                    name="input_action",
+                )
 
-            policy_network_outputs = self._target_policy.build(obs,
-                                                               name='policy')
-            target_qf_outputs = self._target_qf.build(obs, actions, name='qf')
-            target_qf2_outputs = self._target_qf2.build(obs,
-                                                        actions,
-                                                        name='qf')
+            policy_network_outputs = self._target_policy.build(obs, name="policy")
+            target_qf_outputs = self._target_qf.build(obs, actions, name="qf")
+            target_qf2_outputs = self._target_qf2.build(obs, actions, name="qf")
 
             self._target_policy_f_prob_online = compile_function(
-                inputs=[obs], outputs=policy_network_outputs)
+                inputs=[obs], outputs=policy_network_outputs
+            )
 
             self._target_qf_f_prob_online = compile_function(
-                inputs=[obs, actions], outputs=target_qf_outputs)
+                inputs=[obs, actions], outputs=target_qf_outputs
+            )
 
             self._target_qf2_f_prob_online = compile_function(
-                inputs=[obs, actions], outputs=target_qf2_outputs)
+                inputs=[obs, actions], outputs=target_qf2_outputs
+            )
 
             # Set up target init and update functions
-            with tf.name_scope('setup_target'):
+            with tf.name_scope("setup_target"):
                 policy_init_op, policy_update_op = get_target_ops(
                     self.policy.get_global_vars(),
-                    self._target_policy.get_global_vars(), self._tau)
+                    self._target_policy.get_global_vars(),
+                    self._tau,
+                )
                 qf_init_ops, qf_update_ops = get_target_ops(
                     self.qf.get_global_vars(),
-                    self._target_qf.get_global_vars(), self._tau)
+                    self._target_qf.get_global_vars(),
+                    self._tau,
+                )
                 qf2_init_ops, qf2_update_ops = get_target_ops(
                     self.qf2.get_global_vars(),
-                    self._target_qf2.get_global_vars(), self._tau)
+                    self._target_qf2.get_global_vars(),
+                    self._tau,
+                )
                 target_init_op = policy_init_op + qf_init_ops + qf2_init_ops
-                target_update_op = (policy_update_op + qf_update_ops +
-                                    qf2_update_ops)
+                target_update_op = policy_update_op + qf_update_ops + qf2_update_ops
 
             f_init_target = compile_function(inputs=[], outputs=target_init_op)
-            f_update_target = compile_function(inputs=[],
-                                               outputs=target_update_op)
+            f_update_target = compile_function(inputs=[], outputs=target_update_op)
 
             # Set up policy training function
-            next_action = self.policy.build(obs, name='policy_action')
-            next_qval = self.qf.build(obs,
-                                      next_action,
-                                      name='policy_action_qval')
-            with tf.name_scope('action_loss'):
+            next_action = self.policy.build(obs, name="policy_action")
+            next_qval = self.qf.build(obs, next_action, name="policy_action_qval")
+            with tf.name_scope("action_loss"):
                 action_loss = -tf.reduce_mean(next_qval)
 
-            with tf.name_scope('minimize_action_loss'):
+            with tf.name_scope("minimize_action_loss"):
                 policy_optimizer = make_optimizer(
                     self._policy_optimizer,
                     learning_rate=self._policy_lr,
-                    name='PolicyOptimizer')
+                    name="PolicyOptimizer",
+                )
                 policy_train_op = policy_optimizer.minimize(
-                    action_loss, var_list=self.policy.get_trainable_vars())
+                    action_loss, var_list=self.policy.get_trainable_vars()
+                )
 
             f_train_policy = compile_function(
-                inputs=[obs], outputs=[policy_train_op, action_loss])
+                inputs=[obs], outputs=[policy_train_op, action_loss]
+            )
 
             # Set up qf training function
-            qval = self.qf.build(obs, actions, name='q_value')
-            q2val = self.qf2.build(obs, actions, name='q2_value')
-            with tf.name_scope('qval1_loss'):
-                qval1_loss = tf.reduce_mean(tf.math.squared_difference(
-                    y, qval))
-            with tf.name_scope('qval2_loss'):
-                qval2_loss = tf.reduce_mean(
-                    tf.math.squared_difference(y, q2val))
+            qval = self.qf.build(obs, actions, name="q_value")
+            q2val = self.qf2.build(obs, actions, name="q2_value")
+            with tf.name_scope("qval1_loss"):
+                qval1_loss = tf.reduce_mean(tf.math.squared_difference(y, qval))
+            with tf.name_scope("qval2_loss"):
+                qval2_loss = tf.reduce_mean(tf.math.squared_difference(y, q2val))
 
-            with tf.name_scope('minimize_qf_loss'):
-                qf_optimizer = make_optimizer(self._qf_optimizer,
-                                              learning_rate=self._qf_lr,
-                                              name='QFunctionOptimizer')
+            with tf.name_scope("minimize_qf_loss"):
+                qf_optimizer = make_optimizer(
+                    self._qf_optimizer,
+                    learning_rate=self._qf_lr,
+                    name="QFunctionOptimizer",
+                )
                 qf_train_op = qf_optimizer.minimize(
-                    qval1_loss, var_list=self.qf.get_trainable_vars())
+                    qval1_loss, var_list=self.qf.get_trainable_vars()
+                )
                 qf2_train_op = qf_optimizer.minimize(
-                    qval2_loss, var_list=self.qf2.get_trainable_vars())
+                    qval2_loss, var_list=self.qf2.get_trainable_vars()
+                )
 
             f_train_qf = compile_function(
-                inputs=[y, obs, actions],
-                outputs=[qf_train_op, qval1_loss, qval])
+                inputs=[y, obs, actions], outputs=[qf_train_op, qval1_loss, qval]
+            )
             f_train_qf2 = compile_function(
-                inputs=[y, obs, actions],
-                outputs=[qf2_train_op, qval2_loss, q2val])
+                inputs=[y, obs, actions], outputs=[qf2_train_op, qval2_loss, q2val]
+            )
 
             self._f_train_policy = f_train_policy
             self._f_train_qf = f_train_qf
@@ -263,14 +273,14 @@ class TD3(RLAlgorithm):
 
         """
         data = self.__dict__.copy()
-        del data['_target_policy_f_prob_online']
-        del data['_target_qf_f_prob_online']
-        del data['_target_qf2_f_prob_online']
-        del data['_f_train_policy']
-        del data['_f_train_qf']
-        del data['_f_train_qf2']
-        del data['_f_init_target']
-        del data['_f_update_target']
+        del data["_target_policy_f_prob_online"]
+        del data["_target_qf_f_prob_online"]
+        del data["_target_qf2_f_prob_online"]
+        del data["_f_train_policy"]
+        del data["_f_train_qf"]
+        del data["_f_train_qf2"]
+        del data["_f_init_target"]
+        del data["_f_update_target"]
         return data
 
     def __setstate__(self, state):
@@ -296,23 +306,27 @@ class TD3(RLAlgorithm):
         """
         if not self._eval_env:
             self._eval_env = trainer.get_env_copy()
-        last_returns = [float('nan')]
+        last_returns = [float("nan")]
         trainer.enable_logging = False
 
         for _ in trainer.step_epochs():
             for cycle in range(self._steps_per_epoch):
                 trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-                if hasattr(self.exploration_policy, 'update'):
+                if hasattr(self.exploration_policy, "update"):
                     self.exploration_policy.update(trainer.step_path)
                 self._train_once(trainer.step_itr, trainer.step_path)
-                if (cycle == 0 and self._replay_buffer.n_transitions_stored >=
-                        self._min_buffer_size):
+                if (
+                    cycle == 0
+                    and self._replay_buffer.n_transitions_stored
+                    >= self._min_buffer_size
+                ):
                     trainer.enable_logging = True
                     eval_episodes = obtain_evaluation_episodes(
-                        self.policy, self._eval_env)
-                    last_returns = log_performance(trainer.step_itr,
-                                                   eval_episodes,
-                                                   discount=self._discount)
+                        self.policy, self._eval_env
+                    )
+                    last_returns = log_performance(
+                        trainer.step_itr, eval_episodes, discount=self._discount
+                    )
                 trainer.step_itr += 1
 
         return np.mean(last_returns)
@@ -330,8 +344,7 @@ class TD3(RLAlgorithm):
         epoch = itr / self._steps_per_epoch
 
         for _ in range(self._n_train_steps):
-            if (self._replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
+            if self._replay_buffer.n_transitions_stored >= self._min_buffer_size:
                 qf_loss, y_s, qval, policy_loss = self._optimize_policy(itr)
 
                 self._episode_policy_losses.append(policy_loss)
@@ -340,23 +353,22 @@ class TD3(RLAlgorithm):
                 self._epoch_qs.append(qval)
 
         if itr % self._steps_per_epoch == 0:
-            logger.log('Training finished')
+            logger.log("Training finished")
 
-            if (self._replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                tabular.record('Epoch', epoch)
-                tabular.record('Policy/AveragePolicyLoss',
-                               np.mean(self._episode_policy_losses))
-                tabular.record('QFunction/AverageQFunctionLoss',
-                               np.mean(self._episode_qf_losses))
-                tabular.record('QFunction/AverageQ', np.mean(self._epoch_qs))
-                tabular.record('QFunction/MaxQ', np.max(self._epoch_qs))
-                tabular.record('QFunction/AverageAbsQ',
-                               np.mean(np.abs(self._epoch_qs)))
-                tabular.record('QFunction/AverageY', np.mean(self._epoch_ys))
-                tabular.record('QFunction/MaxY', np.max(self._epoch_ys))
-                tabular.record('QFunction/AverageAbsY',
-                               np.mean(np.abs(self._epoch_ys)))
+            if self._replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                tabular.record("Epoch", epoch)
+                tabular.record(
+                    "Policy/AveragePolicyLoss", np.mean(self._episode_policy_losses)
+                )
+                tabular.record(
+                    "QFunction/AverageQFunctionLoss", np.mean(self._episode_qf_losses)
+                )
+                tabular.record("QFunction/AverageQ", np.mean(self._epoch_qs))
+                tabular.record("QFunction/MaxQ", np.max(self._epoch_qs))
+                tabular.record("QFunction/AverageAbsQ", np.mean(np.abs(self._epoch_qs)))
+                tabular.record("QFunction/AverageY", np.mean(self._epoch_ys))
+                tabular.record("QFunction/MaxY", np.max(self._epoch_ys))
+                tabular.record("QFunction/AverageAbsY", np.mean(np.abs(self._epoch_ys)))
 
     def _optimize_policy(self, itr):
         """Perform algorithm optimizing.
@@ -371,8 +383,7 @@ class TD3(RLAlgorithm):
             float: Q value predicted by the q network.
 
         """
-        timesteps = self._replay_buffer.sample_timesteps(
-            self._buffer_batch_size)
+        timesteps = self._replay_buffer.sample_timesteps(self._buffer_batch_size)
 
         observations = timesteps.observations
         rewards = timesteps.rewards.reshape(-1, 1)
@@ -387,18 +398,18 @@ class TD3(RLAlgorithm):
 
         target_actions = self._target_policy_f_prob_online(next_inputs)
 
-        noise = np.random.normal(0.0, self._exploration_policy_sigma,
-                                 target_actions.shape)
-        noise = np.clip(noise, -self._exploration_policy_clip,
-                        self._exploration_policy_clip)
+        noise = np.random.normal(
+            0.0, self._exploration_policy_sigma, target_actions.shape
+        )
+        noise = np.clip(
+            noise, -self._exploration_policy_clip, self._exploration_policy_clip
+        )
         target_actions += noise
 
-        target_qvals = self._target_qf_f_prob_online(next_inputs,
-                                                     target_actions)
-        target_q2vals = self._target_qf2_f_prob_online(next_inputs,
-                                                       target_actions)
+        target_qvals = self._target_qf_f_prob_online(next_inputs, target_actions)
+        target_q2vals = self._target_qf2_f_prob_online(next_inputs, target_actions)
         target_qvals = np.minimum(target_qvals, target_q2vals)
-        ys = (rewards + (1.0 - terminals) * self._discount * target_qvals)
+        ys = rewards + (1.0 - terminals) * self._discount * target_qvals
 
         _, qval_loss, qval = self._f_train_qf(ys, inputs, actions)
         _, q2val_loss, q2val = self._f_train_qf2(ys, inputs, actions)

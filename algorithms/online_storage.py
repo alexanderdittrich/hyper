@@ -3,6 +3,7 @@ Based on https://github.com/ikostrikov/pytorch-a2c-ppo-acktr
 
 Used for on-policy rollout storages.
 """
+
 import torch
 from torch.utils.data.sampler import BatchSampler, SubsetRandomSampler
 
@@ -14,18 +15,27 @@ def _flatten_helper(T, N, _tensor):
 
 
 class OnlineStorage(object):
-    def __init__(self,
-                 args, num_steps, num_processes,
-                 state_dim, belief_dim, task_dim,
-                 action_space,
-                 hidden_size, latent_dim, normalise_rewards):
-
+    def __init__(
+        self,
+        args,
+        num_steps,
+        num_processes,
+        state_dim,
+        belief_dim,
+        task_dim,
+        action_space,
+        hidden_size,
+        latent_dim,
+        normalise_rewards,
+    ):
         self.args = args
         self.state_dim = state_dim
         self.belief_dim = belief_dim
         self.task_dim = task_dim
 
-        self.num_steps = num_steps  # how many steps to do per update (= size of online buffer)
+        self.num_steps = (
+            num_steps  # how many steps to do per update (= size of online buffer)
+        )
         self.num_processes = num_processes  # number of parallel processes
         self.step = 0  # keep track of current environment step
 
@@ -49,7 +59,9 @@ class OnlineStorage(object):
             self.next_state = torch.zeros(num_steps, num_processes, state_dim)
         if self.args.pass_belief_to_policy:
             self.beliefs = torch.zeros(num_steps + 1, num_processes, belief_dim)
-        decode_task_in_rlloss = self.args.decode_task and self.args.rlloss_through_encoder
+        decode_task_in_rlloss = (
+            self.args.decode_task and self.args.rlloss_through_encoder
+        )
         if self.args.pass_task_to_policy or decode_task_in_rlloss:
             self.tasks = torch.zeros(num_steps + 1, num_processes, task_dim)
 
@@ -62,14 +74,14 @@ class OnlineStorage(object):
         self.bad_masks = torch.ones(num_steps + 1, num_processes, 1)
 
         # actions
-        if action_space.__class__.__name__ == 'Discrete':
+        if action_space.__class__.__name__ == "Discrete":
             action_shape = 1
-        elif action_space.__class__.__name__ == 'Tuple':
-            raise NotImplementedError # will cause issues for dist later. once fixed: action_shape = len(action_space)
+        elif action_space.__class__.__name__ == "Tuple":
+            raise NotImplementedError  # will cause issues for dist later. once fixed: action_shape = len(action_space)
         else:
             action_shape = action_space.shape[0]
         self.actions = torch.zeros(num_steps, num_processes, action_shape)
-        if action_space.__class__.__name__ == 'Discrete':
+        if action_space.__class__.__name__ == "Discrete":
             self.actions = self.actions.long()
         self.action_log_probs = torch.zeros(num_steps, num_processes, 1)
 
@@ -90,7 +102,9 @@ class OnlineStorage(object):
             self.next_state = self.next_state.to(device)
         if self.args.pass_belief_to_policy:
             self.beliefs = self.beliefs.to(device)
-        decode_task_in_rlloss = self.args.decode_task and self.args.rlloss_through_encoder
+        decode_task_in_rlloss = (
+            self.args.decode_task and self.args.rlloss_through_encoder
+        )
         if self.args.pass_task_to_policy or decode_task_in_rlloss:
             self.tasks = self.tasks.to(device)
         self.rewards_raw = self.rewards_raw.to(device)
@@ -103,28 +117,31 @@ class OnlineStorage(object):
         self.actions = self.actions.to(device)
         self.action_log_probs = self.action_log_probs.to(device)
 
-    def insert(self,
-               state,
-               belief,
-               task,
-               actions,
-               action_log_probs,
-               rewards_raw,
-               rewards_normalised,
-               value_preds,
-               masks,
-               bad_masks,
-               done,
-               #
-               hidden_states=None,
-               latent_sample=None,
-               latent_mean=None,
-               latent_logvar=None,
-               ):
+    def insert(
+        self,
+        state,
+        belief,
+        task,
+        actions,
+        action_log_probs,
+        rewards_raw,
+        rewards_normalised,
+        value_preds,
+        masks,
+        bad_masks,
+        done,
+        #
+        hidden_states=None,
+        latent_sample=None,
+        latent_mean=None,
+        latent_logvar=None,
+    ):
         self.prev_state[self.step + 1].copy_(state)
         if self.args.pass_belief_to_policy:
             self.beliefs[self.step + 1].copy_(belief)
-        decode_task_in_rlloss = self.args.decode_task and self.args.rlloss_through_encoder
+        decode_task_in_rlloss = (
+            self.args.decode_task and self.args.rlloss_through_encoder
+        )
         if self.args.pass_task_to_policy or decode_task_in_rlloss:
             self.tasks[self.step + 1].copy_(task)
         if self.args.pass_latent_to_policy:
@@ -150,7 +167,9 @@ class OnlineStorage(object):
         self.prev_state[0].copy_(self.prev_state[-1])
         if self.args.pass_belief_to_policy:
             self.beliefs[0].copy_(self.beliefs[-1])
-        decode_task_in_rlloss = self.args.decode_task and self.args.rlloss_through_encoder
+        decode_task_in_rlloss = (
+            self.args.decode_task and self.args.rlloss_through_encoder
+        )
         if self.args.pass_task_to_policy or decode_task_in_rlloss:
             self.tasks[0].copy_(self.tasks[-1])
         if self.args.pass_latent_to_policy:
@@ -162,53 +181,82 @@ class OnlineStorage(object):
         self.masks[0].copy_(self.masks[-1])
         self.bad_masks[0].copy_(self.bad_masks[-1])
 
-    def compute_returns(self, next_value, use_gae, gamma, tau, use_proper_time_limits=True):
-
+    def compute_returns(
+        self, next_value, use_gae, gamma, tau, use_proper_time_limits=True
+    ):
         if self.normalise_rewards:
             rewards = self.rewards_normalised.clone()
         else:
             rewards = self.rewards_raw.clone()
 
-        self._compute_returns(next_value=next_value, rewards=rewards, value_preds=self.value_preds,
-                              returns=self.returns,
-                              gamma=gamma, tau=tau, use_gae=use_gae, use_proper_time_limits=use_proper_time_limits)
+        self._compute_returns(
+            next_value=next_value,
+            rewards=rewards,
+            value_preds=self.value_preds,
+            returns=self.returns,
+            gamma=gamma,
+            tau=tau,
+            use_gae=use_gae,
+            use_proper_time_limits=use_proper_time_limits,
+        )
 
-    def _compute_returns(self, next_value, rewards, value_preds, returns, gamma, tau, use_gae, use_proper_time_limits):
-
+    def _compute_returns(
+        self,
+        next_value,
+        rewards,
+        value_preds,
+        returns,
+        gamma,
+        tau,
+        use_gae,
+        use_proper_time_limits,
+    ):
         if use_proper_time_limits:
             if use_gae:
                 value_preds[-1] = next_value
                 gae = 0
                 for step in reversed(range(rewards.size(0))):
-                    delta = rewards[step] + gamma * value_preds[step + 1] * self.masks[step + 1] - value_preds[step]
+                    delta = (
+                        rewards[step]
+                        + gamma * value_preds[step + 1] * self.masks[step + 1]
+                        - value_preds[step]
+                    )
                     gae = delta + gamma * tau * self.masks[step + 1] * gae
                     gae = gae * self.bad_masks[step + 1]
                     returns[step] = gae + value_preds[step]
             else:
                 returns[-1] = next_value
                 for step in reversed(range(rewards.size(0))):
-                    returns[step] = (returns[step + 1] * gamma * self.masks[step + 1] + rewards[step]) * self.bad_masks[
-                        step + 1] + (1 - self.bad_masks[step + 1]) * value_preds[step]
+                    returns[step] = (
+                        returns[step + 1] * gamma * self.masks[step + 1] + rewards[step]
+                    ) * self.bad_masks[step + 1] + (
+                        1 - self.bad_masks[step + 1]
+                    ) * value_preds[step]
         else:
             if use_gae:
                 value_preds[-1] = next_value
                 gae = 0
                 for step in reversed(range(rewards.size(0))):
-                    delta = rewards[step] + gamma * value_preds[step + 1] * self.masks[step + 1] - value_preds[step]
+                    delta = (
+                        rewards[step]
+                        + gamma * value_preds[step + 1] * self.masks[step + 1]
+                        - value_preds[step]
+                    )
                     gae = delta + gamma * tau * self.masks[step + 1] * gae
                     returns[step] = gae + value_preds[step]
             else:
                 returns[-1] = next_value
                 for step in reversed(range(rewards.size(0))):
-                    returns[step] = returns[step + 1] * gamma * self.masks[step + 1] + rewards[step]
+                    returns[step] = (
+                        returns[step + 1] * gamma * self.masks[step + 1] + rewards[step]
+                    )
 
     def num_transitions(self):
         return len(self.prev_state) * self.num_processes
 
-    def feed_forward_generator(self,
-                               advantages,
-                               num_mini_batch=None,
-                               mini_batch_size=None):
+    def feed_forward_generator(
+        self, advantages, num_mini_batch=None, mini_batch_size=None
+    ):
         num_steps, num_processes = self.rewards_raw.size()[0:2]
         batch_size = num_processes * num_steps
 
@@ -217,17 +265,19 @@ class OnlineStorage(object):
                 "PPO requires the number of processes ({}) "
                 "* number of steps ({}) = {} "
                 "to be greater than or equal to the number of PPO mini batches ({})."
-                "".format(num_processes, num_steps, num_processes * num_steps,
-                          num_mini_batch))
+                "".format(
+                    num_processes, num_steps, num_processes * num_steps, num_mini_batch
+                )
+            )
             mini_batch_size = batch_size // num_mini_batch
         sampler = BatchSampler(
-            SubsetRandomSampler(range(batch_size)),
-            mini_batch_size,
-            drop_last=True)
+            SubsetRandomSampler(range(batch_size)), mini_batch_size, drop_last=True
+        )
         for indices in sampler:
-
             if self.args.pass_state_to_policy:
-                state_batch = self.prev_state[:-1].reshape(-1, *self.prev_state.size()[2:])[indices]
+                state_batch = self.prev_state[:-1].reshape(
+                    -1, *self.prev_state.size()[2:]
+                )[indices]
             else:
                 state_batch = None
             if self.args.pass_latent_to_policy:
@@ -237,12 +287,18 @@ class OnlineStorage(object):
             else:
                 latent_sample_batch = latent_mean_batch = latent_logvar_batch = None
             if self.args.pass_belief_to_policy:
-                belief_batch = self.beliefs[:-1].reshape(-1, *self.beliefs.size()[2:])[indices]
+                belief_batch = self.beliefs[:-1].reshape(-1, *self.beliefs.size()[2:])[
+                    indices
+                ]
             else:
                 belief_batch = None
-            decode_task_in_rlloss = self.args.decode_task and self.args.rlloss_through_encoder
+            decode_task_in_rlloss = (
+                self.args.decode_task and self.args.rlloss_through_encoder
+            )
             if self.args.pass_task_to_policy or decode_task_in_rlloss:
-                task_batch = self.tasks[:-1].reshape(-1, *self.tasks.size()[2:])[indices]
+                task_batch = self.tasks[:-1].reshape(-1, *self.tasks.size()[2:])[
+                    indices
+                ]
             else:
                 task_batch = None
 
@@ -257,7 +313,16 @@ class OnlineStorage(object):
             else:
                 adv_targ = advantages.reshape(-1, 1)[indices]
 
-            yield state_batch, belief_batch, task_batch, \
-                  actions_batch, \
-                  latent_sample_batch, latent_mean_batch, latent_logvar_batch, \
-                  value_preds_batch, return_batch, old_action_log_probs_batch, adv_targ
+            yield (
+                state_batch,
+                belief_batch,
+                task_batch,
+                actions_batch,
+                latent_sample_batch,
+                latent_mean_batch,
+                latent_logvar_batch,
+                value_preds_batch,
+                return_batch,
+                old_action_log_probs_batch,
+                adv_targ,
+            )

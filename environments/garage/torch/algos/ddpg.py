@@ -1,4 +1,5 @@
 """This modules creates a DDPG model in PyTorch."""
+
 # yapf: disable
 import copy
 
@@ -66,31 +67,32 @@ class DDPG(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf,
-            replay_buffer,
-            sampler,
-            *,  # Everything after this is numbers.
-            steps_per_epoch=20,
-            n_train_steps=50,
-            max_episode_length_eval=None,
-            buffer_batch_size=64,
-            min_buffer_size=int(1e4),
-            exploration_policy=None,
-            target_update_tau=0.01,
-            discount=0.99,
-            policy_weight_decay=0,
-            qf_weight_decay=0,
-            policy_optimizer=torch.optim.Adam,
-            qf_optimizer=torch.optim.Adam,
-            policy_lr=_Default(1e-4),
-            qf_lr=_Default(1e-3),
-            clip_pos_returns=False,
-            clip_return=np.inf,
-            max_action=None,
-            reward_scale=1.):
+        self,
+        env_spec,
+        policy,
+        qf,
+        replay_buffer,
+        sampler,
+        *,  # Everything after this is numbers.
+        steps_per_epoch=20,
+        n_train_steps=50,
+        max_episode_length_eval=None,
+        buffer_batch_size=64,
+        min_buffer_size=int(1e4),
+        exploration_policy=None,
+        target_update_tau=0.01,
+        discount=0.99,
+        policy_weight_decay=0,
+        qf_weight_decay=0,
+        policy_optimizer=torch.optim.Adam,
+        qf_optimizer=torch.optim.Adam,
+        policy_lr=_Default(1e-4),
+        qf_lr=_Default(1e-3),
+        clip_pos_returns=False,
+        clip_return=np.inf,
+        max_action=None,
+        reward_scale=1.0,
+    ):
         action_bound = env_spec.action_space.high
         self._tau = target_update_tau
         self._policy_weight_decay = policy_weight_decay
@@ -129,12 +131,10 @@ class DDPG(RLAlgorithm):
 
         self._target_policy = copy.deepcopy(self.policy)
         self._target_qf = copy.deepcopy(self._qf)
-        self._policy_optimizer = make_optimizer(policy_optimizer,
-                                                module=self.policy,
-                                                lr=policy_lr)
-        self._qf_optimizer = make_optimizer(qf_optimizer,
-                                            module=self._qf,
-                                            lr=qf_lr)
+        self._policy_optimizer = make_optimizer(
+            policy_optimizer, module=self.policy, lr=policy_lr
+        )
+        self._qf_optimizer = make_optimizer(qf_optimizer, module=self._qf, lr=qf_lr)
         self._eval_env = None
         self._sampler = sampler
 
@@ -150,23 +150,24 @@ class DDPG(RLAlgorithm):
         """
         if not self._eval_env:
             self._eval_env = trainer.get_env_copy()
-        last_returns = [float('nan')]
+        last_returns = [float("nan")]
         trainer.enable_logging = False
 
         for _ in trainer.step_epochs():
             for cycle in range(self._steps_per_epoch):
                 trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-                if hasattr(self.exploration_policy, 'update'):
+                if hasattr(self.exploration_policy, "update"):
                     self.exploration_policy.update(trainer.step_path)
                 self.train_once(trainer.step_itr, trainer.step_path)
-                if (cycle == 0 and self.replay_buffer.n_transitions_stored >=
-                        self._min_buffer_size):
+                if (
+                    cycle == 0
+                    and self.replay_buffer.n_transitions_stored >= self._min_buffer_size
+                ):
                     trainer.enable_logging = True
-                    eval_eps = obtain_evaluation_episodes(
-                        self.policy, self._eval_env)
-                    last_returns = log_performance(trainer.step_itr,
-                                                   eval_eps,
-                                                   discount=self._discount)
+                    eval_eps = obtain_evaluation_episodes(self.policy, self._eval_env)
+                    last_returns = log_performance(
+                        trainer.step_itr, eval_eps, discount=self._discount
+                    )
                 trainer.step_itr += 1
 
         return np.mean(last_returns)
@@ -184,13 +185,10 @@ class DDPG(RLAlgorithm):
         epoch = itr / self._steps_per_epoch
 
         for _ in range(self._n_train_steps):
-            if (self.replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                samples = self.replay_buffer.sample_transitions(
-                    self._buffer_batch_size)
-                samples['rewards'] *= self._reward_scale
-                qf_loss, y, q, policy_loss = torch_to_np(
-                    self.optimize_policy(samples))
+            if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                samples = self.replay_buffer.sample_transitions(self._buffer_batch_size)
+                samples["rewards"] *= self._reward_scale
+                qf_loss, y, q, policy_loss = torch_to_np(self.optimize_policy(samples))
 
                 self._episode_policy_losses.append(policy_loss)
                 self._episode_qf_losses.append(qf_loss)
@@ -198,23 +196,22 @@ class DDPG(RLAlgorithm):
                 self._epoch_qs.append(q)
 
         if itr % self._steps_per_epoch == 0:
-            logger.log('Training finished')
+            logger.log("Training finished")
 
-            if (self.replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                tabular.record('Epoch', epoch)
-                tabular.record('Policy/AveragePolicyLoss',
-                               np.mean(self._episode_policy_losses))
-                tabular.record('QFunction/AverageQFunctionLoss',
-                               np.mean(self._episode_qf_losses))
-                tabular.record('QFunction/AverageQ', np.mean(self._epoch_qs))
-                tabular.record('QFunction/MaxQ', np.max(self._epoch_qs))
-                tabular.record('QFunction/AverageAbsQ',
-                               np.mean(np.abs(self._epoch_qs)))
-                tabular.record('QFunction/AverageY', np.mean(self._epoch_ys))
-                tabular.record('QFunction/MaxY', np.max(self._epoch_ys))
-                tabular.record('QFunction/AverageAbsY',
-                               np.mean(np.abs(self._epoch_ys)))
+            if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                tabular.record("Epoch", epoch)
+                tabular.record(
+                    "Policy/AveragePolicyLoss", np.mean(self._episode_policy_losses)
+                )
+                tabular.record(
+                    "QFunction/AverageQFunctionLoss", np.mean(self._episode_qf_losses)
+                )
+                tabular.record("QFunction/AverageQ", np.mean(self._epoch_qs))
+                tabular.record("QFunction/MaxQ", np.max(self._epoch_qs))
+                tabular.record("QFunction/AverageAbsQ", np.mean(np.abs(self._epoch_qs)))
+                tabular.record("QFunction/AverageY", np.mean(self._epoch_ys))
+                tabular.record("QFunction/MaxY", np.max(self._epoch_ys))
+                tabular.record("QFunction/AverageAbsY", np.mean(np.abs(self._epoch_ys)))
 
     def optimize_policy(self, samples_data):
         """Perform algorithm optimizing.
@@ -231,11 +228,11 @@ class DDPG(RLAlgorithm):
         """
         transitions = dict_np_to_torch(samples_data)
 
-        observations = transitions['observations']
-        rewards = transitions['rewards'].reshape(-1, 1)
-        actions = transitions['actions']
-        next_observations = transitions['next_observations']
-        terminals = transitions['terminals'].reshape(-1, 1)
+        observations = transitions["observations"]
+        rewards = transitions["rewards"].reshape(-1, 1)
+        actions = transitions["actions"]
+        next_observations = transitions["next_observations"]
+        terminals = transitions["terminals"].reshape(-1, 1)
 
         next_inputs = next_observations
         inputs = observations
@@ -243,8 +240,10 @@ class DDPG(RLAlgorithm):
             next_actions = self._target_policy(next_inputs)
             target_qvals = self._target_qf(next_inputs, next_actions)
 
-        clip_range = (-self._clip_return,
-                      0. if self._clip_pos_returns else self._clip_return)
+        clip_range = (
+            -self._clip_return,
+            0.0 if self._clip_pos_returns else self._clip_return,
+        )
 
         y_target = rewards + (1.0 - terminals) * self._discount * target_qvals
         y_target = torch.clamp(y_target, clip_range[0], clip_range[1])
@@ -266,17 +265,18 @@ class DDPG(RLAlgorithm):
 
         # update target networks
         self.update_target()
-        return (qval_loss.detach(), y_target, qval.detach(),
-                action_loss.detach())
+        return (qval_loss.detach(), y_target, qval.detach(), action_loss.detach())
 
     def update_target(self):
         """Update parameters in the target policy and Q-value network."""
-        for t_param, param in zip(self._target_qf.parameters(),
-                                  self._qf.parameters()):
-            t_param.data.copy_(t_param.data * (1.0 - self._tau) +
-                               param.data * self._tau)
+        for t_param, param in zip(self._target_qf.parameters(), self._qf.parameters()):
+            t_param.data.copy_(
+                t_param.data * (1.0 - self._tau) + param.data * self._tau
+            )
 
-        for t_param, param in zip(self._target_policy.parameters(),
-                                  self.policy.parameters()):
-            t_param.data.copy_(t_param.data * (1.0 - self._tau) +
-                               param.data * self._tau)
+        for t_param, param in zip(
+            self._target_policy.parameters(), self.policy.parameters()
+        ):
+            t_param.data.copy_(
+                t_param.data * (1.0 - self._tau) + param.data * self._tau
+            )

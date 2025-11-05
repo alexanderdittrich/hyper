@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to train MAML-VPG on HalfCheetahDirEnv environment."""
+
 # pylint: disable=no-value-for-parameter
 import click
 import torch
@@ -18,13 +19,12 @@ from environments.garage.trainer import Trainer
 
 
 @click.command()
-@click.option('--seed', default=1)
-@click.option('--epochs', default=300)
-@click.option('--episodes_per_task', default=40)
-@click.option('--meta_batch_size', default=20)
-@wrap_experiment(snapshot_mode='all')
-def maml_trpo_half_cheetah_dir(ctxt, seed, epochs, episodes_per_task,
-                               meta_batch_size):
+@click.option("--seed", default=1)
+@click.option("--epochs", default=300)
+@click.option("--episodes_per_task", default=40)
+@click.option("--meta_batch_size", default=20)
+@wrap_experiment(snapshot_mode="all")
+def maml_trpo_half_cheetah_dir(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Set up environment and algorithm and run the task.
 
     Args:
@@ -40,9 +40,10 @@ def maml_trpo_half_cheetah_dir(ctxt, seed, epochs, episodes_per_task,
     """
     set_seed(seed)
     max_episode_length = 100
-    env = normalize(GymEnv(HalfCheetahDirEnv(),
-                           max_episode_length=max_episode_length),
-                    expected_action_scale=10.)
+    env = normalize(
+        GymEnv(HalfCheetahDirEnv(), max_episode_length=max_episode_length),
+        expected_action_scale=10.0,
+    )
 
     policy = GaussianMLPPolicy(
         env_spec=env.spec,
@@ -51,42 +52,49 @@ def maml_trpo_half_cheetah_dir(ctxt, seed, epochs, episodes_per_task,
         output_nonlinearity=None,
     )
 
-    value_function = GaussianMLPValueFunction(env_spec=env.spec,
-                                              hidden_sizes=[32, 32],
-                                              hidden_nonlinearity=torch.tanh,
-                                              output_nonlinearity=None)
+    value_function = GaussianMLPValueFunction(
+        env_spec=env.spec,
+        hidden_sizes=[32, 32],
+        hidden_nonlinearity=torch.tanh,
+        output_nonlinearity=None,
+    )
 
     task_sampler = SetTaskSampler(
         HalfCheetahDirEnv,
-        wrapper=lambda env, _: normalize(GymEnv(
-            env, max_episode_length=max_episode_length),
-                                         expected_action_scale=10.))
+        wrapper=lambda env, _: normalize(
+            GymEnv(env, max_episode_length=max_episode_length),
+            expected_action_scale=10.0,
+        ),
+    )
 
-    meta_evaluator = MetaEvaluator(test_task_sampler=task_sampler,
-                                   n_test_tasks=1,
-                                   n_test_episodes=10)
+    meta_evaluator = MetaEvaluator(
+        test_task_sampler=task_sampler, n_test_tasks=1, n_test_episodes=10
+    )
 
     trainer = Trainer(ctxt)
 
-    sampler = RaySampler(agents=policy,
-                         envs=env,
-                         max_episode_length=env.spec.max_episode_length)
+    sampler = RaySampler(
+        agents=policy, envs=env, max_episode_length=env.spec.max_episode_length
+    )
 
-    algo = MAMLTRPO(env=env,
-                    policy=policy,
-                    sampler=sampler,
-                    task_sampler=task_sampler,
-                    value_function=value_function,
-                    meta_batch_size=meta_batch_size,
-                    discount=0.99,
-                    gae_lambda=1.,
-                    inner_lr=0.1,
-                    num_grad_updates=1,
-                    meta_evaluator=meta_evaluator)
+    algo = MAMLTRPO(
+        env=env,
+        policy=policy,
+        sampler=sampler,
+        task_sampler=task_sampler,
+        value_function=value_function,
+        meta_batch_size=meta_batch_size,
+        discount=0.99,
+        gae_lambda=1.0,
+        inner_lr=0.1,
+        num_grad_updates=1,
+        meta_evaluator=meta_evaluator,
+    )
 
     trainer.setup(algo, env)
-    trainer.train(n_epochs=epochs,
-                  batch_size=episodes_per_task * env.spec.max_episode_length)
+    trainer.train(
+        n_epochs=epochs, batch_size=episodes_per_task * env.spec.max_episode_length
+    )
 
 
 maml_trpo_half_cheetah_dir()

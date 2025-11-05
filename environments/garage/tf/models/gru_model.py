@@ -2,6 +2,7 @@
 
 A model composed only of a Gated Recurrent Unit (GRU).
 """
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -48,24 +49,29 @@ class GRUModel(Model):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 hidden_dim,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        hidden_dim,
+        name=None,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._output_dim = output_dim
         self._hidden_dim = hidden_dim
@@ -91,13 +97,15 @@ class GRUModel(Model):
             bias_initializer=self._hidden_b_init,
             recurrent_activation=self._recurrent_nonlinearity,
             recurrent_initializer=self._recurrent_w_init,
-            name='gru_layer')
+            name="gru_layer",
+        )
         self._output_nonlinearity_layer = tf.keras.layers.Dense(
             units=self._output_dim,
             activation=self._output_nonlinearity,
             kernel_initializer=self._output_w_init,
             bias_initializer=self._output_b_init,
-            name='output_layer')
+            name="output_layer",
+        )
 
     def network_input_spec(self):
         """Network input spec.
@@ -106,7 +114,7 @@ class GRUModel(Model):
             list[str]: List of key(str) for the network outputs.
 
         """
-        return ['full_input', 'step_input', 'step_hidden_input']
+        return ["full_input", "step_input", "step_hidden_input"]
 
     def network_output_spec(self):
         """Network output spec.
@@ -115,14 +123,10 @@ class GRUModel(Model):
             list[str]: List of key(str) for the network outputs.
 
         """
-        return ['all_output', 'step_output', 'step_hidden', 'init_hidden']
+        return ["all_output", "step_output", "step_hidden", "init_hidden"]
 
     # pylint: disable=arguments-differ
-    def _build(self,
-               all_input_var,
-               step_input_var,
-               step_hidden_var,
-               name=None):
+    def _build(self, all_input_var, step_input_var, step_hidden_var, name=None):
         """Build model given input placeholder(s).
 
         Args:
@@ -143,14 +147,15 @@ class GRUModel(Model):
         """
         del name
         return gru(
-            name='gru',
+            name="gru",
             gru_cell=self._gru_cell,
             all_input_var=all_input_var,
             step_input_var=step_input_var,
             step_hidden_var=step_hidden_var,
             hidden_state_init=self._hidden_state_init,
             hidden_state_init_trainable=self._hidden_state_init_trainable,
-            output_nonlinearity_layer=self._output_nonlinearity_layer)
+            output_nonlinearity_layer=self._output_nonlinearity_layer,
+        )
 
     def __getstate__(self):
         """Object.__getstate__.
@@ -160,8 +165,8 @@ class GRUModel(Model):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_gru_cell']
-        del new_dict['_output_nonlinearity_layer']
+        del new_dict["_gru_cell"]
+        del new_dict["_output_nonlinearity_layer"]
         return new_dict
 
     def __setstate__(self, state):

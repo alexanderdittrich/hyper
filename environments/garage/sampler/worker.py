@@ -1,4 +1,5 @@
 """Worker interface used in all Samplers."""
+
 import abc
 
 
@@ -83,5 +84,6 @@ class Worker(abc.ABC):
             ValueError: Always raised, since pickling Workers is not supported.
 
         """
-        raise ValueError('Workers are not pickleable. '
-                         'Please pickle the WorkerFactory instead.')
+        raise ValueError(
+            "Workers are not pickleable. Please pickle the WorkerFactory instead."
+        )

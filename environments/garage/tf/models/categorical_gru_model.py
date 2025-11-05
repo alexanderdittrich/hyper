@@ -3,6 +3,7 @@
 A model represented by a Categorical distribution
 which is parameterized by a Gated Recurrent Unit (GRU).
 """
+
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -52,24 +53,29 @@ class CategoricalGRUModel(GRUModel):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 hidden_dim,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        hidden_dim,
+        name=None,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        layer_normalization=False,
+    ):
         super().__init__(
             output_dim=output_dim,
             hidden_dim=hidden_dim,
@@ -84,7 +90,8 @@ class CategoricalGRUModel(GRUModel):
             output_b_init=output_b_init,
             hidden_state_init=hidden_state_init,
             hidden_state_init_trainable=hidden_state_init_trainable,
-            layer_normalization=layer_normalization)
+            layer_normalization=layer_normalization,
+        )
 
     def network_output_spec(self):
         """Network output spec.
@@ -93,7 +100,7 @@ class CategoricalGRUModel(GRUModel):
             list[str]: Name of the model outputs, in order.
 
         """
-        return ['dist', 'step_output', 'step_hidden', 'init_hidden']
+        return ["dist", "step_output", "step_hidden", "init_hidden"]
 
     # pylint: disable=arguments-differ
     def _build(self, state_input, step_input, step_hidden, name=None):
@@ -119,6 +126,7 @@ class CategoricalGRUModel(GRUModel):
 
         """
         outputs, step_output, step_hidden, init_hidden = super()._build(
-            state_input, step_input, step_hidden, name=name)
+            state_input, step_input, step_hidden, name=name
+        )
         dist = tfp.distributions.OneHotCategorical(probs=outputs)
         return dist, step_output, step_hidden, init_hidden

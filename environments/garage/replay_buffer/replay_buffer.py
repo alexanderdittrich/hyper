@@ -40,14 +40,15 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
     def store_episode(self):
         """Add an episode to the buffer."""
         episode_buffer = self._convert_episode_to_batch_major()
-        episode_batch_size = len(episode_buffer['observation'])
+        episode_batch_size = len(episode_buffer["observation"])
         idx = self._get_storage_idx(episode_batch_size)
 
         for key in self._buffer:
             self._buffer[key][idx] = episode_buffer[key]
         self._n_transitions_stored = min(
-            self._size_in_transitions, self._n_transitions_stored +
-            self._time_horizon * episode_batch_size)
+            self._size_in_transitions,
+            self._n_transitions_stored + self._time_horizon * episode_batch_size,
+        )
 
     @abstractmethod
     def sample(self, batch_size):
@@ -90,7 +91,7 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
         for key, value in kwargs.items():
             self._episode_buffer[key].append(value)
 
-        if len(self._episode_buffer['observation']) == self._time_horizon:
+        if len(self._episode_buffer["observation"]) == self._time_horizon:
             self.store_episode()
             for key in self._episode_buffer:
                 self._episode_buffer[key].clear()
@@ -100,8 +101,8 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
             self._episode_buffer[key] = list()
             values = np.array(value)
             self._buffer[key] = np.zeros(
-                [self._size, self._time_horizon, *values.shape[1:]],
-                dtype=values.dtype)
+                [self._size, self._time_horizon, *values.shape[1:]], dtype=values.dtype
+            )
         self._initialized_buffer = True
 
     def _get_storage_idx(self, size_increment=1):
@@ -116,8 +117,7 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
 
         """
         if self._current_size + size_increment <= self._size:
-            idx = np.arange(self._current_size,
-                            self._current_size + size_increment)
+            idx = np.arange(self._current_size, self._current_size + size_increment)
         elif self._current_size < self._size:
             overflow = size_increment - (self._size - self._current_size)
             idx_a = np.arange(self._current_size, self._size)
@@ -126,8 +126,7 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
             self._current_ptr = overflow
         else:
             if self._current_ptr + size_increment <= self._size:
-                idx = np.arange(self._current_ptr,
-                                self._current_ptr + size_increment)
+                idx = np.arange(self._current_ptr, self._current_ptr + size_increment)
                 self._current_ptr += size_increment
             else:
                 overflow = size_increment - (self._size - self._current_size)
@@ -137,8 +136,7 @@ class ReplayBuffer(metaclass=abc.ABCMeta):
                 self._current_ptr = overflow
 
         # Update replay size
-        self._current_size = min(self._size,
-                                 self._current_size + size_increment)
+        self._current_size = min(self._size, self._current_size + size_increment)
 
         if size_increment == 1:
             idx = idx[0]

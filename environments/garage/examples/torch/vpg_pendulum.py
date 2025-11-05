@@ -6,6 +6,7 @@ Here it runs InvertedDoublePendulum-v2 environment with 100 iterations.
 Results:
     AverageReturn: 450 - 650
 """
+
 import torch
 
 from environments.garage import wrap_experiment
@@ -30,30 +31,36 @@ def vpg_pendulum(ctxt=None, seed=1):
 
     """
     set_seed(seed)
-    env = GymEnv('InvertedDoublePendulum-v2')
+    env = GymEnv("InvertedDoublePendulum-v2")
 
     trainer = Trainer(ctxt)
 
-    policy = GaussianMLPPolicy(env.spec,
-                               hidden_sizes=[64, 64],
-                               hidden_nonlinearity=torch.tanh,
-                               output_nonlinearity=None)
+    policy = GaussianMLPPolicy(
+        env.spec,
+        hidden_sizes=[64, 64],
+        hidden_nonlinearity=torch.tanh,
+        output_nonlinearity=None,
+    )
 
-    value_function = GaussianMLPValueFunction(env_spec=env.spec,
-                                              hidden_sizes=(32, 32),
-                                              hidden_nonlinearity=torch.tanh,
-                                              output_nonlinearity=None)
+    value_function = GaussianMLPValueFunction(
+        env_spec=env.spec,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=torch.tanh,
+        output_nonlinearity=None,
+    )
 
-    sampler = RaySampler(agents=policy,
-                         envs=env,
-                         max_episode_length=env.spec.max_episode_length)
+    sampler = RaySampler(
+        agents=policy, envs=env, max_episode_length=env.spec.max_episode_length
+    )
 
-    algo = VPG(env_spec=env.spec,
-               policy=policy,
-               value_function=value_function,
-               sampler=sampler,
-               discount=0.99,
-               center_adv=False)
+    algo = VPG(
+        env_spec=env.spec,
+        policy=policy,
+        value_function=value_function,
+        sampler=sampler,
+        discount=0.99,
+        center_adv=False,
+    )
 
     trainer.setup(algo, env)
     trainer.train(n_epochs=100, batch_size=10000)

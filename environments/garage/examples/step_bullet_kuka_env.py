@@ -18,10 +18,7 @@ from environments.garage.envs import GymEnv
 
 
 @click.command()
-@click.option('--n_steps',
-              default=1000,
-              type=int,
-              help='Number of steps to run')
+@click.option("--n_steps", default=1000, type=int, help="Number of steps to run")
 def step_bullet_kuka_env(n_steps=1000):
     """Load, step, and visualize a Bullet Kuka environment.
 
@@ -30,7 +27,7 @@ def step_bullet_kuka_env(n_steps=1000):
 
     """
     # Construct the environment
-    env = GymEnv(gym.make('KukaBulletEnv-v0', renders=True, isDiscrete=True))
+    env = GymEnv(gym.make("KukaBulletEnv-v0", renders=True, isDiscrete=True))
 
     # Reset the environment and launch the viewer
     env.reset()

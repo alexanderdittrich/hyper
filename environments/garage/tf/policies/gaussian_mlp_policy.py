@@ -3,6 +3,7 @@
 A policy represented by a Gaussian distribution
 which is parameterized by a multilayer perceptron (MLP).
 """
+
 # pylint: disable=wrong-import-order
 import akro
 import numpy as np
@@ -71,33 +72,38 @@ class GaussianMLPPolicy(GaussianMLPModel, Policy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 name='GaussianMLPPolicy',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 learn_std=True,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_hidden_sizes=(32, 32),
-                 std_hidden_nonlinearity=tf.nn.tanh,
-                 std_output_nonlinearity=None,
-                 std_parameterization='exp',
-                 layer_normalization=False):
+    def __init__(
+        self,
+        env_spec,
+        name="GaussianMLPPolicy",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        learn_std=True,
+        adaptive_std=False,
+        std_share_network=False,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_hidden_sizes=(32, 32),
+        std_hidden_nonlinearity=tf.nn.tanh,
+        std_output_nonlinearity=None,
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
         if not isinstance(env_spec.action_space, akro.Box):
-            raise ValueError('GaussianMLPPolicy only works with '
-                             'akro.Box action space, but not {}'.format(
-                                 env_spec.action_space))
+            raise ValueError(
+                "GaussianMLPPolicy only works with "
+                "akro.Box action space, but not {}".format(env_spec.action_space)
+            )
 
         self._env_spec = env_spec
         self._obs_dim = env_spec.observation_space.flat_dim
@@ -124,41 +130,41 @@ class GaussianMLPPolicy(GaussianMLPModel, Policy):
 
         self._f_dist = None
 
-        super().__init__(output_dim=self._action_dim,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         learn_std=learn_std,
-                         adaptive_std=adaptive_std,
-                         std_share_network=std_share_network,
-                         init_std=init_std,
-                         min_std=min_std,
-                         max_std=max_std,
-                         std_hidden_sizes=std_hidden_sizes,
-                         std_hidden_nonlinearity=std_hidden_nonlinearity,
-                         std_output_nonlinearity=std_output_nonlinearity,
-                         std_parameterization=std_parameterization,
-                         layer_normalization=layer_normalization,
-                         name=name)
+        super().__init__(
+            output_dim=self._action_dim,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            learn_std=learn_std,
+            adaptive_std=adaptive_std,
+            std_share_network=std_share_network,
+            init_std=init_std,
+            min_std=min_std,
+            max_std=max_std,
+            std_hidden_sizes=std_hidden_sizes,
+            std_hidden_nonlinearity=std_hidden_nonlinearity,
+            std_output_nonlinearity=std_output_nonlinearity,
+            std_parameterization=std_parameterization,
+            layer_normalization=layer_normalization,
+            name=name,
+        )
 
         self._initialize_policy()
 
     def _initialize_policy(self):
         """Initialize policy."""
-        state_input = tf.compat.v1.placeholder(tf.float32,
-                                               shape=(None, None,
-                                                      self._obs_dim))
+        state_input = tf.compat.v1.placeholder(
+            tf.float32, shape=(None, None, self._obs_dim)
+        )
         dist, mean, log_std = self.build(state_input).outputs
         self._f_dist = tf.compat.v1.get_default_session().make_callable(
-            [
-                dist.sample(seed=deterministic.get_tf_seed_stream()), mean,
-                log_std
-            ],
-            feed_list=[state_input])
+            [dist.sample(seed=deterministic.get_tf_seed_stream()), mean, log_std],
+            feed_list=[state_input],
+        )
 
     @property
     def input_dim(self):
@@ -202,11 +208,12 @@ class GaussianMLPPolicy(GaussianMLPModel, Policy):
                 distribution.
 
         """
-        if not isinstance(observations[0],
-                          np.ndarray) or len(observations[0].shape) > 1:
+        if (
+            not isinstance(observations[0], np.ndarray)
+            or len(observations[0].shape) > 1
+        ):
             observations = self.observation_space.flatten_n(observations)
-        samples, means, log_stds = self._f_dist(np.expand_dims(
-            observations, 1))
+        samples, means, log_stds = self._f_dist(np.expand_dims(observations, 1))
         samples = self.action_space.unflatten_n(np.squeeze(samples, 1))
         means = self.action_space.unflatten_n(np.squeeze(means, 1))
         log_stds = self.action_space.unflatten_n(np.squeeze(log_stds, 1))
@@ -246,7 +253,8 @@ class GaussianMLPPolicy(GaussianMLPModel, Policy):
             std_hidden_nonlinearity=self._std_hidden_nonlinearity,
             std_output_nonlinearity=self._std_output_nonlinearity,
             std_parameterization=self._std_parameterization,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_policy.parameters = self.parameters
         return new_policy
 
@@ -268,7 +276,7 @@ class GaussianMLPPolicy(GaussianMLPModel, Policy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_dist']
+        del new_dict["_f_dist"]
         return new_dict
 
     def __setstate__(self, state):

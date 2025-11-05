@@ -1,4 +1,5 @@
 """Environment that wraps a MetaWorld benchmark in the set_task interface."""
+
 import random
 
 # Importing garage directly avoids circular dependencies with GymEnv,
@@ -33,11 +34,7 @@ class MetaWorldSetTaskEnv(Environment):
 
     """
 
-    def __init__(self,
-                 benchmark=None,
-                 kind=None,
-                 wrapper=None,
-                 add_env_onehot=False):
+    def __init__(self, benchmark=None, kind=None, wrapper=None, add_env_onehot=False):
         self._constructed_from_benchmark = benchmark is not None
         if self._constructed_from_benchmark:
             assert kind is not None
@@ -111,15 +108,15 @@ class MetaWorldSetTaskEnv(Environment):
 
         """
         # Mixing train and test is probably a mistake
-        assert self._kind is None or self._kind == task['kind']
-        self._benchmark = task['benchmark']
-        self._kind = task['kind']
-        self._add_env_onehot = task['add_env_onehot']
+        assert self._kind is None or self._kind == task["kind"]
+        self._benchmark = task["benchmark"]
+        self._kind = task["kind"]
+        self._add_env_onehot = task["add_env_onehot"]
         if not self._inner_tasks:
             self._fill_tasks()
-        self._current_task = task['inner']
+        self._current_task = task["inner"]
         self._construct_env_if_needed()
-        self._current_env.set_task(task['inner'])
+        self._current_env.set_task(task["inner"])
         self._current_env.reset()
 
     def _fill_tasks(self):
@@ -129,36 +126,36 @@ class MetaWorldSetTaskEnv(Environment):
             ValueError: If kind is not set to "train" or "test"
         """
         if self._add_env_onehot:
-            if (self._kind == 'test'
-                    or 'metaworld.ML' in repr(type(self._benchmark))):
-                raise ValueError('add_env_onehot should only be used with '
-                                 'multi-task benchmarks, not ' +
-                                 repr(self._benchmark))
+            if self._kind == "test" or "metaworld.ML" in repr(type(self._benchmark)):
+                raise ValueError(
+                    "add_env_onehot should only be used with "
+                    "multi-task benchmarks, not " + repr(self._benchmark)
+                )
         self._tasks = []
         if self._kind is None:
             return
-        if self._kind == 'test':
+        if self._kind == "test":
             self._inner_tasks = self._benchmark.test_tasks
             self._classes = self._benchmark.test_classes
-        elif self._kind == 'train':
+        elif self._kind == "train":
             self._inner_tasks = self._benchmark.train_tasks
             self._classes = self._benchmark.train_classes
         else:
-            raise ValueError('kind should be either "train" or "test", not ' +
-                             repr(self._kind))
+            raise ValueError(
+                'kind should be either "train" or "test", not ' + repr(self._kind)
+            )
         self._env_list = list(self._classes.keys())
         if self._add_env_onehot:
             self._task_indices = {
-                env_name: index
-                for (index, env_name) in enumerate(self._classes.keys())
+                env_name: index for (index, env_name) in enumerate(self._classes.keys())
             }
         self._tasks_by_env = {}
         for inner in self._inner_tasks:
             task = {
-                'kind': self._kind,
-                'benchmark': self._benchmark,
-                'add_env_onehot': self._add_env_onehot,
-                'inner': inner,
+                "kind": self._kind,
+                "benchmark": self._benchmark,
+                "add_env_onehot": self._add_env_onehot,
+                "inner": inner,
             }
             self._tasks_by_env.setdefault(inner.env_name, []).append(task)
 
@@ -173,10 +170,9 @@ class MetaWorldSetTaskEnv(Environment):
             env = envs.TaskNameWrapper(env, task_name=env_name)
             if self._add_env_onehot:
                 task_index = self._task_indices[env_name]
-                env = envs.TaskOnehotWrapper(env,
-                                             task_index=task_index,
-                                             n_total_tasks=len(
-                                                 self._task_indices))
+                env = envs.TaskOnehotWrapper(
+                    env, task_index=task_index, n_total_tasks=len(self._task_indices)
+                )
             if self._wrapper is not None:
                 env = self._wrapper(env, self._current_task)
             self._envs[env_name] = env

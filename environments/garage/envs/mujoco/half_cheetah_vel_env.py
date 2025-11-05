@@ -1,8 +1,10 @@
 """Variant of the HalfCheetahEnv with different target velocity."""
+
 import numpy as np
 
 from environments.garage.envs.mujoco.half_cheetah_env_meta_base import (
-    HalfCheetahEnvMetaBase)  # noqa: E501
+    HalfCheetahEnvMetaBase,
+)  # noqa: E501
 
 
 class HalfCheetahVelEnv(HalfCheetahEnvMetaBase):
@@ -31,7 +33,7 @@ class HalfCheetahVelEnv(HalfCheetahEnvMetaBase):
     """
 
     def __init__(self, task=None):
-        super().__init__(task or {'velocity': 0.})
+        super().__init__(task or {"velocity": 0.0})
 
     def step(self, action):
         """Take one step in the environment.
@@ -61,15 +63,17 @@ class HalfCheetahVelEnv(HalfCheetahEnvMetaBase):
         xposafter = self.sim.data.qpos[0]
 
         forward_vel = (xposafter - xposbefore) / self.dt
-        forward_reward = -1.0 * abs(forward_vel - self._task['velocity'])
+        forward_reward = -1.0 * abs(forward_vel - self._task["velocity"])
         ctrl_cost = 0.5 * 1e-1 * np.sum(np.square(action))
 
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
         done = False
-        infos = dict(reward_forward=np.asarray([forward_reward]),
-                     reward_ctrl=np.asarray([-ctrl_cost]),
-                     task_vel=np.asarray([self._task['velocity']]))
+        infos = dict(
+            reward_forward=np.asarray([forward_reward]),
+            reward_ctrl=np.asarray([-ctrl_cost]),
+            task_vel=np.asarray([self._task["velocity"]]),
+        )
         return observation, reward, done, infos
 
     def sample_tasks(self, num_tasks):
@@ -84,8 +88,8 @@ class HalfCheetahVelEnv(HalfCheetahEnvMetaBase):
                 value between 0 and 2.
 
         """
-        velocities = self.np_random.uniform(0.0, 2.0, size=(num_tasks, ))
-        tasks = [{'velocity': velocity} for velocity in velocities]
+        velocities = self.np_random.uniform(0.0, 2.0, size=(num_tasks,))
+        tasks = [{"velocity": velocity} for velocity in velocities]
         return tasks
 
     def set_task(self, task):

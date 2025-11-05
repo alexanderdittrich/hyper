@@ -14,12 +14,13 @@ try:
 except ImportError as e:
     raise error.DependencyNotInstalled(
         "{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(
-            e))
+            e
+        )
+    )
 
 
 class MujocoEnv(gym.Env):
-    """Superclass for all MuJoCo environments.
-    """
+    """Superclass for all MuJoCo environments."""
 
     def __init__(self, model_path, frame_skip):
         if model_path.startswith("/"):
@@ -34,15 +35,19 @@ class MujocoEnv(gym.Env):
         self.viewer = None
 
         # we need this to get initial observations of correct dimension
-        self.rand_param_dim = \
-            int('body_mass' in self.rand_params) * np.prod(self.model.body_mass.shape) + \
-            int('dof_damping' in self.rand_params) * np.prod(self.model.dof_damping.shape) + \
-            int('body_inertia' in self.rand_params) * np.prod(self.model.body_inertia.shape) + \
-            int('geom_friction' in self.rand_params) * np.prod(self.model.geom_friction.shape)
+        self.rand_param_dim = (
+            int("body_mass" in self.rand_params) * np.prod(self.model.body_mass.shape)
+            + int("dof_damping" in self.rand_params)
+            * np.prod(self.model.dof_damping.shape)
+            + int("body_inertia" in self.rand_params)
+            * np.prod(self.model.body_inertia.shape)
+            + int("geom_friction" in self.rand_params)
+            * np.prod(self.model.geom_friction.shape)
+        )
 
         self.metadata = {
-            'render.modes': ['human', 'rgb_array'],
-            'video.frames_per_second': int(np.round(1.0 / self.dt))
+            "render.modes": ["human", "rgb_array"],
+            "video.frames_per_second": int(np.round(1.0 / self.dt)),
         }
 
         self.init_qpos = self.model.data.qpos.ravel().copy()
@@ -110,18 +115,20 @@ class MujocoEnv(gym.Env):
         for _ in range(n_frames):
             self.model.step()
 
-    def _render(self, mode='human', close=False):
+    def _render(self, mode="human", close=False):
         if close:
             if self.viewer is not None:
                 self._get_viewer().finish()
                 self.viewer = None
             return
 
-        if mode == 'rgb_array':
+        if mode == "rgb_array":
             self._get_viewer().render()
             data, width, height = self._get_viewer().get_image()
-            return np.fromstring(data, dtype='uint8').reshape(height, width, 3)[::-1, :, :]
-        elif mode == 'human':
+            return np.fromstring(data, dtype="uint8").reshape(height, width, 3)[
+                ::-1, :, :
+            ]
+        elif mode == "human":
             self._get_viewer().loop_once()
 
     def _get_viewer(self):
@@ -145,7 +152,4 @@ class MujocoEnv(gym.Env):
         return self.model.data.xmat[idx].reshape((3, 3))
 
     def state_vector(self):
-        return np.concatenate([
-            self.model.data.qpos.flat,
-            self.model.data.qvel.flat
-        ])
+        return np.concatenate([self.model.data.qpos.flat, self.model.data.qvel.flat])

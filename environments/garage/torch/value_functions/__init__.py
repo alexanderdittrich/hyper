@@ -1,6 +1,8 @@
 """Value functions which use PyTorch."""
+
 from environments.garage.torch.value_functions.gaussian_mlp_value_function import (
-    GaussianMLPValueFunction)
+    GaussianMLPValueFunction,
+)
 from environments.garage.torch.value_functions.value_function import ValueFunction
 
-__all__ = ['ValueFunction', 'GaussianMLPValueFunction']
+__all__ = ["ValueFunction", "GaussianMLPValueFunction"]

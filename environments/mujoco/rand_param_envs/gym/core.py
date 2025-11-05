@@ -12,6 +12,7 @@ env_closer = closer.Closer()
 
 # Env-related abstractions
 
+
 class Env(object):
     """The main OpenAI Gym class. It encapsulates an environment with
     arbitrary behind-the-scenes dynamics. An environment can be
@@ -63,7 +64,7 @@ class Env(object):
         return env
 
     # Set this in SOME subclasses
-    metadata = {'render.modes': []}
+    metadata = {"render.modes": []}
     reward_range = (-np.inf, np.inf)
 
     # Override in SOME subclasses
@@ -84,7 +85,7 @@ class Env(object):
     def _reset(self):
         raise NotImplementedError
 
-    def _render(self, mode='human', close=False):
+    def _render(self, mode="human", close=False):
         if close:
             return
         raise NotImplementedError
@@ -98,7 +99,8 @@ class Env(object):
     @property
     def monitor(self):
         raise error.Error(
-            "env.monitor has been deprecated as of 12/23/2016. Remove your call to `env.monitor.start(directory)` and instead wrap your env with `env = gym.wrappers.Monitor(env, directory)` to record data.")
+            "env.monitor has been deprecated as of 12/23/2016. Remove your call to `env.monitor.start(directory)` and instead wrap your env with `env = gym.wrappers.Monitor(env, directory)` to record data."
+        )
 
     def step(self, action):
         """Run one timestep of the environment's dynamics. When end of
@@ -126,14 +128,16 @@ class Env(object):
         Returns: observation (object): the initial observation of the
             space. (Initial reward is assumed to be 0.)
         """
-        if self.metadata.get('configure.required') and not self._configured:
-            logger.warning("Called reset on %s before configuring. Configuring automatically with default arguments",
-                           self)
+        if self.metadata.get("configure.required") and not self._configured:
+            logger.warning(
+                "Called reset on %s before configuring. Configuring automatically with default arguments",
+                self,
+            )
             self.configure()
         observation = self._reset()
         return observation
 
-    def render(self, mode='human', close=False):
+    def render(self, mode="human", close=False):
         """Renders the environment.
 
         The set of supported modes varies per environment. (And some
@@ -175,12 +179,17 @@ class Env(object):
             return self._render(close=close)
 
         # This code can be useful for calling super() in a subclass.
-        modes = self.metadata.get('render.modes', [])
+        modes = self.metadata.get("render.modes", [])
         if len(modes) == 0:
-            raise error.UnsupportedMode('{} does not support rendering (requested mode: {})'.format(self, mode))
+            raise error.UnsupportedMode(
+                "{} does not support rendering (requested mode: {})".format(self, mode)
+            )
         elif mode not in modes:
             raise error.UnsupportedMode(
-                'Unsupported rendering mode: {}. (Supported modes for {}: {})'.format(mode, self, modes))
+                "Unsupported rendering mode: {}. (Supported modes for {}: {})".format(
+                    mode, self, modes
+                )
+            )
 
         return self._render(mode=mode, close=close)
 
@@ -192,7 +201,7 @@ class Env(object):
         """
         # _closed will be missing if this instance is still
         # initializing.
-        if not hasattr(self, '_closed') or self._closed:
+        if not hasattr(self, "_closed") or self._closed:
             return
 
         if self._owns_render:
@@ -238,7 +247,7 @@ class Env(object):
             # and try calling with unsupported arguments, since your
             # stack trace will only show core.py.
             if self.spec:
-                reraise(suffix='(for {})'.format(self.spec.id))
+                reraise(suffix="(for {})".format(self.spec.id))
             else:
                 raise
 
@@ -263,10 +272,11 @@ class Env(object):
         self.close()
 
     def __str__(self):
-        return '<{} instance>'.format(type(self).__name__)
+        return "<{} instance>".format(type(self).__name__)
 
 
 # Space-related abstractions
+
 
 class Space(object):
     """Defines the observation and action spaces, so you can write generic
@@ -323,20 +333,26 @@ class Wrapper(Env):
 
         self._update_wrapper_stack()
         if env and env._configured:
-            logger.warning("Attempted to wrap env %s after .configure() was called.", env)
+            logger.warning(
+                "Attempted to wrap env %s after .configure() was called.", env
+            )
 
     def _update_wrapper_stack(self):
         """
         Keep a list of all the wrappers that have been appended to the stack.
         """
-        self._wrapper_stack = getattr(self.env, '_wrapper_stack', [])
+        self._wrapper_stack = getattr(self.env, "_wrapper_stack", [])
         self._check_for_duplicate_wrappers()
         self._wrapper_stack.append(self)
 
     def _check_for_duplicate_wrappers(self):
         """Raise an error if there are duplicate wrappers. Can be overwritten by subclasses"""
-        if self.class_name() in [wrapper.class_name() for wrapper in self._wrapper_stack]:
-            raise error.DoubleWrapperError("Attempted to double wrap with Wrapper: {}".format(self.class_name()))
+        if self.class_name() in [
+            wrapper.class_name() for wrapper in self._wrapper_stack
+        ]:
+            raise error.DoubleWrapperError(
+                "Attempted to double wrap with Wrapper: {}".format(self.class_name())
+            )
 
     @classmethod
     def class_name(cls):
@@ -348,7 +364,7 @@ class Wrapper(Env):
     def _reset(self):
         return self.env.reset()
 
-    def _render(self, mode='human', close=False):
+    def _render(self, mode="human", close=False):
         if self.env is None:
             return
         return self.env.render(mode, close)
@@ -365,7 +381,7 @@ class Wrapper(Env):
         return self.env.seed(seed)
 
     def __str__(self):
-        return '<{}{}>'.format(type(self).__name__, self.env)
+        return "<{}{}>".format(type(self).__name__, self.env)
 
     def __repr__(self):
         return str(self)

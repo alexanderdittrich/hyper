@@ -1,4 +1,5 @@
 """Default Worker class."""
+
 from collections import defaultdict
 
 import numpy as np
@@ -27,14 +28,17 @@ class DefaultWorker(Worker):
     """
 
     def __init__(
-            self,
-            *,  # Require passing by keyword, since everything's an int.
-            seed,
-            max_episode_length,
-            worker_number):
-        super().__init__(seed=seed,
-                         max_episode_length=max_episode_length,
-                         worker_number=worker_number)
+        self,
+        *,  # Require passing by keyword, since everything's an int.
+        seed,
+        max_episode_length,
+        worker_number,
+    ):
+        super().__init__(
+            seed=seed,
+            max_episode_length=max_episode_length,
+            worker_number=worker_number,
+        )
         self.agent = None
         self.env = None
         self._env_steps = []
@@ -162,16 +166,18 @@ class DefaultWorker(Worker):
 
         lengths = self._lengths
         self._lengths = []
-        return EpisodeBatch(env_spec=self.env.spec,
-                            episode_infos=episode_infos,
-                            observations=np.asarray(observations),
-                            last_observations=np.asarray(last_observations),
-                            actions=np.asarray(actions),
-                            rewards=np.asarray(rewards),
-                            step_types=np.asarray(step_types, dtype=StepType),
-                            env_infos=dict(env_infos),
-                            agent_infos=dict(agent_infos),
-                            lengths=np.asarray(lengths, dtype='i'))
+        return EpisodeBatch(
+            env_spec=self.env.spec,
+            episode_infos=episode_infos,
+            observations=np.asarray(observations),
+            last_observations=np.asarray(last_observations),
+            actions=np.asarray(actions),
+            rewards=np.asarray(rewards),
+            step_types=np.asarray(step_types, dtype=StepType),
+            env_infos=dict(env_infos),
+            agent_infos=dict(agent_infos),
+            lengths=np.asarray(lengths, dtype="i"),
+        )
 
     def rollout(self):
         """Sample a single episode of the agent in the environment.

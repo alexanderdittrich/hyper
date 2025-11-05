@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to train a task with SAC algorithm written in PyTorch."""
+
 import numpy as np
 import torch
 from torch import nn
@@ -17,7 +18,7 @@ from environments.garage.torch.q_functions import ContinuousMLPQFunction
 from environments.garage.trainer import Trainer
 
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode="none")
 def sac_half_cheetah_batch(ctxt=None, seed=1):
     """Set up environment and algorithm and run the task.
 
@@ -30,46 +31,50 @@ def sac_half_cheetah_batch(ctxt=None, seed=1):
     """
     deterministic.set_seed(seed)
     trainer = Trainer(snapshot_config=ctxt)
-    env = normalize(GymEnv('HalfCheetah-v2'))
+    env = normalize(GymEnv("HalfCheetah-v2"))
 
     policy = TanhGaussianMLPPolicy(
         env_spec=env.spec,
         hidden_sizes=[256, 256],
         hidden_nonlinearity=nn.ReLU,
         output_nonlinearity=None,
-        min_std=np.exp(-20.),
-        max_std=np.exp(2.),
+        min_std=np.exp(-20.0),
+        max_std=np.exp(2.0),
     )
 
-    qf1 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[256, 256],
-                                 hidden_nonlinearity=F.relu)
+    qf1 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[256, 256], hidden_nonlinearity=F.relu
+    )
 
-    qf2 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[256, 256],
-                                 hidden_nonlinearity=F.relu)
+    qf2 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[256, 256], hidden_nonlinearity=F.relu
+    )
 
     replay_buffer = PathBuffer(capacity_in_transitions=int(1e6))
 
-    sampler = LocalSampler(agents=policy,
-                           envs=env,
-                           max_episode_length=env.spec.max_episode_length,
-                           worker_class=FragmentWorker)
+    sampler = LocalSampler(
+        agents=policy,
+        envs=env,
+        max_episode_length=env.spec.max_episode_length,
+        worker_class=FragmentWorker,
+    )
 
-    sac = SAC(env_spec=env.spec,
-              policy=policy,
-              qf1=qf1,
-              qf2=qf2,
-              sampler=sampler,
-              gradient_steps_per_itr=1000,
-              max_episode_length_eval=1000,
-              replay_buffer=replay_buffer,
-              min_buffer_size=1e4,
-              target_update_tau=5e-3,
-              discount=0.99,
-              buffer_batch_size=256,
-              reward_scale=1.,
-              steps_per_epoch=1)
+    sac = SAC(
+        env_spec=env.spec,
+        policy=policy,
+        qf1=qf1,
+        qf2=qf2,
+        sampler=sampler,
+        gradient_steps_per_itr=1000,
+        max_episode_length_eval=1000,
+        replay_buffer=replay_buffer,
+        min_buffer_size=1e4,
+        target_update_tau=5e-3,
+        discount=0.99,
+        buffer_batch_size=256,
+        reward_scale=1.0,
+        steps_per_epoch=1,
+    )
 
     if torch.cuda.is_available():
         set_gpu_mode(True)

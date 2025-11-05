@@ -3,6 +3,7 @@
 A model represented by a Gaussian distribution
 which is parameterized by a multilayer perceptron (MLP).
 """
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -78,34 +79,40 @@ class GaussianMLPModel(Model):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 name=None,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 learn_std=True,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_hidden_sizes=(32, 32),
-                 std_hidden_nonlinearity=tf.nn.tanh,
-                 std_hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 std_hidden_b_init=tf.zeros_initializer(),
-                 std_output_nonlinearity=None,
-                 std_output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 std_parameterization='exp',
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        name=None,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        learn_std=True,
+        adaptive_std=False,
+        std_share_network=False,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_hidden_sizes=(32, 32),
+        std_hidden_nonlinearity=tf.nn.tanh,
+        std_hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        std_hidden_b_init=tf.zeros_initializer(),
+        std_output_nonlinearity=None,
+        std_output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
         # Network parameters
         super().__init__(name)
         self._hidden_sizes = hidden_sizes
@@ -135,22 +142,23 @@ class GaussianMLPModel(Model):
         self._min_std_param = None
         self._max_std_param = None
         # pylint: disable=assignment-from-no-return
-        if self._std_parameterization == 'exp':
+        if self._std_parameterization == "exp":
             self._init_std_param = np.log(init_std)
             if min_std is not None:
                 self._min_std_param = np.log(min_std)
             if max_std is not None:
                 self._max_std_param = np.log(max_std)
-        elif self._std_parameterization == 'softplus':
+        elif self._std_parameterization == "softplus":
             self._init_std_param = np.log(np.exp(init_std) - 1)
             if min_std is not None:
                 self._min_std_param = np.log(np.exp(min_std) - 1)
             if max_std is not None:
                 self._max_std_param = np.log(np.exp(max_std) - 1)
         else:
-            raise ValueError("std parameterization should be or 'exp' or "
-                             "'softplus' but got {}".format(
-                                 self._std_parameterization))
+            raise ValueError(
+                "std parameterization should be or 'exp' or "
+                "'softplus' but got {}".format(self._std_parameterization)
+            )
 
     def network_output_spec(self):
         """Network output spec.
@@ -159,7 +167,7 @@ class GaussianMLPModel(Model):
             list[str]: List of key(str) for the network outputs.
 
         """
-        return ['dist', 'mean', 'log_std']
+        return ["dist", "mean", "log_std"]
 
     # pylint: disable=arguments-differ
     def _build(self, state_input, name=None):
@@ -180,7 +188,7 @@ class GaussianMLPModel(Model):
         del name
         action_dim = self._output_dim
 
-        with tf.compat.v1.variable_scope('dist_params'):
+        with tf.compat.v1.variable_scope("dist_params"):
             if self._std_share_network:
                 # mean and std networks share an MLP
                 b = np.concatenate([
@@ -198,11 +206,12 @@ class GaussianMLPModel(Model):
                     output_nonlinearity=self._output_nonlinearity,
                     output_w_init=self._output_w_init,
                     output_b_init=tf.constant_initializer(b),
-                    name='mean_std_network',
-                    layer_normalization=self._layer_normalization)
-                with tf.compat.v1.variable_scope('mean_network'):
+                    name="mean_std_network",
+                    layer_normalization=self._layer_normalization,
+                )
+                with tf.compat.v1.variable_scope("mean_network"):
                     mean_network = mean_std_network[..., :action_dim]
-                with tf.compat.v1.variable_scope('log_std_network'):
+                with tf.compat.v1.variable_scope("log_std_network"):
                     log_std_network = mean_std_network[..., action_dim:]
 
             else:
@@ -218,8 +227,9 @@ class GaussianMLPModel(Model):
                     output_nonlinearity=self._output_nonlinearity,
                     output_w_init=self._output_w_init,
                     output_b_init=self._output_b_init,
-                    name='mean_network',
-                    layer_normalization=self._layer_normalization)
+                    name="mean_network",
+                    layer_normalization=self._layer_normalization,
+                )
 
                 # std network
                 if self._adaptive_std:
@@ -232,36 +242,40 @@ class GaussianMLPModel(Model):
                         hidden_b_init=self._std_hidden_b_init,
                         output_nonlinearity=self._std_output_nonlinearity,
                         output_w_init=self._std_output_w_init,
-                        output_b_init=tf.constant_initializer(
-                            self._init_std_param),
-                        name='log_std_network',
-                        layer_normalization=self._layer_normalization)
+                        output_b_init=tf.constant_initializer(self._init_std_param),
+                        name="log_std_network",
+                        layer_normalization=self._layer_normalization,
+                    )
                 else:
                     log_std_network = parameter(
                         input_var=state_input,
                         length=action_dim,
-                        initializer=tf.constant_initializer(
-                            self._init_std_param),
+                        initializer=tf.constant_initializer(self._init_std_param),
                         trainable=self._learn_std,
-                        name='log_std_network')
+                        name="log_std_network",
+                    )
                     log_std_network = tf.expand_dims(log_std_network, 1)
 
         mean_var = mean_network
         std_param = log_std_network
 
-        with tf.compat.v1.variable_scope('std_limits'):
+        with tf.compat.v1.variable_scope("std_limits"):
             if self._min_std_param is not None:
                 std_param = tf.maximum(std_param, self._min_std_param)
             if self._max_std_param is not None:
                 std_param = tf.minimum(std_param, self._max_std_param)
 
-        with tf.compat.v1.variable_scope('std_parameterization'):
+        with tf.compat.v1.variable_scope("std_parameterization"):
             # build std_var with std parameterization
-            if self._std_parameterization == 'exp':
+            if self._std_parameterization == "exp":
                 log_std_var = std_param
             else:  # we know it must be softplus here
-                log_std_var = tf.math.log(tf.math.log(1. + tf.exp(std_param)))
+                log_std_var = tf.math.log(tf.math.log(1.0 + tf.exp(std_param)))
 
-        return tfp.distributions.MultivariateNormalDiag(
-            loc=mean_var,
-            scale_diag=tf.exp(log_std_var)), mean_var, log_std_var
+        return (
+            tfp.distributions.MultivariateNormalDiag(
+                loc=mean_var, scale_diag=tf.exp(log_std_var)
+            ),
+            mean_var,
+            log_std_var,
+        )

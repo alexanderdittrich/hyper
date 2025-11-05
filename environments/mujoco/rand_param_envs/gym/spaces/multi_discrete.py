@@ -34,14 +34,22 @@ class MultiDiscrete(gym.Space):
         self.num_discrete_space = self.low.shape[0]
 
     def sample(self):
-        """ Returns a array with one sample from each discrete action space """
+        """Returns a array with one sample from each discrete action space"""
         # For each row: round(random .* (max - min) + min, 0)
         random_array = prng.np_random.rand(self.num_discrete_space)
-        return [int(x) for x in np.floor(np.multiply((self.high - self.low + 1.), random_array) + self.low)]
+        return [
+            int(x)
+            for x in np.floor(
+                np.multiply((self.high - self.low + 1.0), random_array) + self.low
+            )
+        ]
 
     def contains(self, x):
-        return len(x) == self.num_discrete_space and (np.array(x) >= self.low).all() and (
-                np.array(x) <= self.high).all()
+        return (
+            len(x) == self.num_discrete_space
+            and (np.array(x) >= self.low).all()
+            and (np.array(x) <= self.high).all()
+        )
 
     @property
     def shape(self):
@@ -51,10 +59,13 @@ class MultiDiscrete(gym.Space):
         return "MultiDiscrete" + str(self.num_discrete_space)
 
     def __eq__(self, other):
-        return np.array_equal(self.low, other.low) and np.array_equal(self.high, other.high)
+        return np.array_equal(self.low, other.low) and np.array_equal(
+            self.high, other.high
+        )
 
 
 # Adapters
+
 
 class DiscreteToMultiDiscrete(Discrete):
     """
@@ -140,15 +151,21 @@ class DiscreteToMultiDiscrete(Discrete):
             self.mapping = options
             for i, key in enumerate(options.keys()):
                 if i != key:
-                    raise Error('DiscreteToMultiDiscrete must contain ordered keys. ' \
-                                'Item {0} should have a key of "{0}", but key "{1}" found instead.'.format(i, key))
+                    raise Error(
+                        "DiscreteToMultiDiscrete must contain ordered keys. "
+                        'Item {0} should have a key of "{0}", but key "{1}" found instead.'.format(
+                            i, key
+                        )
+                    )
                 if not self.multi_discrete.contains(options[key]):
-                    raise Error('DiscreteToMultiDiscrete mapping for key {0} is ' \
-                                'not contained in the underlying MultiDiscrete action space. ' \
-                                'Invalid mapping: {1}'.format(key, options[key]))
+                    raise Error(
+                        "DiscreteToMultiDiscrete mapping for key {0} is "
+                        "not contained in the underlying MultiDiscrete action space. "
+                        "Invalid mapping: {1}".format(key, options[key])
+                    )
         # Unknown parameter provided
         else:
-            raise Error('DiscreteToMultiDiscrete - Invalid parameter provided.')
+            raise Error("DiscreteToMultiDiscrete - Invalid parameter provided.")
 
     def __call__(self, discrete_action):
         return self.mapping[discrete_action]
@@ -206,7 +223,7 @@ class BoxToMultiDiscrete(Box):
             options = list(range(self.num_discrete_space))
 
         if not isinstance(options, list):
-            raise Error('BoxToMultiDiscrete - Invalid parameter provided.')
+            raise Error("BoxToMultiDiscrete - Invalid parameter provided.")
 
         assert len(options) <= self.num_discrete_space
         self.low = np.array([self.multi_discrete.low[x] for x in options])

@@ -1,4 +1,5 @@
 """Datatypes used by multiple Samplers or Workers."""
+
 import collections
 
 import numpy as np
@@ -29,12 +30,14 @@ class InProgressEpisode:
     def __init__(self, env, initial_observation=None, episode_info=None):
         if initial_observation is None and episode_info is not None:
             raise ValueError(
-                'Initial observation and episode info must be both or '
-                'neither provided, but only episode info was passed in')
+                "Initial observation and episode info must be both or "
+                "neither provided, but only episode info was passed in"
+            )
         if initial_observation is not None and episode_info is None:
             raise ValueError(
-                'Initial observation and episode info must be both or '
-                'neither provided, but only initial observation was passed in')
+                "Initial observation and episode info must be both or "
+                "neither provided, but only initial observation was passed in"
+            )
 
         if initial_observation is None:
             initial_observation, episode_info = env.reset()
@@ -90,17 +93,18 @@ class InProgressEpisode:
             agent_infos[k] = np.asarray(v)
         for k, v in episode_infos.items():
             episode_infos[k] = np.asarray([v])
-        return EpisodeBatch(episode_infos=episode_infos,
-                            env_spec=self.env.spec,
-                            observations=np.asarray(self.observations[:-1]),
-                            last_observations=np.asarray([self.last_obs]),
-                            actions=np.asarray(self.actions),
-                            rewards=np.asarray(self.rewards),
-                            step_types=np.asarray(self.step_types,
-                                                  dtype=StepType),
-                            env_infos=env_infos,
-                            agent_infos=agent_infos,
-                            lengths=np.asarray([len(self.rewards)], dtype='l'))
+        return EpisodeBatch(
+            episode_infos=episode_infos,
+            env_spec=self.env.spec,
+            observations=np.asarray(self.observations[:-1]),
+            last_observations=np.asarray([self.last_obs]),
+            actions=np.asarray(self.actions),
+            rewards=np.asarray(self.rewards),
+            step_types=np.asarray(self.step_types, dtype=StepType),
+            env_infos=env_infos,
+            agent_infos=agent_infos,
+            lengths=np.asarray([len(self.rewards)], dtype="l"),
+        )
 
     @property
     def last_obs(self):

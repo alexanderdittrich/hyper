@@ -1,4 +1,5 @@
 """Noop wrapper for gym.Env."""
+
 import gym
 import numpy as np
 
@@ -18,9 +19,10 @@ class Noop(gym.Wrapper):
         super().__init__(env)
         self._noop_max = noop_max
         self._noop_action = 0
-        assert noop_max > 0, 'noop_max should be larger than 0!'
-        assert env.unwrapped.get_action_meanings()[0] == 'NOOP', (
-            "No-op should be the 0-th action but it's not in {}!".format(env))
+        assert noop_max > 0, "noop_max should be larger than 0!"
+        assert env.unwrapped.get_action_meanings()[0] == "NOOP", (
+            "No-op should be the 0-th action but it's not in {}!".format(env)
+        )
 
     def step(self, action):
         """gym.Env step function."""

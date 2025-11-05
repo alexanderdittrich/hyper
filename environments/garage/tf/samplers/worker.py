@@ -1,4 +1,5 @@
 """Default TensorFlow sampler Worker."""
+
 import tensorflow as tf
 
 from environments.garage.sampler.worker import Worker

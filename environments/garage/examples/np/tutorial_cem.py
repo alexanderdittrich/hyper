@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to add a Cross Entropy Method algorithm."""
+
 import numpy as np
 
 from environments.garage import EpisodeBatch, log_performance, wrap_experiment
@@ -47,9 +48,9 @@ class SimpleCEM:
         """
         for epoch in trainer.step_epochs():
             samples = trainer.obtain_samples(epoch)
-            log_performance(epoch,
-                            EpisodeBatch.from_list(self.env_spec, samples),
-                            self._discount)
+            log_performance(
+                epoch, EpisodeBatch.from_list(self.env_spec, samples), self._discount
+            )
             self._train_once(epoch, samples)
 
     def _train_once(self, epoch, paths):
@@ -65,13 +66,13 @@ class SimpleCEM:
         """
         returns = []
         for path in paths:
-            returns.append(discount_cumsum(path['rewards'], self._discount))
+            returns.append(discount_cumsum(path["rewards"], self._discount))
         avg_return = np.mean(np.concatenate(returns))
         self._all_avg_returns.append(avg_return)
 
         if (epoch + 1) % self._n_samples == 0:
             avg_rtns = np.array(self._all_avg_returns)
-            best_inds = np.argsort(-avg_rtns)[:self._n_best]
+            best_inds = np.argsort(-avg_rtns)[: self._n_best]
             best_params = np.array(self._all_params)[best_inds]
             self._cur_mean = best_params.mean(axis=0)
             self._cur_std = best_params.std(axis=0)
@@ -98,11 +99,12 @@ class SimpleCEM:
         """
         extra_var_mult = max(1.0 - epoch / self._extra_decay_time, 0)
         sample_std = np.sqrt(
-            np.square(self._cur_std) +
-            np.square(self._extra_std) * extra_var_mult)
+            np.square(self._cur_std) + np.square(self._extra_std) * extra_var_mult
+        )
 
-        return np.random.standard_normal(len(
-            self._cur_mean)) * sample_std + self._cur_mean
+        return (
+            np.random.standard_normal(len(self._cur_mean)) * sample_std + self._cur_mean
+        )
 
 
 @wrap_experiment
@@ -116,12 +118,14 @@ def tutorial_cem(ctxt=None):
     """
     set_seed(100)
     with TFTrainer(ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
         policy = CategoricalMLPPolicy(env.spec)
-        sampler = LocalSampler(agents=policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True)
+        sampler = LocalSampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
         algo = SimpleCEM(env.spec, policy, sampler)
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=1000)

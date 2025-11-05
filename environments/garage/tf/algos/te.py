@@ -1,4 +1,5 @@
 """Task Embedding Algorithm."""
+
 from collections import defaultdict
 
 import numpy as np
@@ -28,18 +29,21 @@ class TaskEmbeddingWorker(DefaultWorker):
     """
 
     def __init__(
-            self,
-            *,  # Require passing by keyword, since everything's an int.
-            seed,
-            max_episode_length,
-            worker_number):
+        self,
+        *,  # Require passing by keyword, since everything's an int.
+        seed,
+        max_episode_length,
+        worker_number,
+    ):
         self._latents = []
         self._tasks = []
         self._latent_infos = defaultdict(list)
         self._z, self._t, self._latent_info = None, None, None
-        super().__init__(seed=seed,
-                         max_episode_length=max_episode_length,
-                         worker_number=worker_number)
+        super().__init__(
+            seed=seed,
+            max_episode_length=max_episode_length,
+            worker_number=worker_number,
+        )
 
     def start_episode(self):
         """Begin a new episode."""
@@ -58,8 +62,7 @@ class TaskEmbeddingWorker(DefaultWorker):
 
         """
         if self._eps_length < self._max_episode_length:
-            a, agent_info = self.agent.get_action_given_latent(
-                self._prev_obs, self._z)
+            a, agent_info = self.agent.get_action_given_latent(self._prev_obs, self._z)
             es = self.env.step(a)
             self._observations.append(self._prev_obs)
             self._env_steps.append(es)
@@ -130,20 +133,22 @@ class TaskEmbeddingWorker(DefaultWorker):
             env_infos[k] = np.asarray(v)
         for k, v in episode_infos.items():
             episode_infos[k] = np.asarray(v)
-        env_infos['task_onehot'] = np.asarray(tasks)
-        agent_infos['latent'] = np.asarray(latents)
+        env_infos["task_onehot"] = np.asarray(tasks)
+        agent_infos["latent"] = np.asarray(latents)
         for k, v in latent_infos.items():
-            agent_infos['latent_{}'.format(k)] = v
+            agent_infos["latent_{}".format(k)] = v
         lengths = self._lengths
         self._lengths = []
 
-        return EpisodeBatch(env_spec=self.env.spec,
-                            episode_infos=episode_infos,
-                            observations=np.asarray(observations),
-                            last_observations=np.asarray(last_observations),
-                            actions=np.asarray(actions),
-                            rewards=np.asarray(rewards),
-                            step_types=np.asarray(step_types, dtype=StepType),
-                            env_infos=(env_infos),
-                            agent_infos=dict(agent_infos),
-                            lengths=np.asarray(lengths, dtype='i'))
+        return EpisodeBatch(
+            env_spec=self.env.spec,
+            episode_infos=episode_infos,
+            observations=np.asarray(observations),
+            last_observations=np.asarray(last_observations),
+            actions=np.asarray(actions),
+            rewards=np.asarray(rewards),
+            step_types=np.asarray(step_types, dtype=StepType),
+            env_infos=(env_infos),
+            agent_infos=dict(agent_infos),
+            lengths=np.asarray(lengths, dtype="i"),
+        )

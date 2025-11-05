@@ -1,5 +1,7 @@
-"""Uniform random exploration strategy."""
-import gym
+"""Random exploration policy."""
+
+import gymnasium as gym
+import numpy as np
 
 from environments.garage.np.policies.policy import Policy
 
@@ -57,5 +59,4 @@ class UniformRandomPolicy(Policy):
             List[dict]: Arbitrary policy state information (agent_info).
 
         """
-        return [self._env_spec.action_space.sample()
-                for obs in observations], dict()
+        return [self._env_spec.action_space.sample() for obs in observations], dict()

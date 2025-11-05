@@ -8,7 +8,7 @@ from pygame.locals import VIDEORESIZE
 from environments.mujoco.rand_param_envs import gym
 
 try:
-    matplotlib.use('GTK3Agg')
+    matplotlib.use("GTK3Agg")
 except Exception:
     pass
 
@@ -83,13 +83,16 @@ def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=N
     assert len(obs_s.shape) == 2 or (len(obs_s.shape) == 3 and obs_s.shape[2] in [1, 3])
 
     if keys_to_action is None:
-        if hasattr(env, 'get_keys_to_action'):
+        if hasattr(env, "get_keys_to_action"):
             keys_to_action = env.get_keys_to_action()
-        elif hasattr(env.unwrapped, 'get_keys_to_action'):
+        elif hasattr(env.unwrapped, "get_keys_to_action"):
             keys_to_action = env.unwrapped.get_keys_to_action()
         else:
-            assert False, env.spec.id + " does not have explicit key to action mapping, " + \
-                          "please specify one manually"
+            assert False, (
+                env.spec.id
+                + " does not have explicit key to action mapping, "
+                + "please specify one manually"
+            )
     relevant_keys = set(sum(map(list, keys_to_action.keys()), []))
 
     if transpose:
@@ -179,13 +182,11 @@ class PlayPlot(object):
         plt.pause(0.000001)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from rl_algs.common.atari_wrappers import wrap_deepmind
-
 
     def callback(obs_t, obs_tp1, action, rew, done, info):
         return [rew, obs_t.mean()]
-
 
     env_plotter = EnvPlotter(callback, 30 * 5, ["reward", "mean intensity"])
 

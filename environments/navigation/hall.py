@@ -2,12 +2,12 @@ import itertools
 import math
 import random
 
-import gym
+import gymnasium as gym
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import numpy as np
 import torch
-from gym import spaces
+from gymnasium import spaces
 
 from utils import helpers as utl
 
@@ -15,9 +15,22 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Hall(gym.Env):
-    def __init__(self, num_cells=5, num_steps=15, starting_state=(0.0, 0.0), hall_with_door_every=1, new_state_r=None, obs_checked=False, stuck=False, success_r=1, constant_r=-0.1):
+    def __init__(
+        self,
+        num_cells=5,
+        num_steps=15,
+        starting_state=(0.0, 0.0),
+        hall_with_door_every=1,
+        new_state_r=None,
+        obs_checked=False,
+        stuck=False,
+        success_r=1,
+        constant_r=-0.1,
+    ):
         assert hall_with_door_every is not None
-        assert not starting_state is None, "Random start location not supported for hall"
+        assert not starting_state is None, (
+            "Random start location not supported for hall"
+        )
 
         self.ring = False
         self.success_r = success_r
@@ -25,22 +38,29 @@ class Hall(gym.Env):
 
         super(Hall, self).__init__()
 
-        self.seed()
+        # Note: In gymnasium, seeding is done via reset(seed=seed), not self.seed()
+        self.np_random = np.random.RandomState()
         self.num_cells = num_cells
-        self.num_states = num_cells * 2 # should be  num_cells * 2 if hallway, but this messes up visualization 
-        self.new_state_r = new_state_r # reward for looking at a potential goal
-        self.obs_checked = obs_checked # whether to add to observation if door above agent has been checked
+        self.num_states = (
+            num_cells * 2
+        )  # should be  num_cells * 2 if hallway, but this messes up visualization
+        self.new_state_r = new_state_r  # reward for looking at a potential goal
+        self.obs_checked = obs_checked  # whether to add to observation if door above agent has been checked
 
         self._max_episode_steps = num_steps
         self.step_count = 0
 
-        self.hall_with_door_every = hall_with_door_every # whether to train in a hallway with doors (potential goal) every x steps
-        self.stuck = stuck # Whether the agent gets "stuck" behind the door they enter
+        self.hall_with_door_every = hall_with_door_every  # whether to train in a hallway with doors (potential goal) every x steps
+        self.stuck = stuck  # Whether the agent gets "stuck" behind the door they enter
 
         if self.obs_checked:
-            self.observation_space = spaces.Box(low=np.array([0,0,0]), high=np.array([self.num_cells-1,1,1]))
+            self.observation_space = spaces.Box(
+                low=np.array([0, 0, 0]), high=np.array([self.num_cells - 1, 1, 1])
+            )
         else:
-            self.observation_space = spaces.Box(low=np.array([0,0]), high=np.array([self.num_cells-1,1]))
+            self.observation_space = spaces.Box(
+                low=np.array([0, 0]), high=np.array([self.num_cells - 1, 1])
+            )
         self.action_space = spaces.Discrete(5)  # noop, up, right, down, left
         self.task_dim = 1
 
@@ -52,19 +72,27 @@ class Hall(gym.Env):
             sx, sy = int(sx), int(sy)
 
         # define possible goal locations
-        assert starting_state[1] == 0, "Must start in hall if hall_with_door_every is not None"
+        assert starting_state[1] == 0, (
+            "Must start in hall if hall_with_door_every is not None"
+        )
         self.possible_goals = []
-        for offset in range(hall_with_door_every, num_cells, hall_with_door_every): # door every x steps, but not at start
+        for offset in range(
+            hall_with_door_every, num_cells, hall_with_door_every
+        ):  # door every x steps, but not at start
             self.possible_goals.append((offset, 1))
 
         # keep a list of places the agent has not checked yet
         self.goals_unchecked = set(self.possible_goals)
 
-        self.num_tasks = num_cells # Note: this should really be len(self.possible_goals), but that complicates task_to_id()
+        self.num_tasks = num_cells  # Note: this should really be len(self.possible_goals), but that complicates task_to_id()
         self.belief_dim = num_cells
 
         # reset the environment state
-        self._env_state = np.array(random.choice(self.possible_goals)) if starting_state is None else np.array(self.starting_state)
+        self._env_state = (
+            np.array(random.choice(self.possible_goals))
+            if starting_state is None
+            else np.array(self.starting_state)
+        )
         # reset the goal
         self._goal = self.reset_task()
         # reset the belief
@@ -87,7 +115,6 @@ class Hall(gym.Env):
         return self._belief_state
 
     def update_belief(self, state, action):
-
         on_goal = state[0] == self._goal[0] and state[1] == self._goal[1]
 
         # hint
@@ -111,10 +138,18 @@ class Hall(gym.Env):
     def get_belief(self):
         return self._belief_state.copy()
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
+        # Handle seeding if provided
+        if seed is not None:
+            self.np_random = np.random.RandomState(seed)
+
         self.step_count = 0
-        self._env_state = np.array(random.choice(self.possible_goals)) if self.starting_state is None else np.array(self.starting_state)
-        return self.state_wrapper(self._env_state.copy())
+        self._env_state = (
+            np.array(random.choice(self.possible_goals))
+            if self.starting_state is None
+            else np.array(self.starting_state)
+        )
+        return self.state_wrapper(self._env_state.copy()), {}
 
     def state_transition(self, action):
         """
@@ -122,16 +157,19 @@ class Hall(gym.Env):
         """
         if self.hall_with_door_every is not None and self._env_state[1] == 1:
             if self.stuck:
-                return self._env_state # Cannot go backward once a door is entered!
+                return self._env_state  # Cannot go backward once a door is entered!
             elif action != 3:
-                return self._env_state # Can only go down once a door is entered!
+                return self._env_state  # Can only go down once a door is entered!
 
         if action == 1:  # up
             # can only go up if not in hallway or there is door above agent
             if self.hall_with_door_every is None:
                 self._env_state[1] = min([self._env_state[1] + 1, self.num_cells - 1])
-            elif (int(self._env_state[0]), int(self._env_state[1]+1)) in self.possible_goals:
-                self._env_state[1] = self._env_state[1]+1
+            elif (
+                int(self._env_state[0]),
+                int(self._env_state[1] + 1),
+            ) in self.possible_goals:
+                self._env_state[1] = self._env_state[1] + 1
         elif action == 2:  # right
             self._env_state[0] = min([self._env_state[0] + 1, self.num_cells - 1])
         elif action == 3:  # down
@@ -145,19 +183,19 @@ class Hall(gym.Env):
         if self.obs_checked:
             sx, sy = state
             sx, sy = int(sx), int(sy)
-            door_unchecked = 1 if ((sx, sy+1) in self.goals_unchecked) else 0
-            state_to_return = np.array([state[0],state[1],door_unchecked])
+            door_unchecked = 1 if ((sx, sy + 1) in self.goals_unchecked) else 0
+            state_to_return = np.array([state[0], state[1], door_unchecked])
         else:
             state_to_return = state
         return state_to_return
 
     def step(self, action):
-
         if isinstance(action, np.ndarray) and action.ndim == 1:
             action = action[0]
         assert self.action_space.contains(action)
 
-        done = False
+        terminated = False
+        truncated = False
 
         # perform state transition
         state = self.state_transition(action)
@@ -174,11 +212,12 @@ class Hall(gym.Env):
         # check if maximum step limit is reached
         self.step_count += 1
         if self.step_count >= self._max_episode_steps:
-            done = True
+            truncated = True
 
         # compute reward
         if self._env_state[0] == self._goal[0] and self._env_state[1] == self._goal[1]:
             reward = self.success_r
+            terminated = True  # Goal reached
         elif self.new_state_r is not None and checked_potential_goal:
             reward = self.new_state_r
         else:
@@ -189,18 +228,16 @@ class Hall(gym.Env):
 
         task = self.get_task()
         task_id = self.task_to_id(task)
-        info = {'task': task,
-                'task_id': task_id,
-                'belief': self.get_belief()}
-        return self.state_wrapper(state), reward, done, info
+        info = {"task": task, "task_id": task_id, "belief": self.get_belief()}
+        return self.state_wrapper(state), reward, terminated, truncated, info
 
     def task_to_id(self, goals):
         goals = torch.tensor(goals).to(torch.int64)
-        ids = goals[...,0] # just the x coordinate
+        ids = goals[..., 0]  # just the x coordinate
         return ids
 
     def id_to_task(self, classes):
-        return torch.cat([classes, torch.ones_like(classes)],dim=-1)
+        return torch.cat([classes, torch.ones_like(classes)], dim=-1)
 
     def goal_to_onehot_id(self, pos):
         ids = self.task_to_id(pos)
@@ -215,15 +252,16 @@ class Hall(gym.Env):
     #     return pos
 
     @staticmethod
-    def visualise_behaviour(env,
-                            args,
-                            policy,
-                            iter_idx,
-                            encoder=None,
-                            reward_decoder=None,
-                            image_folder=None,
-                            **kwargs
-                            ):
+    def visualise_behaviour(
+        env,
+        args,
+        policy,
+        iter_idx,
+        encoder=None,
+        reward_decoder=None,
+        image_folder=None,
+        **kwargs,
+    ):
         """
         Visualises the behaviour of the policy, together with the latent state and belief.
         The environment passed to this method should be a SubProcVec or DummyVecEnv, not the raw env!
@@ -255,7 +293,9 @@ class Hall(gym.Env):
             episode_latent_means = [[] for _ in range(num_episodes)]
             episode_latent_logvars = [[] for _ in range(num_episodes)]
         else:
-            episode_latent_samples = episode_latent_means = episode_latent_logvars = None
+            episode_latent_samples = episode_latent_means = episode_latent_logvars = (
+                None
+            )
 
         curr_latent_sample = curr_latent_mean = curr_latent_logvar = None
 
@@ -266,30 +306,36 @@ class Hall(gym.Env):
         start_obs = state.clone()
 
         for episode_idx in range(args.max_rollouts_per_task):
-
             curr_goal = env.get_task()
             curr_rollout_rew = []
             curr_rollout_goal = []
 
             if encoder is not None:
-
                 if episode_idx == 0:
                     # reset to prior
-                    curr_latent_sample, curr_latent_mean, curr_latent_logvar, hidden_state = encoder.prior(1)
+                    (
+                        curr_latent_sample,
+                        curr_latent_mean,
+                        curr_latent_logvar,
+                        hidden_state,
+                    ) = encoder.prior(1)
                     curr_latent_sample = curr_latent_sample[0].to(device)
                     curr_latent_mean = curr_latent_mean[0].to(device)
                     curr_latent_logvar = curr_latent_logvar[0].to(device)
 
-                episode_latent_samples[episode_idx].append(curr_latent_sample[0].clone())
+                episode_latent_samples[episode_idx].append(
+                    curr_latent_sample[0].clone()
+                )
                 episode_latent_means[episode_idx].append(curr_latent_mean[0].clone())
-                episode_latent_logvars[episode_idx].append(curr_latent_logvar[0].clone())
+                episode_latent_logvars[episode_idx].append(
+                    curr_latent_logvar[0].clone()
+                )
 
             episode_all_obs[episode_idx].append(start_obs.clone())
             if args.pass_belief_to_policy and (encoder is None):
                 episode_beliefs[episode_idx].append(belief)
 
             for step_idx in range(1, env._max_episode_steps + 1):
-
                 if step_idx == 1:
                     prev_obs = start_obs.clone()
                 else:
@@ -297,33 +343,54 @@ class Hall(gym.Env):
                 episode_prev_obs[episode_idx].append(prev_obs)
 
                 # act
-                _, action, _ = utl.select_action(args=args,
-                                                 policy=policy,
-                                                 state=state.view(-1),
-                                                 belief=belief,
-                                                 task=task,
-                                                 deterministic=True,
-                                                 latent_sample=curr_latent_sample.view(-1) if (curr_latent_sample is not None) else None,
-                                                 latent_mean=curr_latent_mean.view(-1) if (curr_latent_mean is not None) else None,
-                                                 latent_logvar=curr_latent_logvar.view(-1) if (curr_latent_logvar is not None) else None,
-                                                 )
+                _, action, _ = utl.select_action(
+                    args=args,
+                    policy=policy,
+                    state=state.view(-1),
+                    belief=belief,
+                    task=task,
+                    deterministic=True,
+                    latent_sample=curr_latent_sample.view(-1)
+                    if (curr_latent_sample is not None)
+                    else None,
+                    latent_mean=curr_latent_mean.view(-1)
+                    if (curr_latent_mean is not None)
+                    else None,
+                    latent_logvar=curr_latent_logvar.view(-1)
+                    if (curr_latent_logvar is not None)
+                    else None,
+                )
 
                 # observe reward and next obs
-                [state, belief, task], (rew_raw, rew_normalised), done, infos = utl.env_step(env, action, args)
+                [state, belief, task], (rew_raw, rew_normalised), done, infos = (
+                    utl.env_step(env, action, args)
+                )
 
                 if encoder is not None:
                     # update task embedding
-                    curr_latent_sample, curr_latent_mean, curr_latent_logvar, hidden_state = encoder(
+                    (
+                        curr_latent_sample,
+                        curr_latent_mean,
+                        curr_latent_logvar,
+                        hidden_state,
+                    ) = encoder(
                         action.float().to(device),
                         state,
                         rew_raw.reshape((1, 1)).float().to(device),
                         prev_obs,
                         hidden_state,
-                        return_prior=False)
+                        return_prior=False,
+                    )
 
-                    episode_latent_samples[episode_idx].append(curr_latent_sample[0].clone())
-                    episode_latent_means[episode_idx].append(curr_latent_mean[0].clone())
-                    episode_latent_logvars[episode_idx].append(curr_latent_logvar[0].clone())
+                    episode_latent_samples[episode_idx].append(
+                        curr_latent_sample[0].clone()
+                    )
+                    episode_latent_means[episode_idx].append(
+                        curr_latent_mean[0].clone()
+                    )
+                    episode_latent_logvars[episode_idx].append(
+                        curr_latent_logvar[0].clone()
+                    )
 
                 episode_all_obs[episode_idx].append(state.clone())
                 episode_next_obs[episode_idx].append(state.clone())
@@ -336,9 +403,11 @@ class Hall(gym.Env):
                 if args.pass_belief_to_policy and (encoder is None):
                     episode_beliefs[episode_idx].append(belief)
 
-                if infos[0]['done_mdp'] and not done:
-                    start_obs = infos[0]['start_state']
-                    start_obs = torch.from_numpy(start_obs).float().reshape((1, -1)).to(device)
+                if infos[0]["done_mdp"] and not done:
+                    start_obs = infos[0]["start_state"]
+                    start_obs = (
+                        torch.from_numpy(start_obs).float().reshape((1, -1)).to(device)
+                    )
                     break
 
             episode_returns.append(sum(curr_rollout_rew))
@@ -358,24 +427,42 @@ class Hall(gym.Env):
 
         # plot behaviour & visualise belief in env
 
-        rew_pred_means, rew_pred_vars = plot_bb(env, args, episode_all_obs, episode_goals, reward_decoder,
-                                                episode_latent_means, episode_latent_logvars,
-                                                image_folder, iter_idx, episode_beliefs)
+        rew_pred_means, rew_pred_vars = plot_bb(
+            env,
+            args,
+            episode_all_obs,
+            episode_goals,
+            reward_decoder,
+            episode_latent_means,
+            episode_latent_logvars,
+            image_folder,
+            iter_idx,
+            episode_beliefs,
+        )
 
         if reward_decoder:
-            plot_rew_reconstruction(env, rew_pred_means, rew_pred_vars, image_folder, iter_idx)
+            plot_rew_reconstruction(
+                env, rew_pred_means, rew_pred_vars, image_folder, iter_idx
+            )
 
-        return episode_latent_means, episode_latent_logvars, \
-               episode_prev_obs, episode_next_obs, episode_actions, episode_rewards, \
-               episode_returns
+        return (
+            episode_latent_means,
+            episode_latent_logvars,
+            episode_prev_obs,
+            episode_next_obs,
+            episode_actions,
+            episode_rewards,
+            episode_returns,
+        )
 
 
-def plot_rew_reconstruction(env,
-                            rew_pred_means,
-                            rew_pred_vars,
-                            image_folder,
-                            iter_idx,
-                            ):
+def plot_rew_reconstruction(
+    env,
+    rew_pred_means,
+    rew_pred_vars,
+    image_folder,
+    iter_idx,
+):
     """
     Note that env might need to be a wrapped env!
     """
@@ -386,53 +473,80 @@ def plot_rew_reconstruction(env,
 
     plt.subplot(1, 3, 1)
     test_rew_mus = torch.cat(rew_pred_means).cpu().detach().numpy()
-    plt.plot(range(test_rew_mus.shape[0]), test_rew_mus, '.-', alpha=0.5)
-    plt.plot(range(test_rew_mus.shape[0]), test_rew_mus.mean(axis=1), 'k.-')
+    plt.plot(range(test_rew_mus.shape[0]), test_rew_mus, ".-", alpha=0.5)
+    plt.plot(range(test_rew_mus.shape[0]), test_rew_mus.mean(axis=1), "k.-")
     for tj in np.cumsum([0, *[env._max_episode_steps for _ in range(num_rollouts)]]):
         span = test_rew_mus.max() - test_rew_mus.min()
-        plt.plot([tj + 0.5, tj + 0.5], [test_rew_mus.min() - 0.05 * span, test_rew_mus.max() + 0.05 * span], 'k--',
-                 alpha=0.5)
-    plt.title('output - mean')
+        plt.plot(
+            [tj + 0.5, tj + 0.5],
+            [test_rew_mus.min() - 0.05 * span, test_rew_mus.max() + 0.05 * span],
+            "k--",
+            alpha=0.5,
+        )
+    plt.title("output - mean")
 
     plt.subplot(1, 3, 2)
     test_rew_vars = torch.cat(rew_pred_vars).cpu().detach().numpy()
-    plt.plot(range(test_rew_vars.shape[0]), test_rew_vars, '.-', alpha=0.5)
-    plt.plot(range(test_rew_vars.shape[0]), test_rew_vars.mean(axis=1), 'k.-')
+    plt.plot(range(test_rew_vars.shape[0]), test_rew_vars, ".-", alpha=0.5)
+    plt.plot(range(test_rew_vars.shape[0]), test_rew_vars.mean(axis=1), "k.-")
     for tj in np.cumsum([0, *[env._max_episode_steps for _ in range(num_rollouts)]]):
         span = test_rew_vars.max() - test_rew_vars.min()
-        plt.plot([tj + 0.5, tj + 0.5], [test_rew_vars.min() - 0.05 * span, test_rew_vars.max() + 0.05 * span],
-                 'k--', alpha=0.5)
-    plt.title('output - variance')
+        plt.plot(
+            [tj + 0.5, tj + 0.5],
+            [test_rew_vars.min() - 0.05 * span, test_rew_vars.max() + 0.05 * span],
+            "k--",
+            alpha=0.5,
+        )
+    plt.title("output - variance")
 
     plt.subplot(1, 3, 3)
     rew_pred_entropy = -(test_rew_vars * np.log(test_rew_vars)).sum(axis=1)
-    plt.plot(range(len(test_rew_vars)), rew_pred_entropy, 'r.-')
+    plt.plot(range(len(test_rew_vars)), rew_pred_entropy, "r.-")
     for tj in np.cumsum([0, *[env._max_episode_steps for _ in range(num_rollouts)]]):
         span = rew_pred_entropy.max() - rew_pred_entropy.min()
-        plt.plot([tj + 0.5, tj + 0.5], [rew_pred_entropy.min() - 0.05 * span, rew_pred_entropy.max() + 0.05 * span],
-                 'k--', alpha=0.5)
-    plt.title('Reward prediction entropy')
+        plt.plot(
+            [tj + 0.5, tj + 0.5],
+            [
+                rew_pred_entropy.min() - 0.05 * span,
+                rew_pred_entropy.max() + 0.05 * span,
+            ],
+            "k--",
+            alpha=0.5,
+        )
+    plt.title("Reward prediction entropy")
 
     plt.tight_layout()
     if image_folder is not None:
-        plt.savefig('{}/{}_rew_decoder'.format(image_folder, iter_idx))
+        plt.savefig("{}/{}_rew_decoder".format(image_folder, iter_idx))
         plt.close()
     else:
         plt.show()
 
 
-def plot_bb(env, args, episode_all_obs, episode_goals, reward_decoder,
-            episode_latent_means, episode_latent_logvars, image_folder, iter_idx, episode_beliefs):
+def plot_bb(
+    env,
+    args,
+    episode_all_obs,
+    episode_goals,
+    reward_decoder,
+    episode_latent_means,
+    episode_latent_logvars,
+    image_folder,
+    iter_idx,
+    episode_beliefs,
+):
     """
     Plot behaviour and belief.
     """
 
-    only_plot_last_step = env._max_episode_steps > 30 
+    only_plot_last_step = env._max_episode_steps > 30
 
     if only_plot_last_step:
         plt.figure(figsize=(10, 3))
     else:
-        plt.figure(figsize=(1.5 * env._max_episode_steps, 1.5 * args.max_rollouts_per_task))
+        plt.figure(
+            figsize=(1.5 * env._max_episode_steps, 1.5 * args.max_rollouts_per_task)
+        )
 
     num_episodes = len(episode_all_obs)
     num_steps = len(episode_all_obs[0])
@@ -442,37 +556,42 @@ def plot_bb(env, args, episode_all_obs, episode_goals, reward_decoder,
 
     # loop through the experiences
     for episode_idx in range(num_episodes):
-        step_range = [num_steps-1] if only_plot_last_step else range(num_steps) # long horizons just plot at end
+        step_range = (
+            [num_steps - 1] if only_plot_last_step else range(num_steps)
+        )  # long horizons just plot at end
         for step_idx in step_range:
-
-            curr_obs = episode_all_obs[episode_idx][:step_idx + 1]
+            curr_obs = episode_all_obs[episode_idx][: step_idx + 1]
             curr_goal = episode_goals[episode_idx]
 
             if episode_latent_means is not None:
-                curr_means = episode_latent_means[episode_idx][:step_idx + 1]
-                curr_logvars = episode_latent_logvars[episode_idx][:step_idx + 1]
+                curr_means = episode_latent_means[episode_idx][: step_idx + 1]
+                curr_logvars = episode_latent_logvars[episode_idx][: step_idx + 1]
 
             # choose correct subplot
             if only_plot_last_step:
-                plt.subplot(num_episodes,
-                            1,
-                            episode_idx+1)
+                plt.subplot(num_episodes, 1, episode_idx + 1)
             else:
-                plt.subplot(args.max_rollouts_per_task,
-                            math.ceil(env._max_episode_steps) + 1,
-                            1 + episode_idx * (1 + math.ceil(env._max_episode_steps)) + step_idx)
+                plt.subplot(
+                    args.max_rollouts_per_task,
+                    math.ceil(env._max_episode_steps) + 1,
+                    1
+                    + episode_idx * (1 + math.ceil(env._max_episode_steps))
+                    + step_idx,
+                )
 
             # plot the behaviour
             plot_behaviour(env, curr_obs, curr_goal)
 
             if reward_decoder is not None:
                 # visualise belief in env
-                rm, rv = compute_beliefs(env,
-                                         args,
-                                         reward_decoder,
-                                         curr_means[-1],
-                                         curr_logvars[-1],
-                                         curr_goal)
+                rm, rv = compute_beliefs(
+                    env,
+                    args,
+                    reward_decoder,
+                    curr_means[-1],
+                    curr_logvars[-1],
+                    curr_goal,
+                )
                 rew_pred_means[episode_idx].append(rm)
                 rew_pred_vars[episode_idx].append(rv)
                 plot_belief(env, rm, args)
@@ -483,10 +602,10 @@ def plot_bb(env, args, episode_all_obs, episode_goals, reward_decoder,
                 rew_pred_means = rew_pred_vars = None
 
             if episode_idx == 0:
-                plt.title('t = {}'.format(step_idx))
+                plt.title("t = {}".format(step_idx))
 
             if step_idx == 0:
-                plt.ylabel('Episode {}'.format(episode_idx + 1))
+                plt.ylabel("Episode {}".format(episode_idx + 1))
 
     if reward_decoder is not None:
         rew_pred_means = [torch.stack(r) for r in rew_pred_means]
@@ -495,7 +614,7 @@ def plot_bb(env, args, episode_all_obs, episode_goals, reward_decoder,
     # save figure that shows policy behaviour
     plt.tight_layout()
     if image_folder is not None:
-        plt.savefig('{}/{}_behaviour'.format(image_folder, iter_idx))
+        plt.savefig("{}/{}_behaviour".format(image_folder, iter_idx))
         plt.close()
     else:
         plt.show()
@@ -512,8 +631,9 @@ def plot_behaviour(env, observations, goal):
         for j in range(num_cells_y):
             pos_i = i
             pos_j = j
-            rec = Rectangle((pos_i, pos_j), 1, 1, facecolor='none', alpha=0.5,
-                            edgecolor='k')
+            rec = Rectangle(
+                (pos_i, pos_j), 1, 1, facecolor="none", alpha=0.5, edgecolor="k"
+            )
             plt.gca().add_patch(rec)
 
     # shift obs and goal by half a stepsize
@@ -522,13 +642,13 @@ def plot_behaviour(env, observations, goal):
     observations = observations.cpu().numpy() + 0.5
     unwrapped_env = env.venv.unwrapped.envs[0]
     if unwrapped_env.obs_checked:
-        observations = observations[...,:-1] # remove checked door obs
+        observations = observations[..., :-1]  # remove checked door obs
     goal = np.array(goal) + 0.5
 
     # visualise behaviour, current position, goal
-    plt.plot(observations[:, 0], observations[:, 1], 'b-')
-    plt.plot(observations[-1, 0], observations[-1, 1], 'b.')
-    plt.plot(goal[0], goal[1], 'kx')
+    plt.plot(observations[:, 0], observations[:, 1], "b-")
+    plt.plot(observations[-1, 0], observations[-1, 1], "b.")
+    plt.plot(goal[0], goal[1], "kx")
 
     # make it look nice
     plt.xticks([])
@@ -551,9 +671,9 @@ def compute_beliefs(env, args, reward_decoder, latent_mean, latent_logvar, goal)
     # compute reward predictions for those
     if reward_decoder.multi_head:
         rew_pred = reward_decoder(samples, None)
-        if args.rew_pred_type == 'bernoulli':
+        if args.rew_pred_type == "bernoulli":
             rew_pred = torch.sigmoid(rew_pred)
-        elif args.rew_pred_type == 'categorical':
+        elif args.rew_pred_type == "categorical":
             rew_pred = torch.softmax(rew_pred, 1)
         rew_pred_means = torch.mean(rew_pred, dim=0)  # .reshape((1, -1))
         rew_pred_vars = torch.var(rew_pred, dim=0)  # .reshape((1, -1))
@@ -562,13 +682,17 @@ def compute_beliefs(env, args, reward_decoder, latent_mean, latent_logvar, goal)
         tsv = []
         for st in range(num_cells_x):
             task_id = unwrapped_env.id_to_task(torch.tensor([st]))
-            curr_state = unwrapped_env.goal_to_onehot_id(task_id).expand((samples.shape[0], 2))
+            curr_state = unwrapped_env.goal_to_onehot_id(task_id).expand(
+                (samples.shape[0], 2)
+            )
             if unwrapped_env.oracle:
                 if isinstance(goal, np.ndarray):
                     goal = torch.from_numpy(goal)
-                curr_state = torch.cat((curr_state, goal.repeat(curr_state.shape[0], 1).float()), dim=1)
+                curr_state = torch.cat(
+                    (curr_state, goal.repeat(curr_state.shape[0], 1).float()), dim=1
+                )
             rew_pred = reward_decoder(samples, curr_state)
-            if args.rew_pred_type == 'bernoulli':
+            if args.rew_pred_type == "bernoulli":
                 rew_pred = torch.sigmoid(rew_pred)
             tsm.append(torch.mean(rew_pred))
             tsv.append(torch.var(rew_pred))
@@ -607,7 +731,8 @@ def plot_belief(env, beliefs, args):
         j = 1
         pos_i = i
         pos_j = j
-        rec = Rectangle((pos_i, pos_j), 1, 1, facecolor='r', alpha=alphas[count],
-                        edgecolor='k')
+        rec = Rectangle(
+            (pos_i, pos_j), 1, 1, facecolor="r", alpha=alphas[count], edgecolor="k"
+        )
         plt.gca().add_patch(rec)
         count += 1

@@ -1,4 +1,5 @@
 """A baseline based on a GaussianCNN model."""
+
 import akro
 from dowel import tabular
 import numpy as np
@@ -9,7 +10,8 @@ from environments.garage.experiment import deterministic
 from environments.garage.np.baselines.baseline import Baseline
 from environments.garage.tf import compile_function
 from environments.garage.tf.baselines.gaussian_cnn_baseline_model import (
-    GaussianCNNBaselineModel)
+    GaussianCNNBaselineModel,
+)
 from environments.garage.tf.optimizers import LBFGSOptimizer, PenaltyLBFGSOptimizer
 
 
@@ -96,49 +98,55 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 filters,
-                 strides,
-                 padding,
-                 hidden_sizes,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 name='GaussianCNNBaseline',
-                 learn_std=True,
-                 init_std=1.0,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 std_filters=(),
-                 std_strides=(),
-                 std_padding='SAME',
-                 std_hidden_sizes=(),
-                 std_hidden_nonlinearity=None,
-                 std_output_nonlinearity=None,
-                 layer_normalization=False,
-                 normalize_inputs=True,
-                 normalize_outputs=True,
-                 subsample_factor=1.,
-                 optimizer=None,
-                 optimizer_args=None,
-                 use_trust_region=True,
-                 max_kl_step=0.01):
-
-        if not isinstance(env_spec.observation_space, akro.Box) or \
-                not len(env_spec.observation_space.shape) in (2, 3):
+    def __init__(
+        self,
+        env_spec,
+        filters,
+        strides,
+        padding,
+        hidden_sizes,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        name="GaussianCNNBaseline",
+        learn_std=True,
+        init_std=1.0,
+        adaptive_std=False,
+        std_share_network=False,
+        std_filters=(),
+        std_strides=(),
+        std_padding="SAME",
+        std_hidden_sizes=(),
+        std_hidden_nonlinearity=None,
+        std_output_nonlinearity=None,
+        layer_normalization=False,
+        normalize_inputs=True,
+        normalize_outputs=True,
+        subsample_factor=1.0,
+        optimizer=None,
+        optimizer_args=None,
+        use_trust_region=True,
+        max_kl_step=0.01,
+    ):
+        if not isinstance(env_spec.observation_space, akro.Box) or not len(
+            env_spec.observation_space.shape
+        ) in (2, 3):
             raise ValueError(
-                '{} can only process 2D, 3D akro.Image or'
-                ' akro.Box observations, but received an env_spec with '
-                'observation_space of type {} and shape {}'.format(
+                "{} can only process 2D, 3D akro.Image or"
+                " akro.Box observations, but received an env_spec with "
+                "observation_space of type {} and shape {}".format(
                     type(self).__name__,
                     type(env_spec.observation_space).__name__,
-                    env_spec.observation_space.shape))
+                    env_spec.observation_space.shape,
+                )
+            )
 
         self._env_spec = env_spec
         self._use_trust_region = use_trust_region
@@ -151,43 +159,45 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
             optimizer_args = dict()
         if optimizer is None:
             if use_trust_region:
-                self._optimizer = make_optimizer(PenaltyLBFGSOptimizer,
-                                                 **optimizer_args)
+                self._optimizer = make_optimizer(
+                    PenaltyLBFGSOptimizer, **optimizer_args
+                )
             else:
-                self._optimizer = make_optimizer(LBFGSOptimizer,
-                                                 **optimizer_args)
+                self._optimizer = make_optimizer(LBFGSOptimizer, **optimizer_args)
         else:
             self._optimizer = make_optimizer(optimizer, **optimizer_args)
 
-        super().__init__(input_dim=env_spec.observation_space.shape,
-                         output_dim=1,
-                         filters=filters,
-                         strides=strides,
-                         padding=padding,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         learn_std=learn_std,
-                         adaptive_std=adaptive_std,
-                         std_share_network=std_share_network,
-                         init_std=init_std,
-                         min_std=None,
-                         max_std=None,
-                         std_filters=std_filters,
-                         std_strides=std_strides,
-                         std_padding=std_padding,
-                         std_hidden_sizes=std_hidden_sizes,
-                         std_hidden_nonlinearity=std_hidden_nonlinearity,
-                         std_output_nonlinearity=std_output_nonlinearity,
-                         std_parameterization='exp',
-                         layer_normalization=layer_normalization,
-                         name=name)
+        super().__init__(
+            input_dim=env_spec.observation_space.shape,
+            output_dim=1,
+            filters=filters,
+            strides=strides,
+            padding=padding,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            learn_std=learn_std,
+            adaptive_std=adaptive_std,
+            std_share_network=std_share_network,
+            init_std=init_std,
+            min_std=None,
+            max_std=None,
+            std_filters=std_filters,
+            std_strides=std_strides,
+            std_padding=std_padding,
+            std_hidden_sizes=std_hidden_sizes,
+            std_hidden_nonlinearity=std_hidden_nonlinearity,
+            std_output_nonlinearity=std_output_nonlinearity,
+            std_parameterization="exp",
+            layer_normalization=layer_normalization,
+            name=name,
+        )
         # model for old distribution, used when trusted region is on
-        self._old_model = self.clone_model(name=name + '_old_model')
+        self._old_model = self.clone_model(name=name + "_old_model")
         self._old_network = None
 
         self._x_mean = None
@@ -198,20 +208,31 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
         self._initialize()
 
     def _initialize(self):
-        input_var = tf.compat.v1.placeholder(tf.float32,
-                                             shape=(None, ) +
-                                             self._input_shape)
+        input_var = tf.compat.v1.placeholder(
+            tf.float32, shape=(None,) + self._input_shape
+        )
         if isinstance(self.env_spec.observation_space, akro.Image):
             input_var = tf.cast(input_var, tf.float32) / 255.0
 
-        ys_var = tf.compat.v1.placeholder(dtype=tf.float32,
-                                          name='ys',
-                                          shape=(None, self._output_dim))
+        ys_var = tf.compat.v1.placeholder(
+            dtype=tf.float32, name="ys", shape=(None, self._output_dim)
+        )
 
         self._old_network = self._old_model.build(input_var)
-        (_, _, norm_dist, norm_mean, norm_log_std, _, mean, _, self._x_mean,
-         self._x_std, self._y_mean,
-         self._y_std) = self.build(input_var).outputs
+        (
+            _,
+            _,
+            norm_dist,
+            norm_mean,
+            norm_log_std,
+            _,
+            mean,
+            _,
+            self._x_mean,
+            self._x_std,
+            self._y_mean,
+            self._y_std,
+        ) = self.build(input_var).outputs
 
         normalized_ys_var = (ys_var - self._y_mean) / self._y_std
         old_normalized_dist = self._old_network.normalized_dist
@@ -228,12 +249,12 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
         )
 
         if self._use_trust_region:
-            optimizer_args['leq_constraint'] = (mean_k1, self._max_kl_step)
-            optimizer_args['inputs'] = [input_var, ys_var]
+            optimizer_args["leq_constraint"] = (mean_k1, self._max_kl_step)
+            optimizer_args["inputs"] = [input_var, ys_var]
         else:
-            optimizer_args['inputs'] = [input_var, ys_var]
+            optimizer_args["inputs"] = [input_var, ys_var]
 
-        with tf.name_scope('update_opt'):
+        with tf.name_scope("update_opt"):
             self._optimizer.update_opt(**optimizer_args)
 
     def fit(self, paths):
@@ -243,19 +264,19 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
             paths (dict[numpy.ndarray]): Sample paths.
 
         """
-        xs = np.concatenate([p['observations'] for p in paths])
-        if isinstance(self._env_spec.observation_space, akro.Image) and \
-                len(xs[0].shape) < \
-                len(self._env_spec.observation_space.shape):
+        xs = np.concatenate([p["observations"] for p in paths])
+        if isinstance(self._env_spec.observation_space, akro.Image) and len(
+            xs[0].shape
+        ) < len(self._env_spec.observation_space.shape):
             xs = self._env_spec.observation_space.unflatten_n(xs)
-        ys = np.concatenate([p['returns'] for p in paths])
+        ys = np.concatenate([p["returns"] for p in paths])
         ys = ys.reshape((-1, 1))
 
         if self._subsample_factor < 1:
             num_samples_tot = xs.shape[0]
             idx = np.random.randint(
-                0, num_samples_tot,
-                int(num_samples_tot * self._subsample_factor))
+                0, num_samples_tot, int(num_samples_tot * self._subsample_factor)
+            )
             xs, ys = xs[idx], ys[idx]
 
         if self._normalize_inputs:
@@ -263,25 +284,24 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
             self._x_mean.load(np.mean(xs, axis=0, keepdims=True))
             self._x_std.load(np.std(xs, axis=0, keepdims=True) + 1e-8)
             self._old_network.x_mean.load(np.mean(xs, axis=0, keepdims=True))
-            self._old_network.x_std.load(
-                np.std(xs, axis=0, keepdims=True) + 1e-8)
+            self._old_network.x_std.load(np.std(xs, axis=0, keepdims=True) + 1e-8)
         if self._normalize_outputs:
             # recompute normalizing constants for outputs
             self._y_mean.load(np.mean(ys, axis=0, keepdims=True))
             self._y_std.load(np.std(ys, axis=0, keepdims=True) + 1e-8)
             self._old_network.y_mean.load(np.mean(ys, axis=0, keepdims=True))
-            self._old_network.y_std.load(
-                np.std(ys, axis=0, keepdims=True) + 1e-8)
+            self._old_network.y_std.load(np.std(ys, axis=0, keepdims=True) + 1e-8)
         inputs = [xs, ys]
         loss_before = self._optimizer.loss(inputs)
-        tabular.record('{}/LossBefore'.format(self._name), loss_before)
+        tabular.record("{}/LossBefore".format(self._name), loss_before)
         self._optimizer.optimize(inputs)
         loss_after = self._optimizer.loss(inputs)
-        tabular.record('{}/LossAfter'.format(self._name), loss_after)
+        tabular.record("{}/LossAfter".format(self._name), loss_after)
         if self._use_trust_region:
-            tabular.record('{}/MeanKL'.format(self._name),
-                           self._optimizer.constraint_val(inputs))
-        tabular.record('{}/dLoss'.format(self._name), loss_before - loss_after)
+            tabular.record(
+                "{}/MeanKL".format(self._name), self._optimizer.constraint_val(inputs)
+            )
+        tabular.record("{}/dLoss".format(self._name), loss_before - loss_after)
         self._old_model.parameters = self.parameters
 
     def predict(self, paths):
@@ -294,10 +314,10 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
             numpy.ndarray: The predicted ys.
 
         """
-        xs = paths['observations']
-        if isinstance(self._env_spec.observation_space, akro.Image) and \
-                len(xs[0].shape) < \
-                len(self._env_spec.observation_space.shape):
+        xs = paths["observations"]
+        if isinstance(self._env_spec.observation_space, akro.Image) and len(
+            xs[0].shape
+        ) < len(self._env_spec.observation_space.shape):
             xs = self._env_spec.observation_space.unflatten_n(xs)
 
         return self._f_predict(xs).flatten()
@@ -342,8 +362,9 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
             std_hidden_sizes=self._std_hidden_sizes,
             std_hidden_nonlinearity=self._std_hidden_nonlinearity,
             std_output_nonlinearity=None,
-            std_parameterization='exp',
-            layer_normalization=self._layer_normalization)
+            std_parameterization="exp",
+            layer_normalization=self._layer_normalization,
+        )
         new_baseline.parameters = self.parameters
         return new_baseline
 
@@ -370,12 +391,12 @@ class GaussianCNNBaseline(GaussianCNNBaselineModel, Baseline):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_predict']
-        del new_dict['_old_network']
-        del new_dict['_x_mean']
-        del new_dict['_x_std']
-        del new_dict['_y_mean']
-        del new_dict['_y_std']
+        del new_dict["_f_predict"]
+        del new_dict["_old_network"]
+        del new_dict["_x_mean"]
+        del new_dict["_x_std"]
+        del new_dict["_y_mean"]
+        del new_dict["_y_std"]
         return new_dict
 
     def __setstate__(self, state):

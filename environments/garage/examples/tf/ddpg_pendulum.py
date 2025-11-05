@@ -8,6 +8,7 @@ Results:
     AverageReturn: 250
     RiseTime: epoch 499
 """
+
 import tensorflow as tf
 
 from environments.garage import wrap_experiment
@@ -35,44 +36,48 @@ def ddpg_pendulum(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('InvertedDoublePendulum-v2')
+        env = GymEnv("InvertedDoublePendulum-v2")
 
-        policy = ContinuousMLPPolicy(env_spec=env.spec,
-                                     hidden_sizes=[64, 64],
-                                     hidden_nonlinearity=tf.nn.relu,
-                                     output_nonlinearity=tf.nn.tanh)
+        policy = ContinuousMLPPolicy(
+            env_spec=env.spec,
+            hidden_sizes=[64, 64],
+            hidden_nonlinearity=tf.nn.relu,
+            output_nonlinearity=tf.nn.tanh,
+        )
 
-        exploration_policy = AddOrnsteinUhlenbeckNoise(env.spec,
-                                                       policy,
-                                                       sigma=0.2)
+        exploration_policy = AddOrnsteinUhlenbeckNoise(env.spec, policy, sigma=0.2)
 
-        qf = ContinuousMLPQFunction(env_spec=env.spec,
-                                    hidden_sizes=[64, 64],
-                                    hidden_nonlinearity=tf.nn.relu)
+        qf = ContinuousMLPQFunction(
+            env_spec=env.spec, hidden_sizes=[64, 64], hidden_nonlinearity=tf.nn.relu
+        )
 
         replay_buffer = PathBuffer(capacity_in_transitions=int(1e6))
 
-        sampler = LocalSampler(agents=exploration_policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True,
-                               worker_class=FragmentWorker)
+        sampler = LocalSampler(
+            agents=exploration_policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+            worker_class=FragmentWorker,
+        )
 
-        ddpg = DDPG(env_spec=env.spec,
-                    policy=policy,
-                    policy_lr=1e-4,
-                    qf_lr=1e-3,
-                    qf=qf,
-                    replay_buffer=replay_buffer,
-                    sampler=sampler,
-                    steps_per_epoch=20,
-                    target_update_tau=1e-2,
-                    n_train_steps=50,
-                    discount=0.9,
-                    min_buffer_size=int(1e4),
-                    exploration_policy=exploration_policy,
-                    policy_optimizer=tf.compat.v1.train.AdamOptimizer,
-                    qf_optimizer=tf.compat.v1.train.AdamOptimizer)
+        ddpg = DDPG(
+            env_spec=env.spec,
+            policy=policy,
+            policy_lr=1e-4,
+            qf_lr=1e-3,
+            qf=qf,
+            replay_buffer=replay_buffer,
+            sampler=sampler,
+            steps_per_epoch=20,
+            target_update_tau=1e-2,
+            n_train_steps=50,
+            discount=0.9,
+            min_buffer_size=int(1e4),
+            exploration_policy=exploration_policy,
+            policy_optimizer=tf.compat.v1.train.AdamOptimizer,
+            qf_optimizer=tf.compat.v1.train.AdamOptimizer,
+        )
 
         trainer.setup(algo=ddpg, env=env)
 

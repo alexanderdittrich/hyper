@@ -1,18 +1,21 @@
 """LSTM in TensorFlow."""
+
 import tensorflow as tf
 
 
-def lstm(name,
-         lstm_cell,
-         all_input_var,
-         step_input_var,
-         step_hidden_var,
-         step_cell_var,
-         output_nonlinearity_layer,
-         hidden_state_init=tf.zeros_initializer(),
-         hidden_state_init_trainable=False,
-         cell_state_init=tf.zeros_initializer(),
-         cell_state_init_trainable=False):
+def lstm(
+    name,
+    lstm_cell,
+    all_input_var,
+    step_input_var,
+    step_hidden_var,
+    step_cell_var,
+    output_nonlinearity_layer,
+    hidden_state_init=tf.zeros_initializer(),
+    hidden_state_init_trainable=False,
+    cell_state_init=tf.zeros_initializer(),
+    cell_state_init_trainable=False,
+):
     r"""Long Short-Term Memory (LSTM).
 
     Args:
@@ -50,33 +53,36 @@ def lstm(name,
     """
     with tf.compat.v1.variable_scope(name):
         hidden_dim = lstm_cell.units
-        output, [hidden,
-                 cell] = lstm_cell(step_input_var,
-                                   states=(step_hidden_var, step_cell_var))
+        output, [hidden, cell] = lstm_cell(
+            step_input_var, states=(step_hidden_var, step_cell_var)
+        )
         output = output_nonlinearity_layer(output)
 
         hidden_init_var = tf.compat.v1.get_variable(
-            name='initial_hidden',
-            shape=(hidden_dim, ),
+            name="initial_hidden",
+            shape=(hidden_dim,),
             initializer=hidden_state_init,
             trainable=hidden_state_init_trainable,
-            dtype=tf.float32)
+            dtype=tf.float32,
+        )
         cell_init_var = tf.compat.v1.get_variable(
-            name='initial_cell',
-            shape=(hidden_dim, ),
+            name="initial_cell",
+            shape=(hidden_dim,),
             initializer=cell_state_init,
             trainable=cell_state_init_trainable,
-            dtype=tf.float32)
+            dtype=tf.float32,
+        )
 
         hidden_init_var_b = tf.broadcast_to(
-            hidden_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim])
+            hidden_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim]
+        )
         cell_init_var_b = tf.broadcast_to(
-            cell_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim])
+            cell_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim]
+        )
 
         rnn = tf.keras.layers.RNN(lstm_cell, return_sequences=True)
 
-        hs = rnn(all_input_var,
-                 initial_state=[hidden_init_var_b, cell_init_var_b])
+        hs = rnn(all_input_var, initial_state=[hidden_init_var_b, cell_init_var_b])
         outputs = output_nonlinearity_layer(hs)
 
     return outputs, output, hidden, cell, hidden_init_var, cell_init_var

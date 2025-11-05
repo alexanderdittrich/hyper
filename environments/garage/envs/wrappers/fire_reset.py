@@ -1,4 +1,5 @@
 """Fire reset wrapper for gym.Env."""
+
 import gym
 
 
@@ -13,10 +14,12 @@ class FireReset(gym.Wrapper):
 
     def __init__(self, env):
         super().__init__(env)
-        assert env.unwrapped.get_action_meanings()[1] == 'FIRE', (
-            'Only use fire reset wrapper for suitable environment!')
+        assert env.unwrapped.get_action_meanings()[1] == "FIRE", (
+            "Only use fire reset wrapper for suitable environment!"
+        )
         assert len(env.unwrapped.get_action_meanings()) >= 3, (
-            'Only use fire reset wrapper for suitable environment!')
+            "Only use fire reset wrapper for suitable environment!"
+        )
 
     def step(self, action):
         """gym.Env step function.

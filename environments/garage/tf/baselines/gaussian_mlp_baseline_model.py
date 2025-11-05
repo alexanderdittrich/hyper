@@ -1,4 +1,5 @@
 """GaussianMLPRegressorModel."""
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -71,55 +72,63 @@ class GaussianMLPBaselineModel(GaussianMLPModel):
 
     """
 
-    def __init__(self,
-                 input_shape,
-                 output_dim,
-                 name='GaussianMLPRegressorModel',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 learn_std=True,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_hidden_sizes=(32, 32),
-                 std_hidden_nonlinearity=tf.nn.tanh,
-                 std_hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 std_hidden_b_init=tf.zeros_initializer(),
-                 std_output_nonlinearity=None,
-                 std_output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 std_parameterization='exp',
-                 layer_normalization=False):
-        super().__init__(output_dim=output_dim,
-                         name=name,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         learn_std=learn_std,
-                         adaptive_std=adaptive_std,
-                         std_share_network=std_share_network,
-                         init_std=init_std,
-                         min_std=min_std,
-                         max_std=max_std,
-                         std_hidden_sizes=std_hidden_sizes,
-                         std_hidden_nonlinearity=std_hidden_nonlinearity,
-                         std_output_nonlinearity=std_output_nonlinearity,
-                         std_parameterization=std_parameterization,
-                         layer_normalization=layer_normalization)
+    def __init__(
+        self,
+        input_shape,
+        output_dim,
+        name="GaussianMLPRegressorModel",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        learn_std=True,
+        adaptive_std=False,
+        std_share_network=False,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_hidden_sizes=(32, 32),
+        std_hidden_nonlinearity=tf.nn.tanh,
+        std_hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        std_hidden_b_init=tf.zeros_initializer(),
+        std_output_nonlinearity=None,
+        std_output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
+        super().__init__(
+            output_dim=output_dim,
+            name=name,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            learn_std=learn_std,
+            adaptive_std=adaptive_std,
+            std_share_network=std_share_network,
+            init_std=init_std,
+            min_std=min_std,
+            max_std=max_std,
+            std_hidden_sizes=std_hidden_sizes,
+            std_hidden_nonlinearity=std_hidden_nonlinearity,
+            std_output_nonlinearity=std_output_nonlinearity,
+            std_parameterization=std_parameterization,
+            layer_normalization=layer_normalization,
+        )
         self._input_shape = input_shape
 
     def network_output_spec(self):
@@ -130,8 +139,16 @@ class GaussianMLPBaselineModel(GaussianMLPModel):
 
         """
         return [
-            'normalized_dist', 'normalized_mean', 'normalized_log_std', 'dist',
-            'mean', 'log_std', 'x_mean', 'x_std', 'y_mean', 'y_std'
+            "normalized_dist",
+            "normalized_mean",
+            "normalized_log_std",
+            "dist",
+            "mean",
+            "log_std",
+            "x_mean",
+            "x_std",
+            "y_mean",
+            "y_std",
         ]
 
     def _build(self, state_input, name=None):
@@ -156,54 +173,69 @@ class GaussianMLPBaselineModel(GaussianMLPModel):
             tf.Tensor: log_std for label.
 
         """
-        with tf.compat.v1.variable_scope('normalized_vars'):
+        with tf.compat.v1.variable_scope("normalized_vars"):
             x_mean_var = tf.compat.v1.get_variable(
-                name='x_mean',
-                shape=(1, ) + self._input_shape,
+                name="x_mean",
+                shape=(1,) + self._input_shape,
                 dtype=np.float32,
                 initializer=tf.zeros_initializer(),
-                trainable=False)
+                trainable=False,
+            )
             x_std_var = tf.compat.v1.get_variable(
-                name='x_std_var',
-                shape=(1, ) + self._input_shape,
+                name="x_std_var",
+                shape=(1,) + self._input_shape,
                 dtype=np.float32,
                 initializer=tf.ones_initializer(),
-                trainable=False)
+                trainable=False,
+            )
             y_mean_var = tf.compat.v1.get_variable(
-                name='y_mean_var',
+                name="y_mean_var",
                 shape=(1, self._output_dim),
                 dtype=np.float32,
                 initializer=tf.zeros_initializer(),
-                trainable=False)
+                trainable=False,
+            )
             y_std_var = tf.compat.v1.get_variable(
-                name='y_std_var',
+                name="y_std_var",
                 shape=(1, self._output_dim),
                 dtype=np.float32,
                 initializer=tf.ones_initializer(),
-                trainable=False)
+                trainable=False,
+            )
 
         normalized_xs_var = (state_input - x_mean_var) / x_std_var
 
         _, normalized_dist_mean, normalized_dist_log_std = super()._build(
-            normalized_xs_var)
+            normalized_xs_var
+        )
 
         # Since regressor expects [N, *dims], we need to squeeze the extra
         # dimension
         normalized_dist_log_std = tf.squeeze(normalized_dist_log_std, 1)
 
-        with tf.name_scope('mean_network'):
+        with tf.name_scope("mean_network"):
             means_var = normalized_dist_mean * y_std_var + y_mean_var
 
-        with tf.name_scope('std_network'):
+        with tf.name_scope("std_network"):
             log_stds_var = normalized_dist_log_std + tf.math.log(y_std_var)
 
         normalized_dist = tfp.distributions.MultivariateNormalDiag(
-            loc=normalized_dist_mean,
-            scale_diag=tf.exp(normalized_dist_log_std))
+            loc=normalized_dist_mean, scale_diag=tf.exp(normalized_dist_log_std)
+        )
 
         vanilla_dist = tfp.distributions.MultivariateNormalDiag(
-            loc=means_var, scale_diag=tf.exp(log_stds_var))
+            loc=means_var, scale_diag=tf.exp(log_stds_var)
+        )
 
-        return (normalized_dist, normalized_dist_mean, normalized_dist_log_std,
-                vanilla_dist, means_var, log_stds_var, x_mean_var, x_std_var,
-                y_mean_var, y_std_var)
+        return (
+            normalized_dist,
+            normalized_dist_mean,
+            normalized_dist_log_std,
+            vanilla_dist,
+            means_var,
+            log_stds_var,
+            x_mean_var,
+            x_std_var,
+            y_mean_var,
+            y_std_var,
+        )

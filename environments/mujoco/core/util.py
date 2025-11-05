@@ -14,7 +14,7 @@ class Wrapper(object):
         - missing attributes are deferred to the inner object.
         """
         # don't make magic any more magical
-        is_magic = attr.startswith('__') and attr.endswith('__')
+        is_magic = attr.startswith("__") and attr.endswith("__")
         if is_magic:
             return super().__getattr__(attr)
         try:

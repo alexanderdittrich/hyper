@@ -1,4 +1,5 @@
 """This modules creates a sac model in PyTorch."""
+
 # yapf: disable
 from collections import deque
 import copy
@@ -87,32 +88,32 @@ class SAC(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf1,
-            qf2,
-            replay_buffer,
-            sampler,
-            *,  # Everything after this is numbers.
-            max_episode_length_eval=None,
-            gradient_steps_per_itr,
-            fixed_alpha=None,
-            target_entropy=None,
-            initial_log_entropy=0.,
-            discount=0.99,
-            buffer_batch_size=64,
-            min_buffer_size=int(1e4),
-            target_update_tau=5e-3,
-            policy_lr=3e-4,
-            qf_lr=3e-4,
-            reward_scale=1.0,
-            optimizer=torch.optim.Adam,
-            steps_per_epoch=1,
-            num_evaluation_episodes=10,
-            eval_env=None,
-            use_deterministic_evaluation=True):
-
+        self,
+        env_spec,
+        policy,
+        qf1,
+        qf2,
+        replay_buffer,
+        sampler,
+        *,  # Everything after this is numbers.
+        max_episode_length_eval=None,
+        gradient_steps_per_itr,
+        fixed_alpha=None,
+        target_entropy=None,
+        initial_log_entropy=0.0,
+        discount=0.99,
+        buffer_batch_size=64,
+        min_buffer_size=int(1e4),
+        target_update_tau=5e-3,
+        policy_lr=3e-4,
+        qf_lr=3e-4,
+        reward_scale=1.0,
+        optimizer=torch.optim.Adam,
+        steps_per_epoch=1,
+        num_evaluation_episodes=10,
+        eval_env=None,
+        use_deterministic_evaluation=True,
+    ):
         self._qf1 = qf1
         self._qf2 = qf2
         self.replay_buffer = replay_buffer
@@ -147,12 +148,11 @@ class SAC(RLAlgorithm):
         # use 2 target q networks
         self._target_qf1 = copy.deepcopy(self._qf1)
         self._target_qf2 = copy.deepcopy(self._qf2)
-        self._policy_optimizer = self._optimizer(self.policy.parameters(),
-                                                 lr=self._policy_lr)
-        self._qf1_optimizer = self._optimizer(self._qf1.parameters(),
-                                              lr=self._qf_lr)
-        self._qf2_optimizer = self._optimizer(self._qf2.parameters(),
-                                              lr=self._qf_lr)
+        self._policy_optimizer = self._optimizer(
+            self.policy.parameters(), lr=self._policy_lr
+        )
+        self._qf1_optimizer = self._optimizer(self._qf1.parameters(), lr=self._qf_lr)
+        self._qf2_optimizer = self._optimizer(self._qf2.parameters(), lr=self._qf_lr)
         # automatic entropy coefficient tuning
         self._use_automatic_entropy_tuning = fixed_alpha is None
         self._fixed_alpha = fixed_alpha
@@ -160,12 +160,9 @@ class SAC(RLAlgorithm):
             if target_entropy:
                 self._target_entropy = target_entropy
             else:
-                self._target_entropy = -np.prod(
-                    self.env_spec.action_space.shape).item()
-            self._log_alpha = torch.Tensor([self._initial_log_entropy
-                                            ]).requires_grad_()
-            self._alpha_optimizer = optimizer([self._log_alpha],
-                                              lr=self._policy_lr)
+                self._target_entropy = -np.prod(self.env_spec.action_space.shape).item()
+            self._log_alpha = torch.Tensor([self._initial_log_entropy]).requires_grad_()
+            self._alpha_optimizer = optimizer([self._log_alpha], lr=self._policy_lr)
         else:
             self._log_alpha = torch.Tensor([self._fixed_alpha]).log()
         self.episode_rewards = deque(maxlen=30)
@@ -187,32 +184,37 @@ class SAC(RLAlgorithm):
         last_return = None
         for _ in trainer.step_epochs():
             for _ in range(self._steps_per_epoch):
-                if not (self.replay_buffer.n_transitions_stored >=
-                        self._min_buffer_size):
+                if not (
+                    self.replay_buffer.n_transitions_stored >= self._min_buffer_size
+                ):
                     batch_size = int(self._min_buffer_size)
                 else:
                     batch_size = None
-                trainer.step_path = trainer.obtain_samples(
-                    trainer.step_itr, batch_size)
+                trainer.step_path = trainer.obtain_samples(trainer.step_itr, batch_size)
                 path_returns = []
                 for path in trainer.step_path:
                     self.replay_buffer.add_path(
-                        dict(observation=path['observations'],
-                             action=path['actions'],
-                             reward=path['rewards'].reshape(-1, 1),
-                             next_observation=path['next_observations'],
-                             terminal=np.array([
-                                 step_type == StepType.TERMINAL
-                                 for step_type in path['step_types']
-                             ]).reshape(-1, 1)))
-                    path_returns.append(sum(path['rewards']))
+                        dict(
+                            observation=path["observations"],
+                            action=path["actions"],
+                            reward=path["rewards"].reshape(-1, 1),
+                            next_observation=path["next_observations"],
+                            terminal=np.array(
+                                [
+                                    step_type == StepType.TERMINAL
+                                    for step_type in path["step_types"]
+                                ]
+                            ).reshape(-1, 1),
+                        )
+                    )
+                    path_returns.append(sum(path["rewards"]))
                 assert len(path_returns) == len(trainer.step_path)
                 self.episode_rewards.append(np.mean(path_returns))
                 for _ in range(self._gradient_steps):
                     policy_loss, qf1_loss, qf2_loss = self.train_once()
             last_return = self._evaluate_policy(trainer.step_itr)
             self._log_statistics(policy_loss, qf1_loss, qf2_loss)
-            tabular.record('TotalEnvSteps', trainer.total_env_steps)
+            tabular.record("TotalEnvSteps", trainer.total_env_steps)
             trainer.step_itr += 1
 
         return np.mean(last_return)
@@ -234,8 +236,7 @@ class SAC(RLAlgorithm):
         del itr
         del paths
         if self.replay_buffer.n_transitions_stored >= self._min_buffer_size:
-            samples = self.replay_buffer.sample_transitions(
-                self._buffer_batch_size)
+            samples = self.replay_buffer.sample_transitions(self._buffer_batch_size)
             samples = dict_np_to_torch(samples)
             policy_loss, qf1_loss, qf2_loss = self.optimize_policy(samples)
             self._update_targets()
@@ -295,8 +296,10 @@ class SAC(RLAlgorithm):
         """
         alpha_loss = 0
         if self._use_automatic_entropy_tuning:
-            alpha_loss = (-(self._get_log_alpha(samples_data)) *
-                          (log_pi.detach() + self._target_entropy)).mean()
+            alpha_loss = (
+                -(self._get_log_alpha(samples_data))
+                * (log_pi.detach() + self._target_entropy)
+            ).mean()
         return alpha_loss
 
     def _actor_objective(self, samples_data, new_actions, log_pi_new_actions):
@@ -326,13 +329,15 @@ class SAC(RLAlgorithm):
             torch.Tensor: loss from the Policy/Actor.
 
         """
-        obs = samples_data['observation']
+        obs = samples_data["observation"]
         with torch.no_grad():
             alpha = self._get_log_alpha(samples_data).exp()
-        min_q_new_actions = torch.min(self._qf1(obs, new_actions),
-                                      self._qf2(obs, new_actions))
-        policy_objective = ((alpha * log_pi_new_actions) -
-                            min_q_new_actions.flatten()).mean()
+        min_q_new_actions = torch.min(
+            self._qf1(obs, new_actions), self._qf2(obs, new_actions)
+        )
+        policy_objective = (
+            (alpha * log_pi_new_actions) - min_q_new_actions.flatten()
+        ).mean()
         return policy_objective
 
     def _critic_objective(self, samples_data):
@@ -357,11 +362,11 @@ class SAC(RLAlgorithm):
             torch.Tensor: loss from 2nd q-function after optimization.
 
         """
-        obs = samples_data['observation']
-        actions = samples_data['action']
-        rewards = samples_data['reward'].flatten()
-        terminals = samples_data['terminal'].flatten()
-        next_obs = samples_data['next_observation']
+        obs = samples_data["observation"]
+        actions = samples_data["action"]
+        rewards = samples_data["reward"].flatten()
+        terminals = samples_data["terminal"].flatten()
+        next_obs = samples_data["next_observation"]
         with torch.no_grad():
             alpha = self._get_log_alpha(samples_data).exp()
 
@@ -370,17 +375,21 @@ class SAC(RLAlgorithm):
 
         new_next_actions_dist = self.policy(next_obs)[0]
         new_next_actions_pre_tanh, new_next_actions = (
-            new_next_actions_dist.rsample_with_pre_tanh_value())
+            new_next_actions_dist.rsample_with_pre_tanh_value()
+        )
         new_log_pi = new_next_actions_dist.log_prob(
-            value=new_next_actions, pre_tanh_value=new_next_actions_pre_tanh)
+            value=new_next_actions, pre_tanh_value=new_next_actions_pre_tanh
+        )
 
         target_q_values = torch.min(
             self._target_qf1(next_obs, new_next_actions),
-            self._target_qf2(
-                next_obs, new_next_actions)).flatten() - (alpha * new_log_pi)
+            self._target_qf2(next_obs, new_next_actions),
+        ).flatten() - (alpha * new_log_pi)
         with torch.no_grad():
-            q_target = rewards * self._reward_scale + (
-                1. - terminals) * self._discount * target_q_values
+            q_target = (
+                rewards * self._reward_scale
+                + (1.0 - terminals) * self._discount * target_q_values
+            )
         qf1_loss = F.mse_loss(q1_pred.flatten(), q_target)
         qf2_loss = F.mse_loss(q2_pred.flatten(), q_target)
 
@@ -392,8 +401,9 @@ class SAC(RLAlgorithm):
         qfs = [self._qf1, self._qf2]
         for target_qf, qf in zip(target_qfs, qfs):
             for t_param, param in zip(target_qf.parameters(), qf.parameters()):
-                t_param.data.copy_(t_param.data * (1.0 - self._tau) +
-                                   param.data * self._tau)
+                t_param.data.copy_(
+                    t_param.data * (1.0 - self._tau) + param.data * self._tau
+                )
 
     def optimize_policy(self, samples_data):
         """Optimize the policy q_functions, and temperature coefficient.
@@ -418,7 +428,7 @@ class SAC(RLAlgorithm):
             torch.Tensor: loss from 2nd q-function after optimization.
 
         """
-        obs = samples_data['observation']
+        obs = samples_data["observation"]
         qf1_loss, qf2_loss = self._critic_objective(samples_data)
 
         self._qf1_optimizer.zero_grad()
@@ -430,21 +440,21 @@ class SAC(RLAlgorithm):
         self._qf2_optimizer.step()
 
         action_dists = self.policy(obs)[0]
-        new_actions_pre_tanh, new_actions = (
-            action_dists.rsample_with_pre_tanh_value())
+        new_actions_pre_tanh, new_actions = action_dists.rsample_with_pre_tanh_value()
         log_pi_new_actions = action_dists.log_prob(
-            value=new_actions, pre_tanh_value=new_actions_pre_tanh)
+            value=new_actions, pre_tanh_value=new_actions_pre_tanh
+        )
 
-        policy_loss = self._actor_objective(samples_data, new_actions,
-                                            log_pi_new_actions)
+        policy_loss = self._actor_objective(
+            samples_data, new_actions, log_pi_new_actions
+        )
         self._policy_optimizer.zero_grad()
         policy_loss.backward()
 
         self._policy_optimizer.step()
 
         if self._use_automatic_entropy_tuning:
-            alpha_loss = self._temperature_objective(log_pi_new_actions,
-                                                     samples_data)
+            alpha_loss = self._temperature_objective(log_pi_new_actions, samples_data)
             self._alpha_optimizer.zero_grad()
             alpha_loss.backward()
             self._alpha_optimizer.step()
@@ -470,10 +480,9 @@ class SAC(RLAlgorithm):
             self._eval_env,
             self._max_episode_length_eval,
             num_eps=self._num_evaluation_episodes,
-            deterministic=self._use_deterministic_evaluation)
-        last_return = log_performance(epoch,
-                                      eval_episodes,
-                                      discount=self._discount)
+            deterministic=self._use_deterministic_evaluation,
+        )
+        last_return = log_performance(epoch, eval_episodes, discount=self._discount)
         return last_return
 
     def _log_statistics(self, policy_loss, qf1_loss, qf2_loss):
@@ -486,15 +495,14 @@ class SAC(RLAlgorithm):
 
         """
         with torch.no_grad():
-            tabular.record('AlphaTemperature/mean',
-                           self._log_alpha.exp().mean().item())
-        tabular.record('Policy/Loss', policy_loss.item())
-        tabular.record('QF/{}'.format('Qf1Loss'), float(qf1_loss))
-        tabular.record('QF/{}'.format('Qf2Loss'), float(qf2_loss))
-        tabular.record('ReplayBuffer/buffer_size',
-                       self.replay_buffer.n_transitions_stored)
-        tabular.record('Average/TrainAverageReturn',
-                       np.mean(self.episode_rewards))
+            tabular.record("AlphaTemperature/mean", self._log_alpha.exp().mean().item())
+        tabular.record("Policy/Loss", policy_loss.item())
+        tabular.record("QF/{}".format("Qf1Loss"), float(qf1_loss))
+        tabular.record("QF/{}".format("Qf2Loss"), float(qf2_loss))
+        tabular.record(
+            "ReplayBuffer/buffer_size", self.replay_buffer.n_transitions_stored
+        )
+        tabular.record("Average/TrainAverageReturn", np.mean(self.episode_rewards))
 
     @property
     def networks(self):
@@ -504,10 +512,7 @@ class SAC(RLAlgorithm):
             list: A list of networks.
 
         """
-        return [
-            self.policy, self._qf1, self._qf2, self._target_qf1,
-            self._target_qf2
-        ]
+        return [self.policy, self._qf1, self._qf2, self._target_qf1, self._target_qf2]
 
     def to(self, device=None):
         """Put all the networks within the model on device.
@@ -521,10 +526,11 @@ class SAC(RLAlgorithm):
         for net in self.networks:
             net.to(device)
         if not self._use_automatic_entropy_tuning:
-            self._log_alpha = torch.Tensor([self._fixed_alpha
-                                            ]).log().to(device)
+            self._log_alpha = torch.Tensor([self._fixed_alpha]).log().to(device)
         else:
-            self._log_alpha = torch.Tensor([self._initial_log_entropy
-                                            ]).to(device).requires_grad_()
-            self._alpha_optimizer = self._optimizer([self._log_alpha],
-                                                    lr=self._policy_lr)
+            self._log_alpha = (
+                torch.Tensor([self._initial_log_entropy]).to(device).requires_grad_()
+            )
+            self._alpha_optimizer = self._optimizer(
+                [self._log_alpha], lr=self._policy_lr
+            )

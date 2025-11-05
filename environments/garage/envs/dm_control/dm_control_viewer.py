@@ -1,4 +1,5 @@
-""" Wrapper for the dm_control viewer which allows single-stepping """
+"""Wrapper for the dm_control viewer which allows single-stepping"""
+
 import dm_control.viewer.application as dm_viewer_app
 import glfw
 
@@ -19,12 +20,12 @@ class DmControlViewer(dm_viewer_app.Application):
         # See https://github.com/deepmind/dm_control/blob/92f9913013face0468442cd0964d5973ea2089ea/dm_control/viewer/gui/glfw_gui.py#L280  # noqa: E501
         window = self._window
         tick_func = self._tick_func
-        if (window._context
-                and not glfw.window_should_close(window._context.window)):
+        if window._context and not glfw.window_should_close(window._context.window):
             pixels = tick_func()
             with window._context.make_current() as ctx:
-                ctx.call(window._update_gui_on_render_thread,
-                         window._context.window, pixels)
+                ctx.call(
+                    window._update_gui_on_render_thread, window._context.window, pixels
+                )
             window._mouse.process_events()
             window._keyboard.process_events()
         else:

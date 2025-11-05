@@ -1,4 +1,5 @@
 """A replay buffer that efficiently stores and can sample whole paths."""
+
 import collections
 
 import numpy as np
@@ -42,17 +43,16 @@ class PathBuffer:
         env_spec = episodes.env_spec
         obs_space = env_spec.observation_space
         for eps in episodes.split():
-            terminals = np.array([
-                step_type == StepType.TERMINAL for step_type in eps.step_types
-            ],
-                                 dtype=bool)
+            terminals = np.array(
+                [step_type == StepType.TERMINAL for step_type in eps.step_types],
+                dtype=bool,
+            )
             path = {
-                'observations': obs_space.flatten_n(eps.observations),
-                'next_observations':
-                obs_space.flatten_n(eps.next_observations),
-                'actions': env_spec.action_space.flatten_n(eps.actions),
-                'rewards': eps.rewards.reshape(-1, 1),
-                'terminals': terminals.reshape(-1, 1),
+                "observations": obs_space.flatten_n(eps.observations),
+                "next_observations": obs_space.flatten_n(eps.next_observations),
+                "actions": env_spec.action_space.flatten_n(eps.actions),
+                "rewards": eps.rewards.reshape(-1, 1),
+                "terminals": terminals.reshape(-1, 1),
             }
             self.add_path(path)
 
@@ -69,32 +69,34 @@ class PathBuffer:
         for key, buf_arr in self._buffer.items():
             path_array = path.get(key, None)
             if path_array is None:
-                raise ValueError('Key {} missing from path.'.format(key))
-            if (len(path_array.shape) != 2
-                    or path_array.shape[1] != buf_arr.shape[1]):
-                raise ValueError('Array {} has wrong shape.'.format(key))
+                raise ValueError("Key {} missing from path.".format(key))
+            if len(path_array.shape) != 2 or path_array.shape[1] != buf_arr.shape[1]:
+                raise ValueError("Array {} has wrong shape.".format(key))
         path_len = self._get_path_length(path)
         first_seg, second_seg = self._next_path_segments(path_len)
         # Remove paths which will overlap with this one.
-        while (self._path_segments and self._segments_overlap(
-                first_seg, self._path_segments[0][0])):
+        while self._path_segments and self._segments_overlap(
+            first_seg, self._path_segments[0][0]
+        ):
             self._path_segments.popleft()
-        while (self._path_segments and self._segments_overlap(
-                second_seg, self._path_segments[0][0])):
+        while self._path_segments and self._segments_overlap(
+            second_seg, self._path_segments[0][0]
+        ):
             self._path_segments.popleft()
         self._path_segments.append((first_seg, second_seg))
         for key, array in path.items():
             buf_arr = self._get_or_allocate_key(key, array)
             # numpy doesn't special case range indexing, so it's very slow.
             # Slice manually instead, which is faster than any other method.
-            buf_arr[first_seg.start:first_seg.stop] = array[:len(first_seg)]
-            buf_arr[second_seg.start:second_seg.stop] = array[len(first_seg):]
+            buf_arr[first_seg.start : first_seg.stop] = array[: len(first_seg)]
+            buf_arr[second_seg.start : second_seg.stop] = array[len(first_seg) :]
         if second_seg.stop != 0:
             self._first_idx_of_next_path = second_seg.stop
         else:
             self._first_idx_of_next_path = first_seg.stop
-        self._transitions_stored = min(self._capacity,
-                                       self._transitions_stored + path_len)
+        self._transitions_stored = min(
+            self._capacity, self._transitions_stored + path_len
+        )
 
     def sample_path(self):
         """Sample a single path from the buffer.
@@ -135,20 +137,24 @@ class PathBuffer:
 
         """
         samples = self.sample_transitions(batch_size)
-        step_types = np.array([
-            StepType.TERMINAL if terminal else StepType.MID
-            for terminal in samples['terminals'].reshape(-1)
-        ],
-                              dtype=StepType)
-        return TimeStepBatch(env_spec=self._env_spec,
-                             episode_infos={},
-                             observations=samples['observations'],
-                             actions=samples['actions'],
-                             rewards=samples['rewards'].flatten(),
-                             next_observations=samples['next_observations'],
-                             step_types=step_types,
-                             env_infos={},
-                             agent_infos={})
+        step_types = np.array(
+            [
+                StepType.TERMINAL if terminal else StepType.MID
+                for terminal in samples["terminals"].reshape(-1)
+            ],
+            dtype=StepType,
+        )
+        return TimeStepBatch(
+            env_spec=self._env_spec,
+            episode_infos={},
+            observations=samples["observations"],
+            actions=samples["actions"],
+            rewards=samples["rewards"].flatten(),
+            next_observations=samples["next_observations"],
+            step_types=step_types,
+            env_infos={},
+            agent_infos={},
+        )
 
     def _next_path_segments(self, n_indices):
         """Compute where the next path should be stored.
@@ -164,7 +170,7 @@ class PathBuffer:
 
         """
         if n_indices > self._capacity:
-            raise ValueError('Path is too long to store in buffer.')
+            raise ValueError("Path is too long to store in buffer.")
         start = self._first_idx_of_next_path
         end = start + n_indices
         if end > self._capacity:
@@ -218,10 +224,13 @@ class PathBuffer:
                 length = len(value)
                 length_key = key
             elif len(value) != length:
-                raise ValueError('path has inconsistent lengths between '
-                                 '{!r} and {!r}.'.format(length_key, key))
+                raise ValueError(
+                    "path has inconsistent lengths between {!r} and {!r}.".format(
+                        length_key, key
+                    )
+                )
         if not length:
-            raise ValueError('Nothing in path')
+            raise ValueError("Nothing in path")
         return length
 
     @staticmethod

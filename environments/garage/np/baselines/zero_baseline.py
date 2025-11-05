@@ -4,7 +4,6 @@ from environments.garage.np.baselines.baseline import Baseline
 
 
 class ZeroBaseline(Baseline):
-
     def __init__(self, env_spec):
         pass
 
@@ -18,7 +17,7 @@ class ZeroBaseline(Baseline):
         pass
 
     def predict(self, path):
-        return np.zeros_like(path['rewards'])
+        return np.zeros_like(path["rewards"])
 
     def predict_n(self, paths):
-        return [np.zeros_like(path['rewards']) for path in paths]
+        return [np.zeros_like(path["rewards"]) for path in paths]

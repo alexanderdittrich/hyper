@@ -2,7 +2,10 @@ import distutils.version
 import logging
 
 from environments.mujoco.rand_param_envs.gym import error
-from environments.mujoco.rand_param_envs.gym.configuration import logger_setup, undo_logger_setup
+from environments.mujoco.rand_param_envs.gym.configuration import (
+    logger_setup,
+    undo_logger_setup,
+)
 from environments.mujoco.rand_param_envs.gym.utils import reraise
 from environments.mujoco.rand_param_envs.gym.version import VERSION as __version__
 
@@ -15,15 +18,21 @@ def sanity_check_dependencies():
     import numpy
     import requests
 
-    if distutils.version.LooseVersion(numpy.__version__) < distutils.version.LooseVersion('1.10.4'):
+    if distutils.version.LooseVersion(
+        numpy.__version__
+    ) < distutils.version.LooseVersion("1.10.4"):
         logger.warn(
             "You have 'numpy' version %s installed, but 'gym' requires at least 1.10.4. HINT: upgrade via 'pip install -U numpy'.",
-            numpy.__version__)
+            numpy.__version__,
+        )
 
-    if distutils.version.LooseVersion(requests.__version__) < distutils.version.LooseVersion('2.0'):
+    if distutils.version.LooseVersion(
+        requests.__version__
+    ) < distutils.version.LooseVersion("2.0"):
         logger.warn(
             "You have 'requests' version %s installed, but 'gym' requires at least 2.0. HINT: upgrade via 'pip install -U requests'.",
-            requests.__version__)
+            requests.__version__,
+        )
 
 
 # We automatically configure a logger with a simple stderr handler. If
@@ -48,8 +57,14 @@ del logger_setup
 
 sanity_check_dependencies()
 
-from environments.mujoco.rand_param_envs.gym.core import Env, Space, Wrapper, ObservationWrapper, ActionWrapper, \
-    RewardWrapper
+from environments.mujoco.rand_param_envs.gym.core import (
+    Env,
+    Space,
+    Wrapper,
+    ObservationWrapper,
+    ActionWrapper,
+    RewardWrapper,
+)
 from environments.mujoco.rand_param_envs.gym.benchmarks import benchmark_spec
 from environments.mujoco.rand_param_envs.gym.envs import make, spec
 from environments.mujoco.rand_param_envs.gym import wrappers

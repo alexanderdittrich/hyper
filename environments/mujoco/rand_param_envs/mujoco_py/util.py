@@ -52,7 +52,7 @@ class UserString:
         return self.__class__(self.data[index])
 
     def __getslice__(self, start, end):
-        start = max(start, 0);
+        start = max(start, 0)
         end = max(end, 0)
         return self.__class__(self.data[start:end])
 
@@ -234,17 +234,19 @@ class MutableString(UserString):
     def __setitem__(self, index, sub):
         if index < 0:
             index += len(self.data)
-        if index < 0 or index >= len(self.data): raise IndexError
-        self.data = self.data[:index] + sub + self.data[index + 1:]
+        if index < 0 or index >= len(self.data):
+            raise IndexError
+        self.data = self.data[:index] + sub + self.data[index + 1 :]
 
     def __delitem__(self, index):
         if index < 0:
             index += len(self.data)
-        if index < 0 or index >= len(self.data): raise IndexError
-        self.data = self.data[:index] + self.data[index + 1:]
+        if index < 0 or index >= len(self.data):
+            raise IndexError
+        self.data = self.data[:index] + self.data[index + 1 :]
 
     def __setslice__(self, start, end, sub):
-        start = max(start, 0);
+        start = max(start, 0)
         end = max(end, 0)
         if isinstance(sub, UserString):
             self.data = self.data[:start] + sub.data + self.data[end:]
@@ -254,7 +256,7 @@ class MutableString(UserString):
             self.data = self.data[:start] + str(sub) + self.data[end:]
 
     def __delslice__(self, start, end):
-        start = max(start, 0);
+        start = max(start, 0)
         end = max(end, 0)
         self.data = self.data[:start] + self.data[end:]
 
@@ -276,12 +278,11 @@ class MutableString(UserString):
 
 
 class String(MutableString, Union):
-    _fields_ = [('raw', POINTER(c_char)),
-                ('data', c_char_p)]
+    _fields_ = [("raw", POINTER(c_char)), ("data", c_char_p)]
 
     def __init__(self, obj=""):
         if isinstance(obj, six.text_type):
-            self.data = obj.encode('ascii')
+            self.data = obj.encode("ascii")
         elif isinstance(obj, six.binary_type):
             self.data = obj
         elif isinstance(obj, UserString):

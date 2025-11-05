@@ -1,4 +1,5 @@
 """Relative Entropy Policy Search implementation in Tensorflow."""
+
 # yapf: disable
 import collections
 

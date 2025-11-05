@@ -1,4 +1,5 @@
 """Covariance Matrix Adaptation Evolution Strategy."""
+
 import collections
 
 import cma
@@ -27,13 +28,7 @@ class CMAES(RLAlgorithm):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 sampler,
-                 n_samples,
-                 discount=0.99,
-                 sigma0=1.):
+    def __init__(self, env_spec, policy, sampler, n_samples, discount=0.99, sigma0=1.0):
         self.policy = policy
         self.max_episode_length = env_spec.max_episode_length
         self._sampler = sampler
@@ -71,8 +66,9 @@ class CMAES(RLAlgorithm):
 
         """
         init_mean = self.policy.get_param_values()
-        self._es = cma.CMAEvolutionStrategy(init_mean, self._sigma0,
-                                            {'popsize': self._n_samples})
+        self._es = cma.CMAEvolutionStrategy(
+            init_mean, self._sigma0, {"popsize": self._n_samples}
+        )
         self._all_params = self._sample_params()
         self._cur_params = self._all_params[0]
         self.policy.set_param_values(self._cur_params)
@@ -84,8 +80,7 @@ class CMAES(RLAlgorithm):
         for _ in trainer.step_epochs():
             for _ in range(self._n_samples):
                 trainer.step_path = trainer.obtain_episodes(trainer.step_itr)
-                last_return = self._train_once(trainer.step_itr,
-                                               trainer.step_path)
+                last_return = self._train_once(trainer.step_itr, trainer.step_path)
                 trainer.step_itr += 1
 
         return last_return
@@ -103,19 +98,16 @@ class CMAES(RLAlgorithm):
 
         """
         # -- Stage: Run and calculate performance of the algorithm
-        undiscounted_returns = log_performance(itr,
-                                               episodes,
-                                               discount=self._discount)
+        undiscounted_returns = log_performance(itr, episodes, discount=self._discount)
         self._episode_reward_mean.extend(undiscounted_returns)
-        tabular.record('Extras/EpisodeRewardMean',
-                       np.mean(self._episode_reward_mean))
+        tabular.record("Extras/EpisodeRewardMean", np.mean(self._episode_reward_mean))
         average_return = np.mean(undiscounted_returns)
 
         epoch = itr // self._n_samples
         i_sample = itr - epoch * self._n_samples
 
-        tabular.record('Epoch', epoch)
-        tabular.record('# Sample', i_sample)
+        tabular.record("Epoch", epoch)
+        tabular.record("# Sample", i_sample)
         rtn = average_return
         self._all_returns.append(average_return)
 

@@ -32,19 +32,19 @@ def benchmark_aggregate_score(benchmark, env_id_to_benchmark_results):
                 benchmark_result = benchmark_results[trial]
 
                 env_scores = scores.setdefault(env_id, [])
-                env_scores.append(benchmark_result['scores'])
+                env_scores.append(benchmark_result["scores"])
 
                 # note: solves is a list of lists - for each task for this env,
                 # does each episode solve that task. We consider the env solved
                 # if every episode for every task is individually solved.
                 solved = solves.setdefault(env_id, True)
-                solves[env_id] = solved and np.sum(benchmark_result['solves'])
+                solves[env_id] = solved and np.sum(benchmark_result["solves"])
 
                 # these timestamps are a list of the first / last valid timestamp
                 # for each task involving this env.
-                start_times.append(benchmark_result['initial_reset_timestamp'])
-                end_times.append(max(benchmark_result['timestamps']))
-                elapsed_times.extend(benchmark_result['elapsed_times'])
+                start_times.append(benchmark_result["initial_reset_timestamp"])
+                end_times.append(max(benchmark_result["timestamps"]))
+                elapsed_times.extend(benchmark_result["elapsed_times"])
             else:
                 # no matching benchmark result for this trial
                 env_scores = scores.setdefault(env_id, [])
@@ -53,8 +53,12 @@ def benchmark_aggregate_score(benchmark, env_id_to_benchmark_results):
 
     score = benchmark.score_benchmark(scores)
     num_envs_solved = len([s for s in solves.values() if s])
-    start_to_finish_seconds = max(end_times) - min(start_times) if end_times and start_times else 0.0
-    summed_task_wall_time = np.sum([end - start for end, start in zip(end_times, start_times)])
+    start_to_finish_seconds = (
+        max(end_times) - min(start_times) if end_times and start_times else 0.0
+    )
+    summed_task_wall_time = np.sum(
+        [end - start for end, start in zip(end_times, start_times)]
+    )
     summed_training_seconds = np.sum(elapsed_times)
 
     return dict(
@@ -100,8 +104,17 @@ This reward is clipped and normalized to be between 0.0 and 1.0 using thresholds
         """
         return 0.0
 
-    def score_evaluation(self, benchmark, env_id, data_sources, initial_reset_timestamps, episode_lengths,
-                         episode_rewards, episode_types, timestamps):
+    def score_evaluation(
+        self,
+        benchmark,
+        env_id,
+        data_sources,
+        initial_reset_timestamps,
+        episode_lengths,
+        episode_rewards,
+        episode_types,
+        timestamps,
+    ):
         tasks = benchmark.task_specs(env_id)
         spec = envs.spec(env_id)
 
@@ -127,12 +140,14 @@ This reward is clipped and normalized to be between 0.0 and 1.0 using thresholds
             # source (i.e. worker thread), we can just subtract
             # adjoining values
             durations[source_indexes[0]] = timestamps[source_indexes[0]] - initial_ts
-            durations[source_indexes[1:]] = timestamps[source_indexes[1:]] - timestamps[source_indexes[:-1]]
+            durations[source_indexes[1:]] = (
+                timestamps[source_indexes[1:]] - timestamps[source_indexes[:-1]]
+            )
 
         #### 1. Select out which indexes are for evaluation and which are for training
 
-        (t_idx,) = np.where([t == 't' for t in episode_types])  # training episodes
-        (e_idx,) = np.where([t == 'e' for t in episode_types])  # evaluation episodes
+        (t_idx,) = np.where([t == "t" for t in episode_types])  # training episodes
+        (e_idx,) = np.where([t == "e" for t in episode_types])  # evaluation episodes
         if len(e_idx) == 0:
             # If no episodes marked for evaluation, consider
             # everything both a training and evaluation episode.
@@ -182,8 +197,11 @@ This reward is clipped and normalized to be between 0.0 and 1.0 using thresholds
                     cutoff_idx = min(cutoff_idx, seconds_cutoff[0])
             if np.isfinite(cutoff_idx):
                 orig_cutoff_idx = t_idx[
-                    cutoff_idx]  # cutoff index in the original (i.e. before filtering to training/evaluation)
-                (allowed_e_idx,) = np.where(e_idx < orig_cutoff_idx)  # restrict to earlier episodes
+                    cutoff_idx
+                ]  # cutoff index in the original (i.e. before filtering to training/evaluation)
+                (allowed_e_idx,) = np.where(
+                    e_idx < orig_cutoff_idx
+                )  # restrict to earlier episodes
             else:
                 # All episodes are fair game
                 allowed_e_idx = e_idx
@@ -194,16 +212,18 @@ This reward is clipped and normalized to be between 0.0 and 1.0 using thresholds
             #
             # This probably won't work long-term but is fine for now.
             allowed_episode_rewards = np.array(episode_rewards)[allowed_e_idx]
-            reward = allowed_episode_rewards[-self.num_episodes:]
+            reward = allowed_episode_rewards[-self.num_episodes :]
             allowed_episode_lengths = np.array(episode_lengths)[allowed_e_idx]
-            length = allowed_episode_lengths[-self.num_episodes:]
+            length = allowed_episode_lengths[-self.num_episodes :]
 
             floor = task.reward_floor
             ceiling = task.reward_ceiling
 
             if len(reward) < self.num_episodes:
                 extra = self.num_episodes - len(reward)
-                logger.info('Only %s rewards for %s; adding %s', len(reward), env_id, extra)
+                logger.info(
+                    "Only %s rewards for %s; adding %s", len(reward), env_id, extra
+                )
                 reward = np.concatenate([reward, [floor] * extra])
                 length = np.concatenate([length, [0] * extra])
 
@@ -241,13 +261,13 @@ This reward is clipped and normalized to be between 0.0 and 1.0 using thresholds
             elapsed_times.append(elapsed_time)
 
         return {
-            'rewards': rewards,
-            'lengths': lengths,
-            'scores': scores,
-            'solves': solves,
-            'timestamps': _timestamps,
-            'elapsed_times': elapsed_times,
-            'initial_reset_timestamp': initial_reset_timestamp,
+            "rewards": rewards,
+            "lengths": lengths,
+            "scores": scores,
+            "solves": solves,
+            "timestamps": _timestamps,
+            "elapsed_times": elapsed_times,
+            "initial_reset_timestamp": initial_reset_timestamp,
         }
 
     def score_benchmark(self, benchmark, episode_scores):
@@ -282,7 +302,9 @@ def _compute_episode_durations(initial_reset_timestamps, data_sources, timestamp
         # source (i.e. worker thread), we can just subtract
         # adjoining values
         durations[source_indexes[0]] = timestamps[source_indexes[0]] - initial_ts
-        durations[source_indexes[1:]] = timestamps[source_indexes[1:]] - timestamps[source_indexes[:-1]]
+        durations[source_indexes[1:]] = (
+            timestamps[source_indexes[1:]] - timestamps[source_indexes[:-1]]
+        )
     return durations
 
 
@@ -324,8 +346,17 @@ class BenchmarkScoringRule(object):
     def null_score(self):
         return 0.0
 
-    def score_evaluation(self, benchmark, env_id, data_sources, initial_reset_timestamps, episode_lengths,
-                         episode_rewards, episode_types, timestamps):
+    def score_evaluation(
+        self,
+        benchmark,
+        env_id,
+        data_sources,
+        initial_reset_timestamps,
+        episode_lengths,
+        episode_rewards,
+        episode_types,
+        timestamps,
+    ):
         tasks = benchmark.task_specs(env_id)
         spec = envs.spec(env_id)
 
@@ -338,7 +369,9 @@ class BenchmarkScoringRule(object):
 
         # How long each episode actually took
         timestamps = np.array(timestamps)
-        durations = _compute_episode_durations(initial_reset_timestamps, data_sources, timestamps)
+        durations = _compute_episode_durations(
+            initial_reset_timestamps, data_sources, timestamps
+        )
 
         #### Grab the data corresponding to each of evaluation/training
         lengths = np.array(episode_lengths)
@@ -368,14 +401,18 @@ class BenchmarkScoringRule(object):
         for task in tasks:
             # Find the first episode where we're over the allotted
             # training timesteps.
-            cutoff_idx = _find_cutoffs_for_task(task, elapsed_timesteps, elapsed_seconds)
+            cutoff_idx = _find_cutoffs_for_task(
+                task, elapsed_timesteps, elapsed_seconds
+            )
             if not np.isfinite(cutoff_idx):
                 # All episodes are fair game
                 cutoff_idx = len(lengths)
 
             reward = np.array(episode_rewards)[:cutoff_idx]
 
-            score, solved = self.score_and_solved_func(task, reward, elapsed_seconds[:cutoff_idx])
+            score, solved = self.score_and_solved_func(
+                task, reward, elapsed_seconds[:cutoff_idx]
+            )
 
             scores.append(score)
             solves.append(solved)
@@ -396,13 +433,13 @@ class BenchmarkScoringRule(object):
             elapsed_times.append(elapsed_time)
 
         return {
-            'rewards': rewards,
-            'lengths': cutoff_lengths,
-            'scores': scores,
-            'solves': solves,
-            'timestamps': _timestamps,
-            'elapsed_times': elapsed_times,
-            'initial_reset_timestamp': initial_reset_timestamp,
+            "rewards": rewards,
+            "lengths": cutoff_lengths,
+            "scores": scores,
+            "solves": solves,
+            "timestamps": _timestamps,
+            "elapsed_times": elapsed_times,
+            "initial_reset_timestamp": initial_reset_timestamp,
         }
 
     def score_benchmark(self, benchmark, episode_scores):
@@ -447,7 +484,9 @@ def reward_per_time_from_episode_rewards(task, reward, elapsed_seconds):
     solved = np.zeros(len(reward))
 
     # Sum the rewards for all episodes, divide by total time taken for all episodes
-    reward_per_second = np.sum(reward) / elapsed_seconds[-1] if np.any(elapsed_seconds) else 0.0
+    reward_per_second = (
+        np.sum(reward) / elapsed_seconds[-1] if np.any(elapsed_seconds) else 0.0
+    )
     score = np.clip((reward_per_second - floor) / (ceiling - floor), 0, 1)
     return score, solved
 

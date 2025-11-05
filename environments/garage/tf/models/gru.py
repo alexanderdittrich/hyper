@@ -1,15 +1,18 @@
 """GRU in TensorFlow."""
+
 import tensorflow as tf
 
 
-def gru(name,
-        gru_cell,
-        all_input_var,
-        step_input_var,
-        step_hidden_var,
-        output_nonlinearity_layer,
-        hidden_state_init=tf.zeros_initializer(),
-        hidden_state_init_trainable=False):
+def gru(
+    name,
+    gru_cell,
+    all_input_var,
+    step_input_var,
+    step_hidden_var,
+    output_nonlinearity_layer,
+    hidden_state_init=tf.zeros_initializer(),
+    hidden_state_init_trainable=False,
+):
     r"""Gated Recurrent Unit (GRU).
 
     Args:
@@ -43,14 +46,16 @@ def gru(name,
         output = output_nonlinearity_layer(output)
 
         hidden_init_var = tf.compat.v1.get_variable(
-            name='initial_hidden',
-            shape=(hidden_dim, ),
+            name="initial_hidden",
+            shape=(hidden_dim,),
             initializer=hidden_state_init,
             trainable=hidden_state_init_trainable,
-            dtype=tf.float32)
+            dtype=tf.float32,
+        )
 
         hidden_init_var_b = tf.broadcast_to(
-            hidden_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim])
+            hidden_init_var, shape=[tf.shape(all_input_var)[0], hidden_dim]
+        )
 
         rnn = tf.keras.layers.RNN(gru_cell, return_sequences=True)
 

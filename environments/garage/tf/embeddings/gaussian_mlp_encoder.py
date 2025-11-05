@@ -1,4 +1,5 @@
 """GaussianMLPEncoder."""
+
 import numpy as np
 import tensorflow as tf
 
@@ -66,29 +67,33 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
 
     """
 
-    def __init__(self,
-                 embedding_spec,
-                 name='GaussianMLPEncoder',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 learn_std=True,
-                 adaptive_std=False,
-                 std_share_network=False,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_hidden_sizes=(32, 32),
-                 std_hidden_nonlinearity=tf.nn.tanh,
-                 std_output_nonlinearity=None,
-                 std_parameterization='exp',
-                 layer_normalization=False):
+    def __init__(
+        self,
+        embedding_spec,
+        name="GaussianMLPEncoder",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        learn_std=True,
+        adaptive_std=False,
+        std_share_network=False,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_hidden_sizes=(32, 32),
+        std_hidden_nonlinearity=tf.nn.tanh,
+        std_output_nonlinearity=None,
+        std_parameterization="exp",
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._embedding_spec = embedding_spec
         self._hidden_sizes = hidden_sizes
@@ -135,26 +140,27 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
             std_output_nonlinearity=std_output_nonlinearity,
             std_parameterization=std_parameterization,
             layer_normalization=layer_normalization,
-            name='GaussianMLPModel')
+            name="GaussianMLPModel",
+        )
 
         self._initialize()
 
     def _initialize(self):
         """Initialize encoder."""
-        embedding_input = tf.compat.v1.placeholder(tf.float32,
-                                                   shape=(None, None,
-                                                          self._input_dim),
-                                                   name='default_encoder')
+        embedding_input = tf.compat.v1.placeholder(
+            tf.float32, shape=(None, None, self._input_dim), name="default_encoder"
+        )
         with tf.compat.v1.variable_scope(self._name) as vs:
             self._variable_scope = vs
             self._network = self.model.build(embedding_input)
             self._f_dist = tf.compat.v1.get_default_session().make_callable(
                 [
-                    self._network.dist.sample(
-                        seed=deterministic.get_tf_seed_stream()),
-                    self._network.mean, self._network.log_std
+                    self._network.dist.sample(seed=deterministic.get_tf_seed_stream()),
+                    self._network.mean,
+                    self._network.log_std,
                 ],
-                feed_list=[embedding_input])
+                feed_list=[embedding_input],
+            )
 
     def build(self, embedding_input, name=None):
         """Build encoder.
@@ -211,12 +217,9 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
         """
         flat_input = self._embedding_spec.input_space.flatten(input_value)
         sample, mean, log_std = self._f_dist(np.expand_dims([flat_input], 1))
-        sample = self._embedding_spec.output_space.unflatten(
-            np.squeeze(sample, 1)[0])
-        mean = self._embedding_spec.output_space.unflatten(
-            np.squeeze(mean, 1)[0])
-        log_std = self._embedding_spec.output_space.unflatten(
-            np.squeeze(log_std, 1)[0])
+        sample = self._embedding_spec.output_space.unflatten(np.squeeze(sample, 1)[0])
+        mean = self._embedding_spec.output_space.unflatten(np.squeeze(mean, 1)[0])
+        log_std = self._embedding_spec.output_space.unflatten(np.squeeze(log_std, 1)[0])
         return sample, dict(mean=mean, log_std=log_std)
 
     def get_latents(self, input_values):
@@ -238,12 +241,11 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
         """
         flat_input = self._embedding_spec.input_space.flatten_n(input_values)
         samples, means, log_stds = self._f_dist(np.expand_dims(flat_input, 1))
-        samples = self._embedding_spec.output_space.unflatten_n(
-            np.squeeze(samples, 1))
-        means = self._embedding_spec.output_space.unflatten_n(
-            np.squeeze(means, 1))
+        samples = self._embedding_spec.output_space.unflatten_n(np.squeeze(samples, 1))
+        means = self._embedding_spec.output_space.unflatten_n(np.squeeze(means, 1))
         log_stds = self._embedding_spec.output_space.unflatten_n(
-            np.squeeze(log_stds, 1))
+            np.squeeze(log_stds, 1)
+        )
         return samples, dict(mean=means, log_std=log_stds)
 
     @property
@@ -305,7 +307,8 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
             std_hidden_nonlinearity=self._std_hidden_nonlinearity,
             std_output_nonlinearity=self._std_output_nonlinearity,
             std_parameterization=self._std_parameterization,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_encoder.model.parameters = self.model.parameters
         return new_encoder
 
@@ -317,8 +320,8 @@ class GaussianMLPEncoder(StochasticEncoder, StochasticModule):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_dist']
-        del new_dict['_network']
+        del new_dict["_f_dist"]
+        del new_dict["_network"]
         return new_dict
 
     def __setstate__(self, state):

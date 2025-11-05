@@ -1,4 +1,5 @@
 """CNN Model."""
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -42,18 +43,21 @@ class CNNModelWithMaxPooling(Model):
 
     """
 
-    def __init__(self,
-                 input_dim,
-                 filters,
-                 strides,
-                 name=None,
-                 padding='SAME',
-                 pool_strides=(2, 2),
-                 pool_shapes=(2, 2),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer()):
+    def __init__(
+        self,
+        input_dim,
+        filters,
+        strides,
+        name=None,
+        padding="SAME",
+        pool_strides=(2, 2),
+        pool_shapes=(2, 2),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+    ):
         super().__init__(name)
         self._input_dim = input_dim
         self._filters = filters
@@ -91,4 +95,5 @@ class CNNModelWithMaxPooling(Model):
             padding=self._padding,
             pool_shapes=self._pool_shapes,
             pool_strides=self._pool_strides,
-            name='cnn')
+            name="cnn",
+        )

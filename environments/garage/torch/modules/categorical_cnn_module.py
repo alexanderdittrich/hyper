@@ -4,6 +4,7 @@ A model represented by a categorical distribution
 which is parameterized by a convolutional neural network (CNN)
 followed a multilayer perceptron (MLP).
 """
+
 import torch
 from torch import nn
 from torch.distributions import Categorical
@@ -67,26 +68,28 @@ class CategoricalCNNModule(nn.Module):
         is_image (bool): Whether observations are images or not.
     """
 
-    def __init__(self,
-                 input_var,
-                 output_dim,
-                 kernel_sizes,
-                 hidden_channels,
-                 strides=1,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=torch.tanh,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 paddings=0,
-                 padding_mode='zeros',
-                 max_pool=False,
-                 pool_shape=None,
-                 pool_stride=1,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 layer_normalization=False,
-                 is_image=True):
+    def __init__(
+        self,
+        input_var,
+        output_dim,
+        kernel_sizes,
+        hidden_channels,
+        strides=1,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=torch.tanh,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        paddings=0,
+        padding_mode="zeros",
+        max_pool=False,
+        pool_shape=None,
+        pool_stride=1,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        layer_normalization=False,
+        is_image=True,
+    ):
         super().__init__()
         self._input_var = input_var
         self._action_dim = output_dim
@@ -119,7 +122,8 @@ class CategoricalCNNModule(nn.Module):
             max_pool=self._max_pool,
             pool_shape=self._pool_shape,
             pool_stride=self._pool_stride,
-            is_image=self._is_image)
+            is_image=self._is_image,
+        )
 
     def forward(self, *inputs):
         """Forward method.

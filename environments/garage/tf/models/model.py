@@ -1,4 +1,5 @@
 """Base model classes."""
+
 import abc
 from collections import namedtuple
 import warnings
@@ -215,7 +216,7 @@ class Model(BaseModel, Module):
                 inputs.
 
         """
-        network_name = name or 'default'
+        network_name = name or "default"
         if not self._networks:
             # First time building the model, so self._networks are empty
             # We store the variable_scope to reenter later when we reuse it
@@ -227,45 +228,49 @@ class Model(BaseModel, Module):
                     network._outputs = self._build(*inputs, name)
                 variables = self._get_variables().values()
                 tf.compat.v1.get_default_session().run(
-                    tf.compat.v1.variables_initializer(variables))
+                    tf.compat.v1.variables_initializer(variables)
+                )
                 if self._default_parameters:
                     self.parameters = self._default_parameters
         else:
             if network_name in self._networks:
-                raise ValueError(
-                    'Network {} already exists!'.format(network_name))
-            with tf.compat.v1.variable_scope(self._variable_scope,
-                                             reuse=True,
-                                             auxiliary_name_scope=False):
+                raise ValueError("Network {} already exists!".format(network_name))
+            with tf.compat.v1.variable_scope(
+                self._variable_scope, reuse=True, auxiliary_name_scope=False
+            ):
                 with tf.name_scope(name=network_name):
                     network = Network()
                     network._inputs = inputs
                     network._outputs = self._build(*inputs, name)
         custom_in_spec = self.network_input_spec()
         custom_out_spec = self.network_output_spec()
-        in_spec = ['input', 'inputs']
-        out_spec = ['output', 'outputs']
+        in_spec = ["input", "inputs"]
+        out_spec = ["output", "outputs"]
         in_args = [network.input, network.inputs]
         out_args = [network.output, network.outputs]
         if isinstance(network.inputs, tuple) and len(network.inputs) > 1:
             assert len(custom_in_spec) == len(network.inputs), (
-                'network_input_spec must have same length as inputs!')
+                "network_input_spec must have same length as inputs!"
+            )
             in_spec.extend(custom_in_spec)
             in_args.extend(network.inputs)
         if isinstance(network.outputs, tuple) and len(network.outputs) > 1:
             assert len(custom_out_spec) == len(network.outputs), (
-                'network_output_spec must have same length as outputs!')
+                "network_output_spec must have same length as outputs!"
+            )
             out_spec.extend(custom_out_spec)
             out_args.extend(network.outputs)
         elif len(custom_out_spec) > 0:
             if not isinstance(network.outputs, tuple):
                 assert len(custom_out_spec) == 1, (
-                    'network_input_spec must have same length as outputs!')
+                    "network_input_spec must have same length as outputs!"
+                )
                 out_spec.extend(custom_out_spec)
                 out_args.extend([network.outputs])
             else:
                 assert len(custom_out_spec) == len(network.outputs), (
-                    'network_input_spec must have same length as outputs!')
+                    "network_input_spec must have same length as outputs!"
+                )
                 out_spec.extend(custom_out_spec)
                 out_args.extend(network.outputs)
 
@@ -341,14 +346,14 @@ class Model(BaseModel, Module):
         for name, var in variables.items():
             found = False
             # param name without model name
-            param_name = name[name.find(self.name) + len(self.name) + 1:]
+            param_name = name[name.find(self.name) + len(self.name) + 1 :]
             for k, v in parameters.items():
                 if param_name in k:
                     var.load(v)
                     found = True
                     continue
             if not found:
-                warnings.warn('No value provided for variable {}'.format(name))
+                warnings.warn("No value provided for variable {}".format(name))
 
     @property
     def name(self):
@@ -374,7 +379,7 @@ class Model(BaseModel, Module):
             tf.Tensor: Default input of the model.
 
         """
-        return self._networks['default'].input
+        return self._networks["default"].input
 
     @property
     def output(self):
@@ -388,7 +393,7 @@ class Model(BaseModel, Module):
             tf.Tensor: Default output of the model.
 
         """
-        return self._networks['default'].output
+        return self._networks["default"].output
 
     @property
     def inputs(self):
@@ -402,7 +407,7 @@ class Model(BaseModel, Module):
             list[tf.Tensor]: Default inputs of the model.
 
         """
-        return self._networks['default'].inputs
+        return self._networks["default"].inputs
 
     @property
     def outputs(self):
@@ -416,7 +421,7 @@ class Model(BaseModel, Module):
             list[tf.Tensor]: Default outputs of the model.
 
         """
-        return self._networks['default'].outputs
+        return self._networks["default"].outputs
 
     def _get_variables(self):
         """Get variables of this model.
@@ -438,8 +443,8 @@ class Model(BaseModel, Module):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_networks']
-        new_dict['_default_parameters'] = self.parameters
+        del new_dict["_networks"]
+        new_dict["_default_parameters"] = self.parameters
         return new_dict
 
     def __setstate__(self, state):

@@ -20,9 +20,9 @@ from environments.garage.experiment import Snapshotter
 
 # pylint: disable=no-value-for-parameter, protected-access
 @click.command()
-@click.argument('saved_dir', type=str)
-@click.option('--env', type=str, default=None)
-@click.option('--num_episodes', type=int, default=10)
+@click.argument("saved_dir", type=str)
+@click.option("--env", type=str, default=None)
+@click.option("--num_episodes", type=int, default=10)
 def watch_atari(saved_dir, env=None, num_episodes=10):
     """Watch a trained agent play an atari game.
 
@@ -41,7 +41,7 @@ def watch_atari(saved_dir, env=None, num_episodes=10):
         env = Noop(env, noop_max=30)
         env = MaxAndSkip(env, skip=4)
         env = EpisodicLife(env)
-        if 'FIRE' in env.unwrapped.get_action_meanings():
+        if "FIRE" in env.unwrapped.get_action_meanings():
             env = FireReset(env)
         env = Grayscale(env)
         env = Resize(env, 84, 84)
@@ -49,19 +49,18 @@ def watch_atari(saved_dir, env=None, num_episodes=10):
         env = StackFrames(env, 4, axis=0)
         env = GymEnv(env)
     else:
-        env = data['env']
+        env = data["env"]
 
-    exploration_policy = data['algo'].exploration_policy
-    exploration_policy.policy._qf.to('cpu')
+    exploration_policy = data["algo"].exploration_policy
+    exploration_policy.policy._qf.to("cpu")
     ep_rewards = np.asarray([])
     for _ in range(num_episodes):
-        episode_data = rollout(env,
-                               exploration_policy.policy,
-                               animated=True,
-                               pause_per_frame=0.02)
-        ep_rewards = np.append(ep_rewards, np.sum(episode_data['rewards']))
+        episode_data = rollout(
+            env, exploration_policy.policy, animated=True, pause_per_frame=0.02
+        )
+        ep_rewards = np.append(ep_rewards, np.sum(episode_data["rewards"]))
 
-    print('Average Reward {}'.format(np.mean(ep_rewards)))
+    print("Average Reward {}".format(np.mean(ep_rewards)))
 
 
 watch_atari()

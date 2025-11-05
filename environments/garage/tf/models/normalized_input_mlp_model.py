@@ -1,4 +1,5 @@
 """NormalizedInputMLPModel."""
+
 import numpy as np
 import tensorflow as tf
 
@@ -41,30 +42,36 @@ class NormalizedInputMLPModel(MLPModel):
 
     """
 
-    def __init__(self,
-                 input_shape,
-                 output_dim,
-                 name='NormalizedInputMLPModel',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
-        super().__init__(output_dim=output_dim,
-                         name=name,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         layer_normalization=layer_normalization)
+    def __init__(
+        self,
+        input_shape,
+        output_dim,
+        name="NormalizedInputMLPModel",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
+        super().__init__(
+            output_dim=output_dim,
+            name=name,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+        )
         self._input_shape = input_shape
 
     def network_output_spec(self):
@@ -74,7 +81,7 @@ class NormalizedInputMLPModel(MLPModel):
             list[str]: List of key(str) for the network outputs.
 
         """
-        return ['y_hat', 'x_mean', 'x_std']
+        return ["y_hat", "x_mean", "x_std"]
 
     def _build(self, state_input, name=None):
         """Build model given input placeholder(s).
@@ -89,19 +96,21 @@ class NormalizedInputMLPModel(MLPModel):
             tf.Tensor: Tensor output of the model.
 
         """
-        with tf.compat.v1.variable_scope('normalized_vars'):
+        with tf.compat.v1.variable_scope("normalized_vars"):
             x_mean_var = tf.compat.v1.get_variable(
-                name='x_mean',
-                shape=(1, ) + self._input_shape,
+                name="x_mean",
+                shape=(1,) + self._input_shape,
                 dtype=np.float32,
                 initializer=tf.zeros_initializer(),
-                trainable=False)
+                trainable=False,
+            )
             x_std_var = tf.compat.v1.get_variable(
-                name='x_std_var',
-                shape=(1, ) + self._input_shape,
+                name="x_std_var",
+                shape=(1,) + self._input_shape,
                 dtype=np.float32,
                 initializer=tf.ones_initializer(),
-                trainable=False)
+                trainable=False,
+            )
 
         normalized_xs_var = (state_input - x_mean_var) / x_std_var
 

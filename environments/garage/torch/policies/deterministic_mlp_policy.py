@@ -3,6 +3,7 @@
 A neural network can be used as policy method in different RL algorithms.
 It accepts an observation of the environment and predicts an action.
 """
+
 import akro
 import numpy as np
 import torch
@@ -19,7 +20,7 @@ class DeterministicMLPPolicy(Policy):
     It uses a PyTorch neural network module to fit the function of pi(s).
     """
 
-    def __init__(self, env_spec, name='DeterministicMLPPolicy', **kwargs):
+    def __init__(self, env_spec, name="DeterministicMLPPolicy", **kwargs):
         """Initialize class with multiple attributes.
 
         Args:
@@ -31,9 +32,9 @@ class DeterministicMLPPolicy(Policy):
 
         self._obs_dim = env_spec.observation_space.flat_dim
         self._action_dim = env_spec.action_space.flat_dim
-        self._module = MLPModule(input_dim=self._obs_dim,
-                                 output_dim=self._action_dim,
-                                 **kwargs)
+        self._module = MLPModule(
+            input_dim=self._obs_dim, output_dim=self._action_dim, **kwargs
+        )
 
     # pylint: disable=arguments-differ
     def forward(self, observations):
@@ -63,13 +64,12 @@ class DeterministicMLPPolicy(Policy):
                         distribution
         """
         if not isinstance(observation, np.ndarray) and not isinstance(
-                observation, torch.Tensor):
+            observation, torch.Tensor
+        ):
             observation = self._env_spec.observation_space.flatten(observation)
-        elif isinstance(observation,
-                        np.ndarray) and len(observation.shape) > 1:
+        elif isinstance(observation, np.ndarray) and len(observation.shape) > 1:
             observation = self._env_spec.observation_space.flatten(observation)
-        elif isinstance(observation,
-                        torch.Tensor) and len(observation.shape) > 1:
+        elif isinstance(observation, torch.Tensor) and len(observation.shape) > 1:
             observation = torch.flatten(observation)
         with torch.no_grad():
             observation = torch.Tensor(observation).unsqueeze(0)
@@ -91,9 +91,9 @@ class DeterministicMLPPolicy(Policy):
                         distribution
         """
         if not isinstance(observations[0], np.ndarray) and not isinstance(
-                observations[0], torch.Tensor):
-            observations = self._env_spec.observation_space.flatten_n(
-                observations)
+            observations[0], torch.Tensor
+        ):
+            observations = self._env_spec.observation_space.flatten_n(observations)
 
         # frequently users like to pass lists of torch tensors or lists of
         # numpy arrays. This handles those conversions.
@@ -103,19 +103,17 @@ class DeterministicMLPPolicy(Policy):
             elif isinstance(observations[0], torch.Tensor):
                 observations = torch.stack(observations)
 
-        if isinstance(observations[0],
-                      np.ndarray) and len(observations[0].shape) > 1:
-            observations = self._env_spec.observation_space.flatten_n(
-                observations)
-        elif isinstance(observations[0],
-                        torch.Tensor) and len(observations[0].shape) > 1:
+        if isinstance(observations[0], np.ndarray) and len(observations[0].shape) > 1:
+            observations = self._env_spec.observation_space.flatten_n(observations)
+        elif (
+            isinstance(observations[0], torch.Tensor) and len(observations[0].shape) > 1
+        ):
             observations = torch.flatten(observations, start_dim=1)
 
-        if isinstance(self._env_spec.observation_space, akro.Image) and \
-                len(observations.shape) < \
-                len(self._env_spec.observation_space.shape):
-            observations = self._env_spec.observation_space.unflatten_n(
-                observations)
+        if isinstance(self._env_spec.observation_space, akro.Image) and len(
+            observations.shape
+        ) < len(self._env_spec.observation_space.shape):
+            observations = self._env_spec.observation_space.unflatten_n(observations)
         with torch.no_grad():
             x = self(torch.Tensor(observations).to(global_device()))
             return x.cpu().numpy(), dict()

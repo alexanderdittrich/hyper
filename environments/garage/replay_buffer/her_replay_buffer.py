@@ -2,6 +2,7 @@
 
 See: https://arxiv.org/abs/1707.01495.
 """
+
 import copy
 
 import numpy as np
@@ -29,7 +30,7 @@ class HERReplayBuffer(PathBuffer):
         self._reward_fn = reward_fn
 
         if not float(replay_k).is_integer() or replay_k < 0:
-            raise ValueError('replay_k must be an integer and >= 0.')
+            raise ValueError("replay_k must be an integer and >= 0.")
         super().__init__(capacity_in_transitions, env_spec)
 
     def _sample_her_goals(self, path, transition_idx):
@@ -51,19 +52,18 @@ class HERReplayBuffer(PathBuffer):
                 (replay_k, goal_dim).
 
         """
-        goal_indexes = np.random.randint(transition_idx + 1,
-                                         len(path['observations']),
-                                         size=self._replay_k)
+        goal_indexes = np.random.randint(
+            transition_idx + 1, len(path["observations"]), size=self._replay_k
+        )
         return [
-            goal['achieved_goal']
-            for goal in np.asarray(path['observations'])[goal_indexes]
+            goal["achieved_goal"]
+            for goal in np.asarray(path["observations"])[goal_indexes]
         ]
 
     def _flatten_dicts(self, path):
-        for key in ['observations', 'next_observations']:
+        for key in ["observations", "next_observations"]:
             if not isinstance(path[key], dict):
-                path[key] = self._env_spec.observation_space.flatten_n(
-                    path[key])
+                path[key] = self._env_spec.observation_space.flatten_n(path[key])
             else:
                 path[key] = self._env_spec.observation_space.flatten(path[key])
 
@@ -81,28 +81,25 @@ class HERReplayBuffer(PathBuffer):
 
         """
         obs_space = self._env_spec.observation_space
-        if not isinstance(path['observations'][0], dict):
+        if not isinstance(path["observations"][0], dict):
             # unflatten dicts if they've been flattened
-            path['observations'] = obs_space.unflatten_n(path['observations'])
-            path['next_observations'] = (obs_space.unflatten_n(
-                path['next_observations']))
+            path["observations"] = obs_space.unflatten_n(path["observations"])
+            path["next_observations"] = obs_space.unflatten_n(path["next_observations"])
 
         # create HER transitions and add them to the buffer
-        for idx in range(path['actions'].shape[0] - 1):
+        for idx in range(path["actions"].shape[0] - 1):
             transition = {key: sample[idx] for key, sample in path.items()}
             her_goals = self._sample_her_goals(path, idx)
 
             # create replay_k transitions using the HER goals
             for goal in her_goals:
-
                 t_new = copy.deepcopy(transition)
-                a_g = t_new['next_observations']['achieved_goal']
+                a_g = t_new["next_observations"]["achieved_goal"]
 
-                t_new['rewards'] = np.array(self._reward_fn(a_g, goal, None))
-                t_new['observations']['desired_goal'] = goal
-                t_new['next_observations']['desired_goal'] = copy.deepcopy(
-                    goal)
-                t_new['terminals'] = np.array(False)
+                t_new["rewards"] = np.array(self._reward_fn(a_g, goal, None))
+                t_new["observations"]["desired_goal"] = goal
+                t_new["next_observations"]["desired_goal"] = copy.deepcopy(goal)
+                t_new["terminals"] = np.array(False)
 
                 # flatten the observation dicts now that we're done with them
                 self._flatten_dicts(t_new)

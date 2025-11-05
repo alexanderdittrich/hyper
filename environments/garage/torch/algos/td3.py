@@ -1,4 +1,5 @@
 """TD3 model in Pytorch."""
+
 import copy
 
 from dowel import logger, tabular
@@ -6,11 +7,19 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from environments.garage import (_Default, log_performance, make_optimizer,
-                    obtain_evaluation_episodes)
+from environments.garage import (
+    _Default,
+    log_performance,
+    make_optimizer,
+    obtain_evaluation_episodes,
+)
 from environments.garage.np.algos import RLAlgorithm
-from environments.garage.torch import (dict_np_to_torch, global_device, soft_update_model,
-                          torch_to_np)
+from environments.garage.torch import (
+    dict_np_to_torch,
+    global_device,
+    soft_update_model,
+    torch_to_np,
+)
 
 
 class TD3(RLAlgorithm):
@@ -75,40 +84,40 @@ class TD3(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf1,
-            qf2,
-            replay_buffer,
-            sampler,
-            *,  # Everything after this is numbers.
-            max_episode_length_eval=None,
-            grad_steps_per_env_step,
-            exploration_policy,
-            uniform_random_policy=None,
-            max_action=None,
-            target_update_tau=0.005,
-            discount=0.99,
-            reward_scaling=1.,
-            update_actor_interval=2,
-            buffer_batch_size=64,
-            replay_buffer_size=1e6,
-            min_buffer_size=1e4,
-            exploration_noise=0.1,
-            policy_noise=0.2,
-            policy_noise_clip=0.5,
-            clip_return=np.inf,
-            policy_lr=_Default(1e-4),
-            qf_lr=_Default(1e-3),
-            policy_optimizer=torch.optim.Adam,
-            qf_optimizer=torch.optim.Adam,
-            num_evaluation_episodes=10,
-            steps_per_epoch=20,
-            start_steps=10000,
-            update_after=1000,
-            use_deterministic_evaluation=False):
-
+        self,
+        env_spec,
+        policy,
+        qf1,
+        qf2,
+        replay_buffer,
+        sampler,
+        *,  # Everything after this is numbers.
+        max_episode_length_eval=None,
+        grad_steps_per_env_step,
+        exploration_policy,
+        uniform_random_policy=None,
+        max_action=None,
+        target_update_tau=0.005,
+        discount=0.99,
+        reward_scaling=1.0,
+        update_actor_interval=2,
+        buffer_batch_size=64,
+        replay_buffer_size=1e6,
+        min_buffer_size=1e4,
+        exploration_noise=0.1,
+        policy_noise=0.2,
+        policy_noise_clip=0.5,
+        clip_return=np.inf,
+        policy_lr=_Default(1e-4),
+        qf_lr=_Default(1e-3),
+        policy_optimizer=torch.optim.Adam,
+        qf_optimizer=torch.optim.Adam,
+        num_evaluation_episodes=10,
+        steps_per_epoch=20,
+        start_steps=10000,
+        update_after=1000,
+        use_deterministic_evaluation=False,
+    ):
         self._env_spec = env_spec
         action_bound = self._env_spec.action_space.high[0]
         self._max_action = action_bound if max_action is None else max_action
@@ -153,15 +162,11 @@ class TD3(RLAlgorithm):
         self._target_qf_1 = copy.deepcopy(self._qf_1)
         self._target_qf_2 = copy.deepcopy(self._qf_2)
 
-        self._policy_optimizer = make_optimizer(policy_optimizer,
-                                                module=self.policy,
-                                                lr=policy_lr)
-        self._qf_optimizer_1 = make_optimizer(qf_optimizer,
-                                              module=self._qf_1,
-                                              lr=qf_lr)
-        self._qf_optimizer_2 = make_optimizer(qf_optimizer,
-                                              module=self._qf_2,
-                                              lr=qf_lr)
+        self._policy_optimizer = make_optimizer(
+            policy_optimizer, module=self.policy, lr=policy_lr
+        )
+        self._qf_optimizer_1 = make_optimizer(qf_optimizer, module=self._qf_1, lr=qf_lr)
+        self._qf_optimizer_2 = make_optimizer(qf_optimizer, module=self._qf_2, lr=qf_lr)
         self._actor_loss = torch.zeros(1)
 
     def _get_action(self, action, noise_scale):
@@ -196,14 +201,14 @@ class TD3(RLAlgorithm):
                 # Obtain trasnsition batch and store it in replay buffer.
                 # Get action randomly from environment within warm-up steps.
                 # Afterwards, get action from policy.
-                if self._uniform_random_policy and \
-                        trainer.step_itr < self._start_steps:
+                if self._uniform_random_policy and trainer.step_itr < self._start_steps:
                     trainer.step_path = trainer.obtain_episodes(
-                        trainer.step_itr,
-                        agent_update=self._uniform_random_policy)
+                        trainer.step_itr, agent_update=self._uniform_random_policy
+                    )
                 else:
                     trainer.step_path = trainer.obtain_episodes(
-                        trainer.step_itr, agent_update=self.exploration_policy)
+                        trainer.step_itr, agent_update=self.exploration_policy
+                    )
                 self._replay_buffer.add_episode_batch(trainer.step_path)
 
                 # Update after warm-up steps.
@@ -211,18 +216,25 @@ class TD3(RLAlgorithm):
                     self._train_once(trainer.step_itr)
 
                 # Evaluate and log the results.
-                if (cycle == 0 and self._replay_buffer.n_transitions_stored >=
-                        self._min_buffer_size):
+                if (
+                    cycle == 0
+                    and self._replay_buffer.n_transitions_stored
+                    >= self._min_buffer_size
+                ):
                     trainer.enable_logging = True
                     eval_eps = self._evaluate_policy()
-                    log_performance(trainer.step_path,
-                                    eval_eps,
-                                    discount=self._discount,
-                                    prefix='Training')
-                    log_performance(trainer.step_itr,
-                                    eval_eps,
-                                    discount=self._discount,
-                                    prefix='Evaluation')
+                    log_performance(
+                        trainer.step_path,
+                        eval_eps,
+                        discount=self._discount,
+                        prefix="Training",
+                    )
+                    log_performance(
+                        trainer.step_itr,
+                        eval_eps,
+                        discount=self._discount,
+                        prefix="Evaluation",
+                    )
                 trainer.step_itr += 1
 
     def _train_once(self, itr):
@@ -233,16 +245,17 @@ class TD3(RLAlgorithm):
 
         """
         for grad_step_timer in range(self._grad_steps_per_env_step):
-            if (self._replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
+            if self._replay_buffer.n_transitions_stored >= self._min_buffer_size:
                 # Sample from buffer
                 samples = self._replay_buffer.sample_transitions(
-                    self._buffer_batch_size)
+                    self._buffer_batch_size
+                )
                 samples = dict_np_to_torch(samples)
 
                 # Optimize
                 qf_loss, y, q, policy_loss = torch_to_np(
-                    self._optimize_policy(samples, grad_step_timer))
+                    self._optimize_policy(samples, grad_step_timer)
+                )
 
                 self._episode_policy_losses.append(policy_loss)
                 self._episode_qf_losses.append(qf_loss)
@@ -250,12 +263,11 @@ class TD3(RLAlgorithm):
                 self._epoch_qs.append(q)
 
         if itr % self._steps_per_epoch == 0:
-            logger.log('Training finished')
+            logger.log("Training finished")
             epoch = itr // self._steps_per_epoch
 
-            if (self._replay_buffer.n_transitions_stored >=
-                    self._min_buffer_size):
-                tabular.record('Epoch', epoch)
+            if self._replay_buffer.n_transitions_stored >= self._min_buffer_size:
+                tabular.record("Epoch", epoch)
                 self._log_statistics()
 
     # pylint: disable=invalid-unary-operand-type
@@ -278,29 +290,31 @@ class TD3(RLAlgorithm):
                 (action network).
 
         """
-        rewards = samples_data['rewards'].to(global_device()).reshape(-1, 1)
-        terminals = samples_data['terminals'].to(global_device()).reshape(
-            -1, 1)
-        actions = samples_data['actions'].to(global_device())
-        observations = samples_data['observations'].to(global_device())
-        next_observations = samples_data['next_observations'].to(
-            global_device())
+        rewards = samples_data["rewards"].to(global_device()).reshape(-1, 1)
+        terminals = samples_data["terminals"].to(global_device()).reshape(-1, 1)
+        actions = samples_data["actions"].to(global_device())
+        observations = samples_data["observations"].to(global_device())
+        next_observations = samples_data["next_observations"].to(global_device())
 
         next_inputs = next_observations
         inputs = observations
         with torch.no_grad():
             # Select action according to policy and add clipped noise
             noise = (torch.randn_like(actions) * self._policy_noise).clamp(
-                -self._policy_noise_clip, self._policy_noise_clip)
+                -self._policy_noise_clip, self._policy_noise_clip
+            )
             next_actions = (self._target_policy(next_inputs) + noise).clamp(
-                -self._max_action, self._max_action)
+                -self._max_action, self._max_action
+            )
 
             # Compute the target Q value
             target_Q1 = self._target_qf_1(next_inputs, next_actions)
             target_Q2 = self._target_qf_2(next_inputs, next_actions)
             target_q = torch.min(target_Q1, target_Q2)
-            target_Q = rewards * self._reward_scaling + (
-                1. - terminals) * self._discount * target_q
+            target_Q = (
+                rewards * self._reward_scaling
+                + (1.0 - terminals) * self._discount * target_q
+            )
 
         # Get current Q values
         current_Q1 = self._qf_1(inputs, actions)
@@ -309,7 +323,8 @@ class TD3(RLAlgorithm):
 
         # Compute critic loss
         critic_loss = F.mse_loss(current_Q1, target_Q) + F.mse_loss(
-            current_Q2, target_Q)
+            current_Q2, target_Q
+        )
 
         # Optimize critic
         self._qf_optimizer_1.zero_grad()
@@ -332,8 +347,12 @@ class TD3(RLAlgorithm):
             # update target networks
             self._update_network_parameters()
 
-        return (critic_loss.detach(), target_Q, current_Q.detach(),
-                self._actor_loss.detach())
+        return (
+            critic_loss.detach(),
+            target_Q,
+            current_Q.detach(),
+            self._actor_loss.detach(),
+        )
 
     def _evaluate_policy(self):
         """Evaluate the performance of the policy via deterministic rollouts.
@@ -351,7 +370,8 @@ class TD3(RLAlgorithm):
             self._eval_env,
             self._max_episode_length_eval,
             num_eps=self._num_evaluation_episodes,
-            deterministic=self._use_deterministic_evaluation)
+            deterministic=self._use_deterministic_evaluation,
+        )
 
     def _update_network_parameters(self):
         """Update parameters in actor network and critic networks."""
@@ -361,18 +381,16 @@ class TD3(RLAlgorithm):
 
     def _log_statistics(self):
         """Output training statistics to dowel such as losses and returns."""
-        tabular.record('Policy/AveragePolicyLoss',
-                       np.mean(self._episode_policy_losses))
-        tabular.record('QFunction/AverageQFunctionLoss',
-                       np.mean(self._episode_qf_losses))
-        tabular.record('QFunction/AverageQ', np.mean(self._epoch_qs))
-        tabular.record('QFunction/MaxQ', np.max(self._epoch_qs))
-        tabular.record('QFunction/AverageAbsQ',
-                       np.mean(np.abs(self._epoch_qs)))
-        tabular.record('QFunction/AverageY', np.mean(self._epoch_ys))
-        tabular.record('QFunction/MaxY', np.max(self._epoch_ys))
-        tabular.record('QFunction/AverageAbsY',
-                       np.mean(np.abs(self._epoch_ys)))
+        tabular.record("Policy/AveragePolicyLoss", np.mean(self._episode_policy_losses))
+        tabular.record(
+            "QFunction/AverageQFunctionLoss", np.mean(self._episode_qf_losses)
+        )
+        tabular.record("QFunction/AverageQ", np.mean(self._epoch_qs))
+        tabular.record("QFunction/MaxQ", np.max(self._epoch_qs))
+        tabular.record("QFunction/AverageAbsQ", np.mean(np.abs(self._epoch_qs)))
+        tabular.record("QFunction/AverageY", np.mean(self._epoch_ys))
+        tabular.record("QFunction/MaxY", np.max(self._epoch_ys))
+        tabular.record("QFunction/AverageAbsY", np.mean(np.abs(self._epoch_ys)))
 
     @property
     def networks(self):
@@ -383,8 +401,12 @@ class TD3(RLAlgorithm):
 
         """
         return [
-            self.policy, self._qf_1, self._qf_2, self._target_policy,
-            self._target_qf_1, self._target_qf_2
+            self.policy,
+            self._qf_1,
+            self._qf_2,
+            self._target_policy,
+            self._target_qf_1,
+            self._target_qf_2,
         ]
 
     def to(self, device=None):

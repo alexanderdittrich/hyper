@@ -1,4 +1,5 @@
 """Natural Policy Gradient Optimization."""
+
 from dowel import logger, tabular
 import numpy as np
 
@@ -72,31 +73,28 @@ class RL2NPO(NPO):
         returns = self._fit_baseline_with_data(episodes, baselines)
         baselines = self._get_baseline_prediction(episodes)
 
-        policy_opt_input_values = self._policy_opt_input_values(
-            episodes, baselines)
+        policy_opt_input_values = self._policy_opt_input_values(episodes, baselines)
         # Train policy network
-        logger.log('Computing loss before')
+        logger.log("Computing loss before")
         loss_before = self._optimizer.loss(policy_opt_input_values)
-        logger.log('Computing KL before')
+        logger.log("Computing KL before")
         policy_kl_before = self._f_policy_kl(*policy_opt_input_values)
-        logger.log('Optimizing')
+        logger.log("Optimizing")
         self._optimizer.optimize(policy_opt_input_values)
-        logger.log('Computing KL after')
+        logger.log("Computing KL after")
         policy_kl = self._f_policy_kl(*policy_opt_input_values)
-        logger.log('Computing loss after')
+        logger.log("Computing loss after")
         loss_after = self._optimizer.loss(policy_opt_input_values)
-        tabular.record('{}/LossBefore'.format(self.policy.name), loss_before)
-        tabular.record('{}/LossAfter'.format(self.policy.name), loss_after)
-        tabular.record('{}/dLoss'.format(self.policy.name),
-                       loss_before - loss_after)
-        tabular.record('{}/KLBefore'.format(self.policy.name),
-                       policy_kl_before)
-        tabular.record('{}/KL'.format(self.policy.name), policy_kl)
+        tabular.record("{}/LossBefore".format(self.policy.name), loss_before)
+        tabular.record("{}/LossAfter".format(self.policy.name), loss_after)
+        tabular.record("{}/dLoss".format(self.policy.name), loss_before - loss_after)
+        tabular.record("{}/KLBefore".format(self.policy.name), policy_kl_before)
+        tabular.record("{}/KL".format(self.policy.name), policy_kl)
         pol_ent = self._f_policy_entropy(*policy_opt_input_values)
-        tabular.record('{}/Entropy'.format(self.policy.name), np.mean(pol_ent))
+        tabular.record("{}/Entropy".format(self.policy.name), np.mean(pol_ent))
 
         ev = explained_variance_1d(baselines, returns, episodes.valids)
-        tabular.record('{}/ExplainedVariance'.format(self._baseline.name), ev)
+        tabular.record("{}/ExplainedVariance".format(self._baseline.name), ev)
         self._old_policy.parameters = self.policy.parameters
 
     def _get_baseline_prediction(self, episodes):
@@ -111,8 +109,9 @@ class RL2NPO(NPO):
 
         """
         obs = [
-            self._baseline.predict({'observations': obs})
+            self._baseline.predict({"observations": obs})
             for obs in episodes.observations_list
         ]
-        return pad_batch_array(np.concatenate(obs), episodes.lengths,
-                               self.max_episode_length)
+        return pad_batch_array(
+            np.concatenate(obs), episodes.lengths, self.max_episode_length
+        )

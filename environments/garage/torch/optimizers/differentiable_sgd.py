@@ -38,7 +38,7 @@ class DifferentiableSGD:
             params = list(module.named_parameters())
             for name, param in params:
                 # Skip descendant modules' parameters.
-                if '.' not in name:
+                if "." not in name:
                     if param.grad is None:
                         continue
 

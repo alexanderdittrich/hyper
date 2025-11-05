@@ -3,6 +3,7 @@
 
 https://arxiv.org/pdf/1910.10897.pdf
 """
+
 import click
 import metaworld
 import numpy as np
@@ -23,11 +24,11 @@ from environments.garage.trainer import Trainer
 
 
 @click.command()
-@click.option('--seed', 'seed', type=int, default=1)
-@click.option('--gpu', '_gpu', type=int, default=None)
-@click.option('--n_tasks', default=10)
-@click.option('--timesteps', default=20000000)
-@wrap_experiment(snapshot_mode='none')
+@click.option("--seed", "seed", type=int, default=1)
+@click.option("--gpu", "_gpu", type=int, default=None)
+@click.option("--n_tasks", default=10)
+@click.option("--timesteps", default=20000000)
+@wrap_experiment(snapshot_mode="none")
 def mtsac_metaworld_mt10(ctxt=None, *, seed, _gpu, n_tasks, timesteps):
     """Train MTSAC with MT10 environment.
 
@@ -50,13 +51,8 @@ def mtsac_metaworld_mt10(ctxt=None, *, seed, _gpu, n_tasks, timesteps):
     def wrap(env, _):
         return normalize(env, normalize_reward=True)
 
-    train_task_sampler = MetaWorldTaskSampler(mt10,
-                                              'train',
-                                              wrap,
-                                              add_env_onehot=True)
-    test_task_sampler = MetaWorldTaskSampler(mt10_test,
-                                             'train',
-                                             add_env_onehot=True)
+    train_task_sampler = MetaWorldTaskSampler(mt10, "train", wrap, add_env_onehot=True)
+    test_task_sampler = MetaWorldTaskSampler(mt10_test, "train", add_env_onehot=True)
     assert n_tasks % 10 == 0
     assert n_tasks <= 500
     mt10_train_envs = train_task_sampler.sample(n_tasks)
@@ -68,19 +64,21 @@ def mtsac_metaworld_mt10(ctxt=None, *, seed, _gpu, n_tasks, timesteps):
         hidden_sizes=[400, 400, 400],
         hidden_nonlinearity=nn.ReLU,
         output_nonlinearity=None,
-        min_std=np.exp(-20.),
-        max_std=np.exp(2.),
+        min_std=np.exp(-20.0),
+        max_std=np.exp(2.0),
     )
 
-    qf1 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[400, 400, 400],
-                                 hidden_nonlinearity=F.relu)
+    qf1 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[400, 400, 400], hidden_nonlinearity=F.relu
+    )
 
-    qf2 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[400, 400, 400],
-                                 hidden_nonlinearity=F.relu)
+    qf2 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[400, 400, 400], hidden_nonlinearity=F.relu
+    )
 
-    replay_buffer = PathBuffer(capacity_in_transitions=int(1e6), )
+    replay_buffer = PathBuffer(
+        capacity_in_transitions=int(1e6),
+    )
     meta_batch_size = 10
 
     sampler = LocalSampler(
@@ -97,27 +95,30 @@ def mtsac_metaworld_mt10(ctxt=None, *, seed, _gpu, n_tasks, timesteps):
         # so creating 50 envs with 8 copies comes out to 20gb of memory. Many
         # users want to be able to run multiple seeds on 1 machine, so I have
         # reduced this to n_envs = 2 for 2 copies in the meantime.
-        worker_args=dict(n_envs=2))
+        worker_args=dict(n_envs=2),
+    )
 
     batch_size = int(env.spec.max_episode_length * meta_batch_size)
     num_evaluation_points = 500
     epochs = timesteps // batch_size
     epoch_cycles = epochs // num_evaluation_points
     epochs = epochs // epoch_cycles
-    mtsac = MTSAC(policy=policy,
-                  qf1=qf1,
-                  qf2=qf2,
-                  sampler=sampler,
-                  gradient_steps_per_itr=env.spec.max_episode_length,
-                  eval_env=mt10_test_envs,
-                  env_spec=env.spec,
-                  num_tasks=10,
-                  steps_per_epoch=epoch_cycles,
-                  replay_buffer=replay_buffer,
-                  min_buffer_size=1500,
-                  target_update_tau=5e-3,
-                  discount=0.99,
-                  buffer_batch_size=1280)
+    mtsac = MTSAC(
+        policy=policy,
+        qf1=qf1,
+        qf2=qf2,
+        sampler=sampler,
+        gradient_steps_per_itr=env.spec.max_episode_length,
+        eval_env=mt10_test_envs,
+        env_spec=env.spec,
+        num_tasks=10,
+        steps_per_epoch=epoch_cycles,
+        replay_buffer=replay_buffer,
+        min_buffer_size=1500,
+        target_update_tau=5e-3,
+        discount=0.99,
+        buffer_batch_size=1280,
+    )
     if _gpu is not None:
         set_gpu_mode(True, _gpu)
     mtsac.to()

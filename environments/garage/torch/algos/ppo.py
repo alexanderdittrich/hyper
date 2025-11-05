@@ -1,4 +1,5 @@
 """Proximal Policy Optimization (PPO)."""
+
 import torch
 
 from environments.garage.torch.algos import VPG
@@ -44,52 +45,57 @@ class PPO(VPG):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 value_function,
-                 sampler,
-                 policy_optimizer=None,
-                 vf_optimizer=None,
-                 lr_clip_range=2e-1,
-                 num_train_per_epoch=1,
-                 discount=0.99,
-                 gae_lambda=0.97,
-                 center_adv=True,
-                 positive_adv=False,
-                 policy_ent_coeff=0.0,
-                 use_softplus_entropy=False,
-                 stop_entropy_gradient=False,
-                 entropy_method='no_entropy'):
-
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        value_function,
+        sampler,
+        policy_optimizer=None,
+        vf_optimizer=None,
+        lr_clip_range=2e-1,
+        num_train_per_epoch=1,
+        discount=0.99,
+        gae_lambda=0.97,
+        center_adv=True,
+        positive_adv=False,
+        policy_ent_coeff=0.0,
+        use_softplus_entropy=False,
+        stop_entropy_gradient=False,
+        entropy_method="no_entropy",
+    ):
         if policy_optimizer is None:
             policy_optimizer = OptimizerWrapper(
                 (torch.optim.Adam, dict(lr=2.5e-4)),
                 policy,
                 max_optimization_epochs=10,
-                minibatch_size=64)
+                minibatch_size=64,
+            )
         if vf_optimizer is None:
             vf_optimizer = OptimizerWrapper(
                 (torch.optim.Adam, dict(lr=2.5e-4)),
                 value_function,
                 max_optimization_epochs=10,
-                minibatch_size=64)
+                minibatch_size=64,
+            )
 
-        super().__init__(env_spec=env_spec,
-                         policy=policy,
-                         value_function=value_function,
-                         sampler=sampler,
-                         policy_optimizer=policy_optimizer,
-                         vf_optimizer=vf_optimizer,
-                         num_train_per_epoch=num_train_per_epoch,
-                         discount=discount,
-                         gae_lambda=gae_lambda,
-                         center_adv=center_adv,
-                         positive_adv=positive_adv,
-                         policy_ent_coeff=policy_ent_coeff,
-                         use_softplus_entropy=use_softplus_entropy,
-                         stop_entropy_gradient=stop_entropy_gradient,
-                         entropy_method=entropy_method)
+        super().__init__(
+            env_spec=env_spec,
+            policy=policy,
+            value_function=value_function,
+            sampler=sampler,
+            policy_optimizer=policy_optimizer,
+            vf_optimizer=vf_optimizer,
+            num_train_per_epoch=num_train_per_epoch,
+            discount=discount,
+            gae_lambda=gae_lambda,
+            center_adv=center_adv,
+            positive_adv=positive_adv,
+            policy_ent_coeff=policy_ent_coeff,
+            use_softplus_entropy=use_softplus_entropy,
+            stop_entropy_gradient=stop_entropy_gradient,
+            entropy_method=entropy_method,
+        )
 
         self._lr_clip_range = lr_clip_range
 
@@ -122,9 +128,9 @@ class PPO(VPG):
         surrogate = likelihood_ratio * advantages
 
         # Clipping the constraint
-        likelihood_ratio_clip = torch.clamp(likelihood_ratio,
-                                            min=1 - self._lr_clip_range,
-                                            max=1 + self._lr_clip_range)
+        likelihood_ratio_clip = torch.clamp(
+            likelihood_ratio, min=1 - self._lr_clip_range, max=1 + self._lr_clip_range
+        )
 
         # Calculate surrotate clip
         surrogate_clip = likelihood_ratio_clip * advantages

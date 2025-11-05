@@ -5,14 +5,14 @@ from environments.mujoco.rand_param_envs.gym.monitoring import VideoRecorder
 
 
 class BrokenRecordableEnv(object):
-    metadata = {'render.modes': [None, 'rgb_array']}
+    metadata = {"render.modes": [None, "rgb_array"]}
 
     def render(self, mode=None):
         pass
 
 
 class UnrecordableEnv(object):
-    metadata = {'render.modes': [None]}
+    metadata = {"render.modes": [None]}
 
     def render(self, mode=None):
         pass
@@ -58,7 +58,7 @@ def test_record_breaking_render_method():
 
 
 def test_text_envs():
-    env = gym.make('FrozenLake-v0')
+    env = gym.make("FrozenLake-v0")
     video = VideoRecorder(env)
     try:
         env.reset()

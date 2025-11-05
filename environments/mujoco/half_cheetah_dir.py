@@ -48,14 +48,19 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
         done = False
-        infos = dict(reward_forward=forward_reward,
-                     reward_ctrl=-ctrl_cost,
-                     task=self.get_task())
+        infos = dict(
+            reward_forward=forward_reward, reward_ctrl=-ctrl_cost, task=self.get_task()
+        )
         return observation, reward, done, infos
 
     def sample_tasks(self, n_tasks):
         # for fwd/bwd env, goal direc is backwards if - 1.0, forwards if + 1.0
-        return [random.choice([-1.0, 1.0]) for _ in range(n_tasks, )]
+        return [
+            random.choice([-1.0, 1.0])
+            for _ in range(
+                n_tasks,
+            )
+        ]
 
     def set_task(self, task):
         self.goal_direction = task
@@ -75,12 +80,13 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
 
 
 class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
-
     def __init__(self, max_episode_steps=200, sparse_dist=5):
         self.sparse_dist = sparse_dist
         self.belief_dim = 2
         self.initialise_belief()
-        super(HalfCheetahDirSparseEnv, self).__init__(max_episode_steps=max_episode_steps)
+        super(HalfCheetahDirSparseEnv, self).__init__(
+            max_episode_steps=max_episode_steps
+        )
 
     def get_belief(self):
         return self.belief
@@ -95,8 +101,7 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
         self.initialise_belief()
 
     def update_belief(self):
-
-        belief_is_prior = (self.belief[0] == 0.5 and self.belief[1] == 0.5)
+        belief_is_prior = self.belief[0] == 0.5 and self.belief[1] == 0.5
 
         # only update belief if we haven't learned anything yet
         if belief_is_prior:
@@ -118,23 +123,23 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
         # sparsify reward
         curr_x_pos = self.get_body_com("torso")[0]
         if np.abs(curr_x_pos) < self.sparse_dist:
-            reward = infos['reward_ctrl']
+            reward = infos["reward_ctrl"]
 
         return observation, reward, done, infos
 
-    def visualise_behaviour(self,
-                            env,
-                            args,
-                            policy,
-                            iter_idx,
-                            intrinsic_reward=None,
-                            vae=None,
-                            encoder=None,
-                            image_folder=None,
-                            return_pos=False,
-                            **kwargs,
-                            ):
-
+    def visualise_behaviour(
+        self,
+        env,
+        args,
+        policy,
+        iter_idx,
+        intrinsic_reward=None,
+        vae=None,
+        encoder=None,
+        image_folder=None,
+        return_pos=False,
+        **kwargs,
+    ):
         num_episodes = args.max_rollouts_per_task
         unwrapped_env = env.venv.unwrapped.envs[0].unwrapped
 
@@ -154,7 +159,9 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
             episode_latent_logvars = [[] for _ in range(num_episodes)]
         else:
             curr_latent_sample = curr_latent_mean = curr_latent_logvar = None
-            episode_latent_samples = episode_latent_means = episode_latent_logvars = None
+            episode_latent_samples = episode_latent_means = episode_latent_logvars = (
+                None
+            )
 
         # --- roll out policy ---
 
@@ -170,23 +177,30 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
         start_pos = unwrapped_env.get_body_com("torso")[0].copy()
 
         for episode_idx in range(num_episodes):
-
             curr_rollout_rew = []
             pos[episode_idx].append(start_pos)
 
             if encoder is not None:
                 if episode_idx == 0:
                     # reset to prior
-                    curr_latent_sample, curr_latent_mean, curr_latent_logvar, hidden_state = encoder.prior(1)
+                    (
+                        curr_latent_sample,
+                        curr_latent_mean,
+                        curr_latent_logvar,
+                        hidden_state,
+                    ) = encoder.prior(1)
                     curr_latent_sample = curr_latent_sample[0].to(device)
                     curr_latent_mean = curr_latent_mean[0].to(device)
                     curr_latent_logvar = curr_latent_logvar[0].to(device)
-                episode_latent_samples[episode_idx].append(curr_latent_sample[0].clone())
+                episode_latent_samples[episode_idx].append(
+                    curr_latent_sample[0].clone()
+                )
                 episode_latent_means[episode_idx].append(curr_latent_mean[0].clone())
-                episode_latent_logvars[episode_idx].append(curr_latent_logvar[0].clone())
+                episode_latent_logvars[episode_idx].append(
+                    curr_latent_logvar[0].clone()
+                )
 
             for step_idx in range(1, env._max_episode_steps + 1):
-
                 if step_idx == 1:
                     prev_obs = start_state.clone()
                 else:
@@ -194,13 +208,23 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
                 episode_prev_obs[episode_idx].append(prev_obs)
 
                 # act
-                latent = utl.get_latent_for_policy(args,
-                                                   latent_sample=curr_latent_sample,
-                                                   latent_mean=curr_latent_mean,
-                                                   latent_logvar=curr_latent_logvar)
-                _, action, _ = policy.act(state=state.view(-1), latent=latent, belief=belief, task=task, deterministic=True)
+                latent = utl.get_latent_for_policy(
+                    args,
+                    latent_sample=curr_latent_sample,
+                    latent_mean=curr_latent_mean,
+                    latent_logvar=curr_latent_logvar,
+                )
+                _, action, _ = policy.act(
+                    state=state.view(-1),
+                    latent=latent,
+                    belief=belief,
+                    task=task,
+                    deterministic=True,
+                )
 
-                (state, belief, task), (rew, rew_normalised), done, info = utl.env_step(env, action, args)
+                (state, belief, task), (rew, rew_normalised), done, info = utl.env_step(
+                    env, action, args
+                )
                 state = state.reshape((1, -1)).to(device)
                 task = task.view(-1) if task is not None else None
 
@@ -209,21 +233,42 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
 
                 if encoder is not None:
                     # update task embedding
-                    curr_latent_sample, curr_latent_mean, curr_latent_logvar, hidden_state = encoder(
-                        action.reshape(1, -1).float().to(device), state, rew.reshape(1, -1).float().to(device), prev_obs,
-                        hidden_state, return_prior=False)
+                    (
+                        curr_latent_sample,
+                        curr_latent_mean,
+                        curr_latent_logvar,
+                        hidden_state,
+                    ) = encoder(
+                        action.reshape(1, -1).float().to(device),
+                        state,
+                        rew.reshape(1, -1).float().to(device),
+                        prev_obs,
+                        hidden_state,
+                        return_prior=False,
+                    )
 
-                    episode_latent_samples[episode_idx].append(curr_latent_sample[0].clone())
-                    episode_latent_means[episode_idx].append(curr_latent_mean[0].clone())
-                    episode_latent_logvars[episode_idx].append(curr_latent_logvar[0].clone())
+                    episode_latent_samples[episode_idx].append(
+                        curr_latent_sample[0].clone()
+                    )
+                    episode_latent_means[episode_idx].append(
+                        curr_latent_mean[0].clone()
+                    )
+                    episode_latent_logvars[episode_idx].append(
+                        curr_latent_logvar[0].clone()
+                    )
 
                 episode_next_obs[episode_idx].append(state.clone())
                 episode_rewards[episode_idx].append(rew.clone())
                 episode_actions[episode_idx].append(action.reshape(1, -1).clone())
 
-                if info[0]['done_mdp'] and not done:
-                    start_state = info[0]['start_state']
-                    start_state = torch.from_numpy(start_state).float().reshape((1, -1)).to(device)
+                if info[0]["done_mdp"] and not done:
+                    start_state = info[0]["start_state"]
+                    start_state = (
+                        torch.from_numpy(start_state)
+                        .float()
+                        .reshape((1, -1))
+                        .to(device)
+                    )
                     start_pos = unwrapped_env.get_body_com("torso")[0].copy()
                     break
 
@@ -283,7 +328,8 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
                     rew_bonus = intrinsic_reward.reward(
                         state=torch.from_numpy(x_pos[:, np.newaxis]).float().to(device),
                         belief=torch.from_numpy(belief).float().to(device),
-                        done=done)
+                        done=done,
+                    )
                     reward_bonusses.append(rew_bonus.view(-1).detach().cpu().numpy())
 
             # normalise the reward bonusses
@@ -293,45 +339,67 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
             normalised_reward_bonusses = []
             for i in range(len(reward_bonusses)):
                 normalised_reward_bonusses.append(
-                    (reward_bonusses[i] - min_rew_bonus) / (max_rew_bonus - min_rew_bonus))
+                    (reward_bonusses[i] - min_rew_bonus)
+                    / (max_rew_bonus - min_rew_bonus)
+                )
 
         for k, cp in enumerate(cut_points):
-
             # --- plot movement ---
 
             plt.figure(figsize=(7, 4 * num_episodes))
 
             for i in range(num_episodes):
-
                 plt.subplot(num_episodes, 1, i + 1)
 
                 # (not plotting the last step because this gives weird artefacts)
-                plt.plot(pos[i][:cp], range(len(pos[i][:cp])), 'k')
+                plt.plot(pos[i][:cp], range(len(pos[i][:cp])), "k")
 
-                if (intrinsic_reward is not None) and (vae is None): # for the belief oracle we can show the bonus along the way
+                if (intrinsic_reward is not None) and (
+                    vae is None
+                ):  # for the belief oracle we can show the bonus along the way
                     width = (x_lim_max - x_lim_min) / n * 10
                     for j in range(n):
-                        col = (1, 1 - normalised_reward_bonusses[k][j] ** 2, 1 - normalised_reward_bonusses[k][j] ** 2)
-                        plt.bar(x_pos[j], self._max_episode_steps, width=width, linewidth=0, facecolor=col)
+                        col = (
+                            1,
+                            1 - normalised_reward_bonusses[k][j] ** 2,
+                            1 - normalised_reward_bonusses[k][j] ** 2,
+                        )
+                        plt.bar(
+                            x_pos[j],
+                            self._max_episode_steps,
+                            width=width,
+                            linewidth=0,
+                            facecolor=col,
+                        )
 
                 if self.get_task() == -1:
-                    task = 'go left'
+                    task = "go left"
                 else:
-                    task = 'go right'
-                plt.title('Task: {}'.format(task), fontsize=15)
-                plt.ylabel('Steps'.format(i), fontsize=15)
+                    task = "go right"
+                plt.title("Task: {}".format(task), fontsize=15)
+                plt.ylabel("Steps".format(i), fontsize=15)
                 if i == num_episodes - 1:
-                    plt.xlabel('Position', fontsize=15)
+                    plt.xlabel("Position", fontsize=15)
 
-                plt.plot([-self.sparse_dist, -self.sparse_dist], [0, self._max_episode_steps], 'k--', alpha=0.5)
-                plt.plot([self.sparse_dist, self.sparse_dist], [0, self._max_episode_steps], 'k--', alpha=0.5)
+                plt.plot(
+                    [-self.sparse_dist, -self.sparse_dist],
+                    [0, self._max_episode_steps],
+                    "k--",
+                    alpha=0.5,
+                )
+                plt.plot(
+                    [self.sparse_dist, self.sparse_dist],
+                    [0, self._max_episode_steps],
+                    "k--",
+                    alpha=0.5,
+                )
 
                 plt.xlim([x_lim_min, x_lim_max])
                 plt.ylim([0, self._max_episode_steps])
 
             plt.tight_layout()
             if image_folder is not None:
-                plt.savefig('{}/{}_behaviour_{}'.format(image_folder, iter_idx, cp))
+                plt.savefig("{}/{}_behaviour_{}".format(image_folder, iter_idx, cp))
                 plt.close()
             else:
                 plt.show()
@@ -339,49 +407,71 @@ class HalfCheetahDirSparseEnv(HalfCheetahDirEnv):
             # ------- visualise reward bonus over time when we run VariBAD -------
 
             if vae is not None:
+                (
+                    rew_bonus,
+                    intrinsic_rew_state,
+                    intrinsic_rew_belief,
+                    intrinsic_rew_hyperstate,
+                    intrinsic_rew_vae_loss,
+                ) = intrinsic_reward.reward(
+                    state=torch.cat(episode_next_obs, dim=1),
+                    belief=torch.cat(
+                        (episode_latent_means[0][1:], episode_latent_logvars[0][1:]),
+                        dim=-1,
+                    ),
+                    action=episode_actions[0],
+                    done=done,
+                    return_individual=True,
+                    vae=vae,
+                    latent_mean=[episode_latent_means[0][1:]],
+                    latent_logvar=[episode_latent_logvars[0][1:]],
+                    batch_prev_obs=torch.stack(episode_prev_obs, dim=0),
+                    batch_next_obs=torch.stack(episode_next_obs, dim=0),
+                    batch_actions=torch.stack(episode_actions, dim=0),
+                    batch_rewards=torch.stack(episode_rewards, dim=0),
+                )
 
-                rew_bonus, intrinsic_rew_state, \
-                intrinsic_rew_belief, intrinsic_rew_hyperstate, \
-                intrinsic_rew_vae_loss = intrinsic_reward.reward(state=torch.cat(episode_next_obs, dim=1),
-                                                                 belief=torch.cat((episode_latent_means[0][1:], episode_latent_logvars[0][1:]), dim=-1),
-                                                                 action=episode_actions[0],
-                                                                 done=done,
-                                                                 return_individual=True,
-                                                                 vae=vae,
-                                                                 latent_mean=[episode_latent_means[0][1:]],
-                                                                 latent_logvar=[episode_latent_logvars[0][1:]],
-                                                                 batch_prev_obs=torch.stack(episode_prev_obs, dim=0),
-                                                                 batch_next_obs=torch.stack(episode_next_obs, dim=0),
-                                                                 batch_actions=torch.stack(episode_actions, dim=0),
-                                                                 batch_rewards=torch.stack(episode_rewards, dim=0),
-                                                                 )
-
-                for name, my_rew in [['state_bonus', intrinsic_rew_state],
-                                     ['belief_bonus', intrinsic_rew_belief],
-                                     ['hyperstate_bonus', intrinsic_rew_hyperstate],
-                                     ['vae_loss_bonus', intrinsic_rew_vae_loss]]:
-
+                for name, my_rew in [
+                    ["state_bonus", intrinsic_rew_state],
+                    ["belief_bonus", intrinsic_rew_belief],
+                    ["hyperstate_bonus", intrinsic_rew_hyperstate],
+                    ["vae_loss_bonus", intrinsic_rew_vae_loss],
+                ]:
                     if isinstance(my_rew, int):
                         continue
 
                     plt.plot(my_rew.detach().cpu().view(-1))
-                    plt.xlabel('Steps')
-                    plt.ylabel('Bonys')
+                    plt.xlabel("Steps")
+                    plt.ylabel("Bonys")
 
                     plt.legend()
                     plt.tight_layout()
                     if image_folder is not None:
-                        plt.savefig('{}/{}_rew_bonus_{}'.format(image_folder, iter_idx, name))
+                        plt.savefig(
+                            "{}/{}_rew_bonus_{}".format(image_folder, iter_idx, name)
+                        )
                         plt.close()
                     else:
                         plt.show()
 
         if not return_pos:
-            return episode_latent_means, episode_latent_logvars, \
-                   episode_prev_obs, episode_next_obs, episode_actions, episode_rewards, \
-                   episode_returns
+            return (
+                episode_latent_means,
+                episode_latent_logvars,
+                episode_prev_obs,
+                episode_next_obs,
+                episode_actions,
+                episode_rewards,
+                episode_returns,
+            )
         else:
-            return episode_latent_means, episode_latent_logvars, \
-                   episode_prev_obs, episode_next_obs, episode_actions, episode_rewards, \
-                   episode_returns, pos
-
+            return (
+                episode_latent_means,
+                episode_latent_logvars,
+                episode_prev_obs,
+                episode_next_obs,
+                episode_actions,
+                episode_rewards,
+                episode_returns,
+                pos,
+            )

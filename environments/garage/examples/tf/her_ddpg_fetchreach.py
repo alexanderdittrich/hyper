@@ -3,6 +3,7 @@
 
 Here it creates a gym environment FetchReach.
 """
+
 import tensorflow as tf
 
 from environments.garage import wrap_experiment
@@ -17,7 +18,7 @@ from environments.garage.tf.q_functions import ContinuousMLPQFunction
 from environments.garage.trainer import TFTrainer
 
 
-@wrap_experiment(snapshot_mode='last')
+@wrap_experiment(snapshot_mode="last")
 def her_ddpg_fetchreach(ctxt=None, seed=1):
     """Train DDPG + HER on the goal-conditioned FetchReach env.
 
@@ -30,38 +31,40 @@ def her_ddpg_fetchreach(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = GymEnv('FetchReach-v1')
+        env = GymEnv("FetchReach-v1")
 
         policy = ContinuousMLPPolicy(
             env_spec=env.spec,
-            name='Policy',
+            name="Policy",
             hidden_sizes=[256, 256, 256],
             hidden_nonlinearity=tf.nn.relu,
             output_nonlinearity=tf.nn.tanh,
         )
 
-        exploration_policy = AddOrnsteinUhlenbeckNoise(env.spec,
-                                                       policy,
-                                                       sigma=0.2)
+        exploration_policy = AddOrnsteinUhlenbeckNoise(env.spec, policy, sigma=0.2)
 
         qf = ContinuousMLPQFunction(
             env_spec=env.spec,
-            name='QFunction',
+            name="QFunction",
             hidden_sizes=[256, 256, 256],
             hidden_nonlinearity=tf.nn.relu,
         )
 
         # pylint: disable=no-member
-        replay_buffer = HERReplayBuffer(capacity_in_transitions=int(1e6),
-                                        replay_k=4,
-                                        reward_fn=env.compute_reward,
-                                        env_spec=env.spec)
+        replay_buffer = HERReplayBuffer(
+            capacity_in_transitions=int(1e6),
+            replay_k=4,
+            reward_fn=env.compute_reward,
+            env_spec=env.spec,
+        )
 
-        sampler = LocalSampler(agents=exploration_policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True,
-                               worker_class=FragmentWorker)
+        sampler = LocalSampler(
+            agents=exploration_policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+            worker_class=FragmentWorker,
+        )
 
         ddpg = DDPG(
             env_spec=env.spec,

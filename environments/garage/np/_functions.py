@@ -1,4 +1,5 @@
 """Utility functions for NumPy-based Reinforcement learning algorithms."""
+
 import warnings
 
 import numpy as np
@@ -32,7 +33,6 @@ def explained_variance_1d(ypred, y, valids=None):
 
     vary = np.var(y)
     if np.isclose(vary, 0):
-
         if np.var(ypred) > 0:
             return 0
 
@@ -54,8 +54,9 @@ def rrse(actual, predicted):
 
     """
     return np.sqrt(
-        np.sum(np.square(actual - predicted)) /
-        np.sum(np.square(actual - np.mean(actual))))
+        np.sum(np.square(actual - predicted))
+        / np.sum(np.square(actual - np.mean(actual)))
+    )
 
 
 def sliding_window(t, window, smear=False):
@@ -80,7 +81,7 @@ def sliding_window(t, window, smear=False):
 
     """
     if window > t.shape[0]:
-        raise ValueError('`window` must be <= `t.shape[0]`')
+        raise ValueError("`window` must be <= `t.shape[0]`")
 
     if window == t.shape[0]:
         return np.stack([t] * window)
@@ -90,10 +91,8 @@ def sliding_window(t, window, smear=False):
     t_T = t.T
 
     shape = t_T.shape[:-1] + (t_T.shape[-1] - window, window)
-    strides = t_T.strides + (t_T.strides[-1], )
-    t_T_win = np.lib.stride_tricks.as_strided(t_T,
-                                              shape=shape,
-                                              strides=strides)
+    strides = t_T.strides + (t_T.strides[-1],)
+    t_T_win = np.lib.stride_tricks.as_strided(t_T, shape=shape, strides=strides)
 
     # t_T_win has shape (d_k, d_k-1, ..., (n - window_size), window_size)
     # To arrive at the final shape, we first transpose the result to arrive at
@@ -103,7 +102,7 @@ def sliding_window(t, window, smear=False):
 
     # Optionally smear the last element to preserve the first dimension
     if smear:
-        t_win = pad_tensor(t_win, t.shape[0], mode='last')
+        t_win = pad_tensor(t_win, t.shape[0], mode="last")
 
     return t_win
 
@@ -124,8 +123,7 @@ def discount_cumsum(x, discount):
 
 
     """
-    return scipy.signal.lfilter([1], [1, float(-discount)], x[::-1],
-                                axis=-1)[::-1]
+    return scipy.signal.lfilter([1], [1, float(-discount)], x[::-1], axis=-1)[::-1]
 
 
 def flatten_tensors(tensors):
@@ -172,7 +170,7 @@ def unflatten_tensors(flattened, tensor_shapes):
     ]
 
 
-def pad_tensor(x, max_len, mode='zero'):
+def pad_tensor(x, max_len, mode="zero"):
     """Pad tensors.
 
     Args:
@@ -185,11 +183,12 @@ def pad_tensor(x, max_len, mode='zero'):
 
     """
     padding = np.zeros_like(x[0])
-    if mode == 'last':
+    if mode == "last":
         padding = x[-1]
 
     return np.concatenate(
-        [x, np.tile(padding, (max_len - len(x), ) + (1, ) * np.ndim(x[0]))])
+        [x, np.tile(padding, (max_len - len(x),) + (1,) * np.ndim(x[0]))]
+    )
 
 
 def pad_tensor_n(xs, max_len):
@@ -205,12 +204,12 @@ def pad_tensor_n(xs, max_len):
     """
     ret = np.zeros((len(xs), max_len) + xs[0].shape[1:], dtype=xs[0].dtype)
     for idx, x in enumerate(xs):
-        ret[idx][:len(x)] = x
+        ret[idx][: len(x)] = x
 
     return ret
 
 
-def pad_tensor_dict(tensor_dict, max_len, mode='zero'):
+def pad_tensor_dict(tensor_dict, max_len, mode="zero"):
     """Pad dictionary of tensors.
 
     Args:
@@ -363,8 +362,7 @@ def slice_nested_dict(dict_or_array, start, stop):
     """
     if isinstance(dict_or_array, dict):
         return {
-            k: slice_nested_dict(v, start, stop)
-            for (k, v) in dict_or_array.items()
+            k: slice_nested_dict(v, start, stop) for (k, v) in dict_or_array.items()
         }
     else:
         # It *should* be a numpy array (unless someone ignored the type
@@ -392,12 +390,10 @@ def pad_batch_array(array, lengths, max_length=None):
         # We have at least one episode longther than max_length (whtich is
         # usually max_episode_length).
         # This is probably not a good idea to allow, but RL2 already uses it.
-        warnings.warn('Creating a padded array with longer length than '
-                      'requested')
+        warnings.warn("Creating a padded array with longer length than requested")
         max_length = max(lengths)
 
-    padded = np.zeros((len(lengths), max_length) + array.shape[1:],
-                      dtype=array.dtype)
+    padded = np.zeros((len(lengths), max_length) + array.shape[1:], dtype=array.dtype)
     start = 0
     for i, length in enumerate(lengths):
         stop = start + length

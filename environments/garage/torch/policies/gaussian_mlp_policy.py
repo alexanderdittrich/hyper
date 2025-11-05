@@ -1,4 +1,5 @@
 """GaussianMLPPolicy."""
+
 import torch
 from torch import nn
 
@@ -50,22 +51,24 @@ class GaussianMLPPolicy(StochasticPolicy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=torch.tanh,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 learn_std=True,
-                 init_std=1.0,
-                 min_std=1e-6,
-                 max_std=None,
-                 std_parameterization='exp',
-                 layer_normalization=False,
-                 name='GaussianMLPPolicy'):
+    def __init__(
+        self,
+        env_spec,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=torch.tanh,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        learn_std=True,
+        init_std=1.0,
+        min_std=1e-6,
+        max_std=None,
+        std_parameterization="exp",
+        layer_normalization=False,
+        name="GaussianMLPPolicy",
+    ):
         super().__init__(env_spec, name)
         self._obs_dim = env_spec.observation_space.flat_dim
         self._action_dim = env_spec.action_space.flat_dim
@@ -84,7 +87,8 @@ class GaussianMLPPolicy(StochasticPolicy):
             min_std=min_std,
             max_std=max_std,
             std_parameterization=std_parameterization,
-            layer_normalization=layer_normalization)
+            layer_normalization=layer_normalization,
+        )
 
     def forward(self, observations):
         """Compute the action distributions from the observations.
@@ -99,4 +103,4 @@ class GaussianMLPPolicy(StochasticPolicy):
 
         """
         dist = self._module(observations)
-        return (dist, dict(mean=dist.mean, log_std=(dist.variance**.5).log()))
+        return (dist, dict(mean=dist.mean, log_std=(dist.variance**0.5).log()))

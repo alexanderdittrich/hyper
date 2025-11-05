@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Example script to run RL2 in ML45."""
+
 # pylint: disable=no-value-for-parameter
 # yapf: disable
 import click
@@ -21,13 +22,12 @@ from environments.garage.trainer import TFTrainer
 
 
 @click.command()
-@click.option('--seed', default=1)
-@click.option('--meta_batch_size', default=45)
-@click.option('--n_epochs', default=10)
-@click.option('--episode_per_task', default=10)
+@click.option("--seed", default=1)
+@click.option("--meta_batch_size", default=45)
+@click.option("--n_epochs", default=10)
+@click.option("--episode_per_task", default=10)
 @wrap_experiment
-def rl2_ppo_metaworld_ml45(ctxt, seed, meta_batch_size, n_epochs,
-                           episode_per_task):
+def rl2_ppo_metaworld_ml45(ctxt, seed, meta_batch_size, n_epochs, episode_per_task):
     """Train PPO with ML45 environment.
 
     Args:
@@ -42,26 +42,28 @@ def rl2_ppo_metaworld_ml45(ctxt, seed, meta_batch_size, n_epochs,
     """
     set_seed(seed)
     ml45 = metaworld.ML45()
-    tasks = MetaWorldTaskSampler(ml45, 'train', lambda env, _: RL2Env(env))
-    test_task_sampler = SetTaskSampler(MetaWorldSetTaskEnv,
-                                       env=MetaWorldSetTaskEnv(ml45, 'test'),
-                                       wrapper=lambda env, _: RL2Env(env))
+    tasks = MetaWorldTaskSampler(ml45, "train", lambda env, _: RL2Env(env))
+    test_task_sampler = SetTaskSampler(
+        MetaWorldSetTaskEnv,
+        env=MetaWorldSetTaskEnv(ml45, "test"),
+        wrapper=lambda env, _: RL2Env(env),
+    )
     with TFTrainer(snapshot_config=ctxt) as trainer:
-
         env = tasks.sample(45)[0]()
         env_spec = env.spec
 
-        policy = GaussianGRUPolicy(name='policy',
-                                   hidden_dim=64,
-                                   env_spec=env_spec,
-                                   state_include_action=False)
+        policy = GaussianGRUPolicy(
+            name="policy", hidden_dim=64, env_spec=env_spec, state_include_action=False
+        )
 
         baseline = LinearFeatureBaseline(env_spec=env_spec)
 
-        meta_evaluator = MetaEvaluator(test_task_sampler=test_task_sampler,
-                                       n_exploration_eps=10,
-                                       n_test_episodes=10,
-                                       n_test_tasks=5)
+        meta_evaluator = MetaEvaluator(
+            test_task_sampler=test_task_sampler,
+            n_exploration_eps=10,
+            n_test_episodes=10,
+            n_test_tasks=5,
+        )
 
         envs = tasks.sample(meta_batch_size)
         sampler = LocalSampler(
@@ -71,30 +73,36 @@ def rl2_ppo_metaworld_ml45(ctxt, seed, meta_batch_size, n_epochs,
             is_tf_worker=True,
             n_workers=meta_batch_size,
             worker_class=RL2Worker,
-            worker_args=dict(n_episodes_per_trial=episode_per_task))
+            worker_args=dict(n_episodes_per_trial=episode_per_task),
+        )
 
-        algo = RL2PPO(meta_batch_size=meta_batch_size,
-                      task_sampler=tasks,
-                      env_spec=env_spec,
-                      policy=policy,
-                      baseline=baseline,
-                      sampler=sampler,
-                      discount=0.99,
-                      gae_lambda=0.95,
-                      lr_clip_range=0.2,
-                      optimizer_args=dict(batch_size=32, ),
-                      stop_entropy_gradient=True,
-                      entropy_method='max',
-                      policy_ent_coeff=0.02,
-                      center_adv=False,
-                      meta_evaluator=meta_evaluator,
-                      episodes_per_trial=10)
+        algo = RL2PPO(
+            meta_batch_size=meta_batch_size,
+            task_sampler=tasks,
+            env_spec=env_spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+            gae_lambda=0.95,
+            lr_clip_range=0.2,
+            optimizer_args=dict(
+                batch_size=32,
+            ),
+            stop_entropy_gradient=True,
+            entropy_method="max",
+            policy_ent_coeff=0.02,
+            center_adv=False,
+            meta_evaluator=meta_evaluator,
+            episodes_per_trial=10,
+        )
 
         trainer.setup(algo, envs)
 
-        trainer.train(n_epochs=n_epochs,
-                      batch_size=episode_per_task *
-                      env_spec.max_episode_length * meta_batch_size)
+        trainer.train(
+            n_epochs=n_epochs,
+            batch_size=episode_per_task * env_spec.max_episode_length * meta_batch_size,
+        )
 
 
 rl2_ppo_metaworld_ml45()

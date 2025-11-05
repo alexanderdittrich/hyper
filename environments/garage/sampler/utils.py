@@ -5,13 +5,15 @@ import numpy as np
 from environments.garage.np import stack_tensor_dict_list, truncate_tensor_dict
 
 
-def rollout(env,
-            agent,
-            *,
-            max_episode_length=np.inf,
-            animated=False,
-            speedup=1,
-            deterministic=False):
+def rollout(
+    env,
+    agent,
+    *,
+    max_episode_length=np.inf,
+    animated=False,
+    speedup=1,
+    deterministic=False,
+):
     """Sample a single episode of the agent in the environment.
 
     Args:
@@ -59,8 +61,8 @@ def rollout(env,
         env.visualize()
     while episode_length < (max_episode_length or np.inf):
         a, agent_info = agent.get_action(last_obs)
-        if deterministic and 'mean' in agent_info:
-            a = agent_info['mean']
+        if deterministic and "mean" in agent_info:
+            a = agent_info["mean"]
         es = env.step(a)
         env_steps.append(es)
         observations.append(last_obs)
@@ -108,26 +110,25 @@ def truncate_paths(paths, max_samples):
     """
     # chop samples collected by extra paths
     # make a copy
-    valid_keys = {
-        'observations', 'actions', 'rewards', 'env_infos', 'agent_infos'
-    }
+    valid_keys = {"observations", "actions", "rewards", "env_infos", "agent_infos"}
     paths = list(paths)
-    total_n_samples = sum(len(path['rewards']) for path in paths)
-    while paths and total_n_samples - len(paths[-1]['rewards']) >= max_samples:
-        total_n_samples -= len(paths.pop(-1)['rewards'])
+    total_n_samples = sum(len(path["rewards"]) for path in paths)
+    while paths and total_n_samples - len(paths[-1]["rewards"]) >= max_samples:
+        total_n_samples -= len(paths.pop(-1)["rewards"])
     if paths:
         last_path = paths.pop(-1)
         truncated_last_path = dict()
-        truncated_len = len(
-            last_path['rewards']) - (total_n_samples - max_samples)
+        truncated_len = len(last_path["rewards"]) - (total_n_samples - max_samples)
         for k, v in last_path.items():
-            if k in ['observations', 'actions', 'rewards']:
+            if k in ["observations", "actions", "rewards"]:
                 truncated_last_path[k] = v[:truncated_len]
-            elif k in ['env_infos', 'agent_infos']:
+            elif k in ["env_infos", "agent_infos"]:
                 truncated_last_path[k] = truncate_tensor_dict(v, truncated_len)
             else:
                 raise ValueError(
-                    'Unexpected key {} found in path. Valid keys: {}'.format(
-                        k, valid_keys))
+                    "Unexpected key {} found in path. Valid keys: {}".format(
+                        k, valid_keys
+                    )
+                )
         paths.append(truncated_last_path)
     return paths

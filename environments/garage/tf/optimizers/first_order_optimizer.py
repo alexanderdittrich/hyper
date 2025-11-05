@@ -1,4 +1,5 @@
 """First order optimizer."""
+
 import time
 
 import click
@@ -31,15 +32,17 @@ class FirstOrderOptimizer:
 
     """
 
-    def __init__(self,
-                 optimizer=None,
-                 learning_rate=None,
-                 max_optimization_epochs=1000,
-                 tolerance=1e-6,
-                 batch_size=32,
-                 callback=None,
-                 verbose=False,
-                 name='FirstOrderOptimizer'):
+    def __init__(
+        self,
+        optimizer=None,
+        learning_rate=None,
+        max_optimization_epochs=1000,
+        tolerance=1e-6,
+        batch_size=32,
+        callback=None,
+        verbose=False,
+        name="FirstOrderOptimizer",
+    ):
         self._opt_fun = None
         self._target = None
         self._callback = callback
@@ -75,16 +78,15 @@ class FirstOrderOptimizer:
         del kwargs
         with tf.name_scope(self._name):
             self._target = target
-            tf_optimizer = make_optimizer(self._tf_optimizer,
-                                          **self._learning_rate)
-            self._train_op = tf_optimizer.minimize(
-                loss, var_list=target.get_params())
+            tf_optimizer = make_optimizer(self._tf_optimizer, **self._learning_rate)
+            self._train_op = tf_optimizer.minimize(loss, var_list=target.get_params())
 
             if extra_inputs is None:
                 extra_inputs = list()
             self._input_vars = inputs + extra_inputs
             self._opt_fun = LazyDict(
-                f_loss=lambda: compile_function(inputs + extra_inputs, loss), )
+                f_loss=lambda: compile_function(inputs + extra_inputs, loss),
+            )
 
     def loss(self, inputs, extra_inputs=None):
         """The loss.
@@ -101,13 +103,13 @@ class FirstOrderOptimizer:
 
         """
         if self._opt_fun is None:
-            raise Exception(
-                'Use update_opt() to setup the loss function first.')
+            raise Exception("Use update_opt() to setup the loss function first.")
         if extra_inputs is None:
             extra_inputs = tuple()
-        return self._opt_fun['f_loss'](*(tuple(inputs) + extra_inputs))
+        return self._opt_fun["f_loss"](*(tuple(inputs) + extra_inputs))
 
         # pylint: disable=too-many-branches
+
     def optimize(self, inputs, extra_inputs=None, callback=None):
         """Perform optimization.
 
@@ -124,12 +126,11 @@ class FirstOrderOptimizer:
         """
         if not inputs:
             # Assumes that we should always sample mini-batches
-            raise NotImplementedError('No inputs are fed to optimizer.')
+            raise NotImplementedError("No inputs are fed to optimizer.")
         if self._opt_fun is None:
-            raise Exception(
-                'Use update_opt() to setup the loss function first.')
+            raise Exception("Use update_opt() to setup the loss function first.")
 
-        f_loss = self._opt_fun['f_loss']
+        f_loss = self._opt_fun["f_loss"]
 
         if extra_inputs is None:
             extra_inputs = tuple()
@@ -138,34 +139,31 @@ class FirstOrderOptimizer:
 
         start_time = time.time()
 
-        dataset = BatchDataset(inputs,
-                               self._batch_size,
-                               extra_inputs=extra_inputs)
+        dataset = BatchDataset(inputs, self._batch_size, extra_inputs=extra_inputs)
 
         sess = tf.compat.v1.get_default_session()
 
         for epoch in range(self._max_optimization_epochs):
             if self._verbose:
-                logger.log('Epoch {}'.format(epoch))
+                logger.log("Epoch {}".format(epoch))
 
-            with click.progressbar(length=len(inputs[0]),
-                                   label='Optimizing minibatches') as pbar:
+            with click.progressbar(
+                length=len(inputs[0]), label="Optimizing minibatches"
+            ) as pbar:
                 for batch in dataset.iterate(update=True):
-                    sess.run(self._train_op,
-                             dict(list(zip(self._input_vars, batch))))
+                    sess.run(self._train_op, dict(list(zip(self._input_vars, batch))))
 
                     pbar.update(len(batch[0]))
 
             new_loss = f_loss(*(tuple(inputs) + extra_inputs))
 
             if self._verbose:
-                logger.log('Epoch: {} | Loss: {}'.format(epoch, new_loss))
+                logger.log("Epoch: {} | Loss: {}".format(epoch, new_loss))
             if self._callback or callback:
                 elapsed = time.time() - start_time
                 callback_args = dict(
                     loss=new_loss,
-                    params=self._target.get_param_values()
-                    if self._target else None,
+                    params=self._target.get_param_values() if self._target else None,
                     itr=epoch,
                     elapsed=elapsed,
                 )
@@ -186,10 +184,10 @@ class FirstOrderOptimizer:
 
         """
         new_dict = self.__dict__.copy()
-        del new_dict['_opt_fun']
-        del new_dict['_tf_optimizer']
-        del new_dict['_train_op']
-        del new_dict['_input_vars']
+        del new_dict["_opt_fun"]
+        del new_dict["_tf_optimizer"]
+        del new_dict["_train_op"]
+        del new_dict["_input_vars"]
         return new_dict
 
     def __setstate__(self, state):

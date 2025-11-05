@@ -9,6 +9,7 @@ Results:
     RiseTime: itr 40
 
 """
+
 import tensorflow as tf
 
 from environments.garage import wrap_experiment
@@ -34,7 +35,7 @@ def ppo_pendulum(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(snapshot_config=ctxt) as trainer:
-        env = normalize(GymEnv('InvertedDoublePendulum-v2'))
+        env = normalize(GymEnv("InvertedDoublePendulum-v2"))
 
         policy = GaussianMLPPolicy(
             env_spec=env.spec,
@@ -49,10 +50,12 @@ def ppo_pendulum(ctxt=None, seed=1):
             use_trust_region=True,
         )
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_length,
-                             is_tf_worker=True)
+        sampler = RaySampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
         # NOTE: make sure when setting entropy_method to 'max', set
         # center_adv to False and turn off policy gradient. See
@@ -70,7 +73,7 @@ def ppo_pendulum(ctxt=None, seed=1):
                 max_optimization_epochs=10,
             ),
             stop_entropy_gradient=True,
-            entropy_method='max',
+            entropy_method="max",
             policy_ent_coeff=0.02,
             center_adv=False,
         )

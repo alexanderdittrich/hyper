@@ -3,19 +3,17 @@
 
 This example requires that garage[dm_control] be installed.
 """
+
 import argparse
 
 from environments.garage.envs.dm_control import DMControlEnv
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--n_steps',
-                    type=int,
-                    default=1000,
-                    help='Number of steps to run')
+parser.add_argument("--n_steps", type=int, default=1000, help="Number of steps to run")
 args = parser.parse_args()
 
 # Construct the environment
-env = DMControlEnv.from_suite('walker', 'run')
+env = DMControlEnv.from_suite("walker", "run")
 
 # Reset the environment and launch the viewer
 env.reset()

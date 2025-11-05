@@ -1,4 +1,5 @@
 """Base Stochastic Policy."""
+
 import abc
 
 import akro
@@ -29,18 +30,16 @@ class StochasticPolicy(Policy, abc.ABC):
                         values of the distribution.
         """
         if not isinstance(observation, np.ndarray) and not isinstance(
-                observation, torch.Tensor):
+            observation, torch.Tensor
+        ):
             observation = self._env_spec.observation_space.flatten(observation)
-        elif isinstance(observation,
-                        np.ndarray) and len(observation.shape) > 1:
+        elif isinstance(observation, np.ndarray) and len(observation.shape) > 1:
             observation = self._env_spec.observation_space.flatten(observation)
-        elif isinstance(observation,
-                        torch.Tensor) and len(observation.shape) > 1:
+        elif isinstance(observation, torch.Tensor) and len(observation.shape) > 1:
             observation = torch.flatten(observation)
         with torch.no_grad():
             if not isinstance(observation, torch.Tensor):
-                observation = torch.as_tensor(observation).float().to(
-                    global_device())
+                observation = torch.as_tensor(observation).float().to(global_device())
             observation = observation.unsqueeze(0)
             action, agent_infos = self.get_actions(observation)
             return action[0], {k: v[0] for k, v in agent_infos.items()}
@@ -62,9 +61,9 @@ class StochasticPolicy(Policy, abc.ABC):
                         values of the distribution.
         """
         if not isinstance(observations[0], np.ndarray) and not isinstance(
-                observations[0], torch.Tensor):
-            observations = self._env_spec.observation_space.flatten_n(
-                observations)
+            observations[0], torch.Tensor
+        ):
+            observations = self._env_spec.observation_space.flatten_n(observations)
 
         # frequently users like to pass lists of torch tensors or lists of
         # numpy arrays. This handles those conversions.
@@ -74,29 +73,25 @@ class StochasticPolicy(Policy, abc.ABC):
             elif isinstance(observations[0], torch.Tensor):
                 observations = torch.stack(observations)
 
-        if isinstance(observations[0],
-                      np.ndarray) and len(observations[0].shape) > 1:
-            observations = self._env_spec.observation_space.flatten_n(
-                observations)
-        elif isinstance(observations[0],
-                        torch.Tensor) and len(observations[0].shape) > 1:
+        if isinstance(observations[0], np.ndarray) and len(observations[0].shape) > 1:
+            observations = self._env_spec.observation_space.flatten_n(observations)
+        elif (
+            isinstance(observations[0], torch.Tensor) and len(observations[0].shape) > 1
+        ):
             observations = torch.flatten(observations, start_dim=1)
 
-        if isinstance(self._env_spec.observation_space, akro.Image) and \
-                len(observations.shape) < \
-                len(self._env_spec.observation_space.shape):
-            observations = self._env_spec.observation_space.unflatten_n(
-                observations)
+        if isinstance(self._env_spec.observation_space, akro.Image) and len(
+            observations.shape
+        ) < len(self._env_spec.observation_space.shape):
+            observations = self._env_spec.observation_space.unflatten_n(observations)
         with torch.no_grad():
             if not isinstance(observations, torch.Tensor):
-                observations = torch.as_tensor(observations).float().to(
-                    global_device())
+                observations = torch.as_tensor(observations).float().to(global_device())
             if isinstance(self._env_spec.observation_space, akro.Image):
                 observations /= 255.0  # scale image
             dist, info = self.forward(observations)
             return dist.sample().cpu().numpy(), {
-                k: v.detach().cpu().numpy()
-                for (k, v) in info.items()
+                k: v.detach().cpu().numpy() for (k, v) in info.items()
             }
 
     # pylint: disable=arguments-differ

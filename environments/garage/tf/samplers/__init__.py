@@ -2,4 +2,4 @@
 
 from environments.garage.tf.samplers.worker import TFWorkerClassWrapper, TFWorkerWrapper
 
-__all__ = ['TFWorkerClassWrapper', 'TFWorkerWrapper']
+__all__ = ["TFWorkerClassWrapper", "TFWorkerWrapper"]

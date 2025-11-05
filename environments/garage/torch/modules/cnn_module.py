@@ -1,4 +1,5 @@
 """CNN Module."""
+
 import copy
 
 import torch
@@ -54,25 +55,28 @@ class CNNModule(nn.Module):
         is_image (bool): Whether observations are images or not.
     """
 
-    def __init__(self,
-                 input_var,
-                 hidden_channels,
-                 kernel_sizes,
-                 strides,
-                 hidden_nonlinearity=nn.ReLU,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 paddings=0,
-                 padding_mode='zeros',
-                 max_pool=False,
-                 pool_shape=None,
-                 pool_stride=1,
-                 layer_normalization=False,
-                 n_layers=None,
-                 is_image=True):
+    def __init__(
+        self,
+        input_var,
+        hidden_channels,
+        kernel_sizes,
+        strides,
+        hidden_nonlinearity=nn.ReLU,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        paddings=0,
+        padding_mode="zeros",
+        max_pool=False,
+        pool_shape=None,
+        pool_stride=1,
+        layer_normalization=False,
+        n_layers=None,
+        is_image=True,
+    ):
         if len(strides) != len(hidden_channels):
-            raise ValueError('Strides and hidden_channels must have the same'
-                             ' number of dimensions')
+            raise ValueError(
+                "Strides and hidden_channels must have the same number of dimensions"
+            )
         super().__init__()
         self._hidden_channels = hidden_channels
         self._kernel_sizes = kernel_sizes
@@ -113,8 +117,10 @@ class CNNModule(nn.Module):
                 return list(var) * n_layers
             if len(var) == n_layers:
                 return var
-            msg = ('{} should be either an integer or a collection of length '
-                   'n_layers ({}), but got {} instead.')
+            msg = (
+                "{} should be either an integer or a collection of length "
+                "n_layers ({}), but got {} instead."
+            )
             raise ValueError(msg.format(str(var), n_layers, var))
         return [copy.deepcopy(var) for _ in range(n_layers)]
 
@@ -142,7 +148,8 @@ class CNNModule(nn.Module):
         """Helper function for initializing convolutional layer(s)."""
         prev_channel = self._in_channel
         for index, (channel, kernel_size, stride) in enumerate(
-                zip(self._hidden_channels, self._kernel_sizes, self._strides)):
+            zip(self._hidden_channels, self._kernel_sizes, self._strides)
+        ):
             hidden_layers = nn.Sequential()
 
             if isinstance(self._paddings, (list, tuple)):
@@ -151,44 +158,50 @@ class CNNModule(nn.Module):
                 padding = self._paddings
 
             # conv 2D layer
-            conv_layer = _conv(in_channels=prev_channel,
-                               out_channels=channel,
-                               kernel_size=kernel_size,
-                               stride=stride,
-                               padding=padding)
+            conv_layer = _conv(
+                in_channels=prev_channel,
+                out_channels=channel,
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=padding,
+            )
             self._hidden_w_init(conv_layer.weight)
             self._hidden_b_init(conv_layer.bias)
-            hidden_layers.add_module('conv_{}'.format(index), conv_layer)
+            hidden_layers.add_module("conv_{}".format(index), conv_layer)
 
             # layer normalization
             if self._layer_normalization:
-                hidden_layers.add_module('layer_normalization',
-                                         nn.LayerNorm(channel))
+                hidden_layers.add_module("layer_normalization", nn.LayerNorm(channel))
 
             # non-linear function
             if self._hidden_nonlinearity:
                 hidden_layers.add_module(
-                    'non_linearity', NonLinearity(self._hidden_nonlinearity))
+                    "non_linearity", NonLinearity(self._hidden_nonlinearity)
+                )
 
             # max-pooling
             if self._max_pool:
                 hidden_layers.add_module(
-                    'max_pooling',
-                    nn.MaxPool2d(kernel_size=self._pool_shape,
-                                 stride=self._pool_stride))
+                    "max_pooling",
+                    nn.MaxPool2d(
+                        kernel_size=self._pool_shape, stride=self._pool_stride
+                    ),
+                )
 
             self._cnn_layers.append(hidden_layers)
             prev_channel = channel
 
 
-def _conv(in_channels,
-          out_channels,
-          kernel_size,
-          stride=1,
-          padding=0,
-          padding_mode='zeros',
-          dilation=1,
-          bias=True):
+def _conv(
+    in_channels,
+    out_channels,
+    kernel_size,
+    stride=1,
+    padding=0,
+    padding_mode="zeros",
+    dilation=1,
+    bias=True,
+):
     """Helper function for performing convolution.
 
     Args:
@@ -213,11 +226,13 @@ def _conv(in_channels,
         torch.Tensor: The output of the 2D convolution.
 
     """
-    return nn.Conv2d(in_channels=in_channels,
-                     out_channels=out_channels,
-                     kernel_size=kernel_size,
-                     stride=stride,
-                     padding=padding,
-                     padding_mode=padding_mode,
-                     dilation=dilation,
-                     bias=bias)
+    return nn.Conv2d(
+        in_channels=in_channels,
+        out_channels=out_channels,
+        kernel_size=kernel_size,
+        stride=stride,
+        padding=padding,
+        padding_mode=padding_mode,
+        dilation=dilation,
+        bias=bias,
+    )

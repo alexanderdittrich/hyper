@@ -1,4 +1,5 @@
 """Simple 2D environment containing a point and a goal location."""
+
 import math
 
 import akro
@@ -22,12 +23,14 @@ class PointEnv(Environment):
 
     """
 
-    def __init__(self,
-                 goal=np.array((1., 1.), dtype=np.float32),
-                 arena_size=5.,
-                 done_bonus=0.,
-                 never_done=False,
-                 max_episode_length=math.inf):
+    def __init__(
+        self,
+        goal=np.array((1.0, 1.0), dtype=np.float32),
+        arena_size=5.0,
+        done_bonus=0.0,
+        never_done=False,
+        max_episode_length=math.inf,
+    ):
         goal = np.array(goal, dtype=np.float32)
         self._goal = goal
         self._done_bonus = done_bonus
@@ -41,18 +44,16 @@ class PointEnv(Environment):
         self._visualize = False
 
         self._point = np.zeros_like(self._goal)
-        self._task = {'goal': self._goal}
-        self._observation_space = akro.Box(low=-np.inf,
-                                           high=np.inf,
-                                           shape=(3, ),
-                                           dtype=np.float32)
-        self._action_space = akro.Box(low=-0.1,
-                                      high=0.1,
-                                      shape=(2, ),
-                                      dtype=np.float32)
-        self._spec = EnvSpec(action_space=self.action_space,
-                             observation_space=self.observation_space,
-                             max_episode_length=max_episode_length)
+        self._task = {"goal": self._goal}
+        self._observation_space = akro.Box(
+            low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32
+        )
+        self._action_space = akro.Box(low=-0.1, high=0.1, shape=(2,), dtype=np.float32)
+        self._spec = EnvSpec(
+            action_space=self.action_space,
+            observation_space=self.observation_space,
+            max_episode_length=max_episode_length,
+        )
 
     @property
     def action_space(self):
@@ -73,7 +74,7 @@ class PointEnv(Environment):
     def render_modes(self):
         """list: A list of string representing the supported render modes."""
         return [
-            'ascii',
+            "ascii",
         ]
 
     def reset(self):
@@ -92,7 +93,7 @@ class PointEnv(Environment):
         self._point = np.zeros_like(self._goal)
         dist = np.linalg.norm(self._point - self._goal)
 
-        first_obs = np.concatenate([self._point, (dist, )])
+        first_obs = np.concatenate([self._point, (dist,)])
         self._step_cnt = 0
 
         return first_obs, dict(goal=self._goal)
@@ -113,16 +114,15 @@ class PointEnv(Environment):
 
         """
         if self._step_cnt is None:
-            raise RuntimeError('reset() must be called before step()!')
+            raise RuntimeError("reset() must be called before step()!")
 
         # enforce action space
         a = action.copy()  # NOTE: we MUST copy the action before modifying it
         a = np.clip(a, self.action_space.low, self.action_space.high)
 
-        self._point = np.clip(self._point + a, -self._arena_size,
-                              self._arena_size)
+        self._point = np.clip(self._point + a, -self._arena_size, self._arena_size)
         if self._visualize:
-            print(self.render('ascii'))
+            print(self.render("ascii"))
 
         dist = np.linalg.norm(self._point - self._goal)
         succ = dist < np.linalg.norm(self.action_space.low)
@@ -139,27 +139,27 @@ class PointEnv(Environment):
         # sometimes we don't want to terminate
         done = succ and not self._never_done
 
-        obs = np.concatenate([self._point, (dist, )])
+        obs = np.concatenate([self._point, (dist,)])
 
         self._step_cnt += 1
 
         step_type = StepType.get_step_type(
             step_cnt=self._step_cnt,
             max_episode_length=self._max_episode_length,
-            done=done)
+            done=done,
+        )
 
         if step_type in (StepType.TERMINAL, StepType.TIMEOUT):
             self._step_cnt = None
 
-        return EnvStep(env_spec=self.spec,
-                       action=action,
-                       reward=reward,
-                       observation=obs,
-                       env_info={
-                           'task': self._task,
-                           'success': succ
-                       },
-                       step_type=step_type)
+        return EnvStep(
+            env_spec=self.spec,
+            action=action,
+            reward=reward,
+            observation=obs,
+            env_info={"task": self._task, "success": succ},
+            step_type=step_type,
+        )
 
     def render(self, mode):
         """Renders the environment.
@@ -172,12 +172,12 @@ class PointEnv(Environment):
             str: the point and goal of environment.
 
         """
-        return f'Point: {self._point}, Goal: {self._goal}'
+        return f"Point: {self._point}, Goal: {self._goal}"
 
     def visualize(self):
         """Creates a visualization of the environment."""
         self._visualize = True
-        print(self.render('ascii'))
+        print(self.render("ascii"))
 
     def close(self):
         """Close the env."""
@@ -196,7 +196,7 @@ class PointEnv(Environment):
 
         """
         goals = np.random.uniform(-2, 2, size=(num_tasks, 2))
-        tasks = [{'goal': goal} for goal in goals]
+        tasks = [{"goal": goal} for goal in goals]
         return tasks
 
     def set_task(self, task):
@@ -208,4 +208,4 @@ class PointEnv(Environment):
 
         """
         self._task = task
-        self._goal = task['goal']
+        self._goal = task["goal"]

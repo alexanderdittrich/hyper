@@ -681,7 +681,6 @@ class MJMODEL(Structure):
 
 
 class MjContactWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -704,7 +703,9 @@ class MjContactWrapper(object):
 
     @property
     def pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pos, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.pos, dtype=np.double, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -715,7 +716,9 @@ class MjContactWrapper(object):
 
     @property
     def frame(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.frame, dtype=np.double, count=(9)), (9,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.frame, dtype=np.double, count=(9)), (9,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -734,7 +737,10 @@ class MjContactWrapper(object):
 
     @property
     def friction(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.friction, dtype=np.double, count=(5)), (5,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.friction, dtype=np.double, count=(5)),
+            (5,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -745,7 +751,9 @@ class MjContactWrapper(object):
 
     @property
     def solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.solref, dtype=np.double, count=(2)), (2,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.solref, dtype=np.double, count=(2)), (2,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -756,7 +764,9 @@ class MjContactWrapper(object):
 
     @property
     def solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.solimp, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.solimp, dtype=np.double, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -775,7 +785,9 @@ class MjContactWrapper(object):
 
     @property
     def coef(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.coef, dtype=np.double, count=(5)), (5,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.coef, dtype=np.double, count=(5)), (5,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -834,7 +846,6 @@ class MjContactWrapper(object):
 
 
 class MjrRectWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -881,7 +892,6 @@ class MjrRectWrapper(object):
 
 
 class MjvCameraPoseWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -896,7 +906,10 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def head_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.head_pos, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.head_pos, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -907,7 +920,10 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def head_right(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.head_right, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.head_right, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -918,7 +934,10 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def window_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.window_pos, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.window_pos, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -929,7 +948,12 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def window_right(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.window_right, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.window_right, dtype=np.double, count=(3)
+            ),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -940,7 +964,10 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def window_up(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.window_up, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.window_up, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -951,7 +978,12 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def window_normal(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.window_normal, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.window_normal, dtype=np.double, count=(3)
+            ),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -962,7 +994,10 @@ class MjvCameraPoseWrapper(object):
 
     @property
     def window_size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.window_size, dtype=np.double, count=(2)), (2,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.window_size, dtype=np.double, count=(2)),
+            (2,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -989,7 +1024,6 @@ class MjvCameraPoseWrapper(object):
 
 
 class MjrOptionWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1012,7 +1046,9 @@ class MjrOptionWrapper(object):
 
     @property
     def flags(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.flags, dtype=np.uint8, count=(6)), (6,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.flags, dtype=np.uint8, count=(6)), (6,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1023,7 +1059,6 @@ class MjrOptionWrapper(object):
 
 
 class MjrContextWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1150,7 +1185,10 @@ class MjrContextWrapper(object):
 
     @property
     def texture(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.texture, dtype=np.int, count=(100)), (100,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.texture, dtype=np.int, count=(100)),
+            (100,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1161,7 +1199,10 @@ class MjrContextWrapper(object):
 
     @property
     def textureType(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.textureType, dtype=np.int, count=(100)), (100,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.textureType, dtype=np.int, count=(100)),
+            (100,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1268,7 +1309,10 @@ class MjrContextWrapper(object):
 
     @property
     def charWidth(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.charWidth, dtype=np.int, count=(127)), (127,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.charWidth, dtype=np.int, count=(127)),
+            (127,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1279,7 +1323,10 @@ class MjrContextWrapper(object):
 
     @property
     def charWidthBig(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.charWidthBig, dtype=np.int, count=(127)), (127,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.charWidthBig, dtype=np.int, count=(127)),
+            (127,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1314,7 +1361,6 @@ class MjrContextWrapper(object):
 
 
 class MjvCameraWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1353,7 +1399,9 @@ class MjvCameraWrapper(object):
 
     @property
     def lookat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.lookat, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.lookat, dtype=np.double, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1404,7 +1452,6 @@ class MjvCameraWrapper(object):
 
 
 class MjvOptionWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1435,7 +1482,10 @@ class MjvOptionWrapper(object):
 
     @property
     def geomgroup(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geomgroup, dtype=np.uint8, count=(5)), (5,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.geomgroup, dtype=np.uint8, count=(5)),
+            (5,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1446,7 +1496,10 @@ class MjvOptionWrapper(object):
 
     @property
     def sitegroup(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sitegroup, dtype=np.uint8, count=(5)), (5,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.sitegroup, dtype=np.uint8, count=(5)),
+            (5,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1457,7 +1510,9 @@ class MjvOptionWrapper(object):
 
     @property
     def flags(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.flags, dtype=np.uint8, count=(18)), (18,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.flags, dtype=np.uint8, count=(18)), (18,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1468,7 +1523,6 @@ class MjvOptionWrapper(object):
 
 
 class MjvGeomWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1539,7 +1593,10 @@ class MjvGeomWrapper(object):
 
     @property
     def texrepeat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.texrepeat, dtype=np.float, count=(2)), (2,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.texrepeat, dtype=np.float, count=(2)),
+            (2,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1550,7 +1607,9 @@ class MjvGeomWrapper(object):
 
     @property
     def size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.size, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.size, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1561,7 +1620,9 @@ class MjvGeomWrapper(object):
 
     @property
     def pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pos, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.pos, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1572,7 +1633,9 @@ class MjvGeomWrapper(object):
 
     @property
     def mat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat, dtype=np.float, count=(9)), (9,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.mat, dtype=np.float, count=(9)), (9,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1583,7 +1646,9 @@ class MjvGeomWrapper(object):
 
     @property
     def rgba(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.rgba, dtype=np.float, count=(4)), (4,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.rgba, dtype=np.float, count=(4)), (4,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1658,7 +1723,6 @@ class MjvGeomWrapper(object):
 
 
 class MjvLightWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1673,7 +1737,9 @@ class MjvLightWrapper(object):
 
     @property
     def pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pos, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.pos, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1684,7 +1750,9 @@ class MjvLightWrapper(object):
 
     @property
     def dir(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dir, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.dir, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1695,7 +1763,10 @@ class MjvLightWrapper(object):
 
     @property
     def attenuation(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.attenuation, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.attenuation, dtype=np.float, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1722,7 +1793,9 @@ class MjvLightWrapper(object):
 
     @property
     def ambient(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.ambient, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.ambient, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1733,7 +1806,9 @@ class MjvLightWrapper(object):
 
     @property
     def diffuse(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.diffuse, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.diffuse, dtype=np.float, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1744,7 +1819,10 @@ class MjvLightWrapper(object):
 
     @property
     def specular(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.specular, dtype=np.float, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.specular, dtype=np.float, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1779,7 +1857,6 @@ class MjvLightWrapper(object):
 
 
 class MjvObjectsWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1826,7 +1903,6 @@ class MjvObjectsWrapper(object):
 
 
 class MjOptionWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -1873,7 +1949,10 @@ class MjOptionWrapper(object):
 
     @property
     def gravity(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.gravity, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.gravity, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1884,7 +1963,9 @@ class MjOptionWrapper(object):
 
     @property
     def wind(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.wind, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.wind, dtype=np.double, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1895,7 +1976,10 @@ class MjOptionWrapper(object):
 
     @property
     def magnetic(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.magnetic, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.magnetic, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1930,7 +2014,10 @@ class MjOptionWrapper(object):
 
     @property
     def o_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.o_solref, dtype=np.double, count=(2)), (2,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.o_solref, dtype=np.double, count=(2)),
+            (2,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -1941,7 +2028,10 @@ class MjOptionWrapper(object):
 
     @property
     def o_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.o_solimp, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.o_solimp, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2032,7 +2122,6 @@ class MjOptionWrapper(object):
 
 
 class MjVisualWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -2095,7 +2184,6 @@ class MjVisualWrapper(object):
 
 
 class MjStatisticWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -2134,7 +2222,9 @@ class MjStatisticWrapper(object):
 
     @property
     def center(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.center, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.center, dtype=np.double, count=(3)), (3,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2145,7 +2235,6 @@ class MjStatisticWrapper(object):
 
 
 class MjDataWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -2224,7 +2313,9 @@ class MjDataWrapper(object):
 
     @property
     def nwarning(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.nwarning, dtype=np.int, count=(8)), (8,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.nwarning, dtype=np.int, count=(8)), (8,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2235,7 +2326,10 @@ class MjDataWrapper(object):
 
     @property
     def warning_info(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.warning_info, dtype=np.int, count=(8)), (8,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.warning_info, dtype=np.int, count=(8)),
+            (8,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2246,7 +2340,12 @@ class MjDataWrapper(object):
 
     @property
     def timer_duration(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.timer_duration, dtype=np.double, count=(14)), (14,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.timer_duration, dtype=np.double, count=(14)
+            ),
+            (14,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2257,7 +2356,12 @@ class MjDataWrapper(object):
 
     @property
     def timer_ncall(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.timer_ncall, dtype=np.double, count=(14)), (14,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.timer_ncall, dtype=np.double, count=(14)
+            ),
+            (14,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2268,7 +2372,10 @@ class MjDataWrapper(object):
 
     @property
     def mocaptime(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mocaptime, dtype=np.double, count=(3)), (3,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.mocaptime, dtype=np.double, count=(3)),
+            (3,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2287,7 +2394,9 @@ class MjDataWrapper(object):
 
     @property
     def energy(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.energy, dtype=np.double, count=(2)), (2,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.energy, dtype=np.double, count=(2)), (2,)
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2298,7 +2407,10 @@ class MjDataWrapper(object):
 
     @property
     def solverstat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.solverstat, dtype=np.double, count=(4)), (4,))
+        arr = np.reshape(
+            np.fromiter(self._wrapped.contents.solverstat, dtype=np.double, count=(4)),
+            (4,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2309,7 +2421,12 @@ class MjDataWrapper(object):
 
     @property
     def solvertrace(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.solvertrace, dtype=np.double, count=(200)), (200,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.solvertrace, dtype=np.double, count=(200)
+            ),
+            (200,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2320,8 +2437,12 @@ class MjDataWrapper(object):
 
     @property
     def buffer(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.buffer, dtype=np.uint8, count=(self.nbuffer)),
-                         (self.nbuffer,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.buffer, dtype=np.uint8, count=(self.nbuffer)
+            ),
+            (self.nbuffer,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2332,8 +2453,12 @@ class MjDataWrapper(object):
 
     @property
     def stack(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.stack, dtype=np.double, count=(self.nstack)),
-                         (self.nstack,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.stack, dtype=np.double, count=(self.nstack)
+            ),
+            (self.nstack,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -2344,1076 +2469,2129 @@ class MjDataWrapper(object):
 
     @property
     def qpos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qpos, dtype=np.double, count=(self._size_src.nq * 1)),
-                         (self._size_src.nq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qpos,
+                dtype=np.double,
+                count=(self._size_src.nq * 1),
+            ),
+            (
+                self._size_src.nq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qpos.setter
     def qpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qpos, val_ptr, self._size_src.nq * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qpos,
+            val_ptr,
+            self._size_src.nq * 1 * sizeof(c_double),
+        )
 
     @property
     def qvel(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qvel, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qvel,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qvel.setter
     def qvel(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qvel, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qvel,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def act(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.act, dtype=np.double, count=(self._size_src.na * 1)),
-                         (self._size_src.na, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.act,
+                dtype=np.double,
+                count=(self._size_src.na * 1),
+            ),
+            (
+                self._size_src.na,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @act.setter
     def act(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.act, val_ptr, self._size_src.na * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.act,
+            val_ptr,
+            self._size_src.na * 1 * sizeof(c_double),
+        )
 
     @property
     def ctrl(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.ctrl, dtype=np.double, count=(self._size_src.nu * 1)),
-                         (self._size_src.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.ctrl,
+                dtype=np.double,
+                count=(self._size_src.nu * 1),
+            ),
+            (
+                self._size_src.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ctrl.setter
     def ctrl(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.ctrl, val_ptr, self._size_src.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.ctrl,
+            val_ptr,
+            self._size_src.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_applied(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qfrc_applied, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qfrc_applied,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_applied.setter
     def qfrc_applied(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_applied, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_applied,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def xfrc_applied(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.xfrc_applied, dtype=np.double, count=(self._size_src.nbody * 6)),
-            (self._size_src.nbody, 6,))
+            np.fromiter(
+                self._wrapped.contents.xfrc_applied,
+                dtype=np.double,
+                count=(self._size_src.nbody * 6),
+            ),
+            (
+                self._size_src.nbody,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xfrc_applied.setter
     def xfrc_applied(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xfrc_applied, val_ptr, self._size_src.nbody * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xfrc_applied,
+            val_ptr,
+            self._size_src.nbody * 6 * sizeof(c_double),
+        )
 
     @property
     def qacc(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qacc, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qacc,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qacc.setter
     def qacc(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qacc, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qacc,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def act_dot(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.act_dot, dtype=np.double, count=(self._size_src.na * 1)),
-                         (self._size_src.na, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.act_dot,
+                dtype=np.double,
+                count=(self._size_src.na * 1),
+            ),
+            (
+                self._size_src.na,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @act_dot.setter
     def act_dot(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.act_dot, val_ptr, self._size_src.na * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.act_dot,
+            val_ptr,
+            self._size_src.na * 1 * sizeof(c_double),
+        )
 
     @property
     def mocap_pos(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.mocap_pos, dtype=np.double, count=(self._size_src.nmocap * 3)),
-            (self._size_src.nmocap, 3,))
+            np.fromiter(
+                self._wrapped.contents.mocap_pos,
+                dtype=np.double,
+                count=(self._size_src.nmocap * 3),
+            ),
+            (
+                self._size_src.nmocap,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mocap_pos.setter
     def mocap_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.mocap_pos, val_ptr, self._size_src.nmocap * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.mocap_pos,
+            val_ptr,
+            self._size_src.nmocap * 3 * sizeof(c_double),
+        )
 
     @property
     def mocap_quat(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.mocap_quat, dtype=np.double, count=(self._size_src.nmocap * 4)),
-            (self._size_src.nmocap, 4,))
+            np.fromiter(
+                self._wrapped.contents.mocap_quat,
+                dtype=np.double,
+                count=(self._size_src.nmocap * 4),
+            ),
+            (
+                self._size_src.nmocap,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mocap_quat.setter
     def mocap_quat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.mocap_quat, val_ptr, self._size_src.nmocap * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.mocap_quat,
+            val_ptr,
+            self._size_src.nmocap * 4 * sizeof(c_double),
+        )
 
     @property
     def userdata(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.userdata, dtype=np.double, count=(self._size_src.nuserdata * 1)),
-            (self._size_src.nuserdata, 1,))
+            np.fromiter(
+                self._wrapped.contents.userdata,
+                dtype=np.double,
+                count=(self._size_src.nuserdata * 1),
+            ),
+            (
+                self._size_src.nuserdata,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @userdata.setter
     def userdata(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.userdata, val_ptr, self._size_src.nuserdata * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.userdata,
+            val_ptr,
+            self._size_src.nuserdata * 1 * sizeof(c_double),
+        )
 
     @property
     def sensordata(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.sensordata, dtype=np.double, count=(self._size_src.nsensordata * 1)),
-            (self._size_src.nsensordata, 1,))
+            np.fromiter(
+                self._wrapped.contents.sensordata,
+                dtype=np.double,
+                count=(self._size_src.nsensordata * 1),
+            ),
+            (
+                self._size_src.nsensordata,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensordata.setter
     def sensordata(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.sensordata, val_ptr, self._size_src.nsensordata * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.sensordata,
+            val_ptr,
+            self._size_src.nsensordata * 1 * sizeof(c_double),
+        )
 
     @property
     def xpos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xpos, dtype=np.double, count=(self._size_src.nbody * 3)),
-                         (self._size_src.nbody, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xpos,
+                dtype=np.double,
+                count=(self._size_src.nbody * 3),
+            ),
+            (
+                self._size_src.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xpos.setter
     def xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xpos, val_ptr, self._size_src.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xpos,
+            val_ptr,
+            self._size_src.nbody * 3 * sizeof(c_double),
+        )
 
     @property
     def xquat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xquat, dtype=np.double, count=(self._size_src.nbody * 4)),
-                         (self._size_src.nbody, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xquat,
+                dtype=np.double,
+                count=(self._size_src.nbody * 4),
+            ),
+            (
+                self._size_src.nbody,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xquat.setter
     def xquat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xquat, val_ptr, self._size_src.nbody * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xquat,
+            val_ptr,
+            self._size_src.nbody * 4 * sizeof(c_double),
+        )
 
     @property
     def xmat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xmat, dtype=np.double, count=(self._size_src.nbody * 9)),
-                         (self._size_src.nbody, 9,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xmat,
+                dtype=np.double,
+                count=(self._size_src.nbody * 9),
+            ),
+            (
+                self._size_src.nbody,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xmat.setter
     def xmat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xmat, val_ptr, self._size_src.nbody * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xmat,
+            val_ptr,
+            self._size_src.nbody * 9 * sizeof(c_double),
+        )
 
     @property
     def xipos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xipos, dtype=np.double, count=(self._size_src.nbody * 3)),
-                         (self._size_src.nbody, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xipos,
+                dtype=np.double,
+                count=(self._size_src.nbody * 3),
+            ),
+            (
+                self._size_src.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xipos.setter
     def xipos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xipos, val_ptr, self._size_src.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xipos,
+            val_ptr,
+            self._size_src.nbody * 3 * sizeof(c_double),
+        )
 
     @property
     def ximat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.ximat, dtype=np.double, count=(self._size_src.nbody * 9)),
-                         (self._size_src.nbody, 9,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.ximat,
+                dtype=np.double,
+                count=(self._size_src.nbody * 9),
+            ),
+            (
+                self._size_src.nbody,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ximat.setter
     def ximat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.ximat, val_ptr, self._size_src.nbody * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.ximat,
+            val_ptr,
+            self._size_src.nbody * 9 * sizeof(c_double),
+        )
 
     @property
     def xanchor(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xanchor, dtype=np.double, count=(self._size_src.njnt * 3)),
-                         (self._size_src.njnt, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xanchor,
+                dtype=np.double,
+                count=(self._size_src.njnt * 3),
+            ),
+            (
+                self._size_src.njnt,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xanchor.setter
     def xanchor(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xanchor, val_ptr, self._size_src.njnt * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xanchor,
+            val_ptr,
+            self._size_src.njnt * 3 * sizeof(c_double),
+        )
 
     @property
     def xaxis(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.xaxis, dtype=np.double, count=(self._size_src.njnt * 3)),
-                         (self._size_src.njnt, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.xaxis,
+                dtype=np.double,
+                count=(self._size_src.njnt * 3),
+            ),
+            (
+                self._size_src.njnt,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @xaxis.setter
     def xaxis(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.xaxis, val_ptr, self._size_src.njnt * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.xaxis,
+            val_ptr,
+            self._size_src.njnt * 3 * sizeof(c_double),
+        )
 
     @property
     def geom_xpos(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.geom_xpos, dtype=np.double, count=(self._size_src.ngeom * 3)),
-            (self._size_src.ngeom, 3,))
+            np.fromiter(
+                self._wrapped.contents.geom_xpos,
+                dtype=np.double,
+                count=(self._size_src.ngeom * 3),
+            ),
+            (
+                self._size_src.ngeom,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_xpos.setter
     def geom_xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_xpos, val_ptr, self._size_src.ngeom * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_xpos,
+            val_ptr,
+            self._size_src.ngeom * 3 * sizeof(c_double),
+        )
 
     @property
     def geom_xmat(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.geom_xmat, dtype=np.double, count=(self._size_src.ngeom * 9)),
-            (self._size_src.ngeom, 9,))
+            np.fromiter(
+                self._wrapped.contents.geom_xmat,
+                dtype=np.double,
+                count=(self._size_src.ngeom * 9),
+            ),
+            (
+                self._size_src.ngeom,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_xmat.setter
     def geom_xmat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_xmat, val_ptr, self._size_src.ngeom * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_xmat,
+            val_ptr,
+            self._size_src.ngeom * 9 * sizeof(c_double),
+        )
 
     @property
     def site_xpos(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.site_xpos, dtype=np.double, count=(self._size_src.nsite * 3)),
-            (self._size_src.nsite, 3,))
+            np.fromiter(
+                self._wrapped.contents.site_xpos,
+                dtype=np.double,
+                count=(self._size_src.nsite * 3),
+            ),
+            (
+                self._size_src.nsite,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_xpos.setter
     def site_xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_xpos, val_ptr, self._size_src.nsite * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_xpos,
+            val_ptr,
+            self._size_src.nsite * 3 * sizeof(c_double),
+        )
 
     @property
     def site_xmat(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.site_xmat, dtype=np.double, count=(self._size_src.nsite * 9)),
-            (self._size_src.nsite, 9,))
+            np.fromiter(
+                self._wrapped.contents.site_xmat,
+                dtype=np.double,
+                count=(self._size_src.nsite * 9),
+            ),
+            (
+                self._size_src.nsite,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_xmat.setter
     def site_xmat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_xmat, val_ptr, self._size_src.nsite * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_xmat,
+            val_ptr,
+            self._size_src.nsite * 9 * sizeof(c_double),
+        )
 
     @property
     def cam_xpos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_xpos, dtype=np.double, count=(self._size_src.ncam * 3)),
-                         (self._size_src.ncam, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_xpos,
+                dtype=np.double,
+                count=(self._size_src.ncam * 3),
+            ),
+            (
+                self._size_src.ncam,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_xpos.setter
     def cam_xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_xpos, val_ptr, self._size_src.ncam * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_xpos,
+            val_ptr,
+            self._size_src.ncam * 3 * sizeof(c_double),
+        )
 
     @property
     def cam_xmat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_xmat, dtype=np.double, count=(self._size_src.ncam * 9)),
-                         (self._size_src.ncam, 9,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_xmat,
+                dtype=np.double,
+                count=(self._size_src.ncam * 9),
+            ),
+            (
+                self._size_src.ncam,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_xmat.setter
     def cam_xmat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_xmat, val_ptr, self._size_src.ncam * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_xmat,
+            val_ptr,
+            self._size_src.ncam * 9 * sizeof(c_double),
+        )
 
     @property
     def light_xpos(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.light_xpos, dtype=np.double, count=(self._size_src.nlight * 3)),
-            (self._size_src.nlight, 3,))
+            np.fromiter(
+                self._wrapped.contents.light_xpos,
+                dtype=np.double,
+                count=(self._size_src.nlight * 3),
+            ),
+            (
+                self._size_src.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_xpos.setter
     def light_xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_xpos, val_ptr, self._size_src.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_xpos,
+            val_ptr,
+            self._size_src.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_xdir(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.light_xdir, dtype=np.double, count=(self._size_src.nlight * 3)),
-            (self._size_src.nlight, 3,))
+            np.fromiter(
+                self._wrapped.contents.light_xdir,
+                dtype=np.double,
+                count=(self._size_src.nlight * 3),
+            ),
+            (
+                self._size_src.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_xdir.setter
     def light_xdir(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_xdir, val_ptr, self._size_src.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_xdir,
+            val_ptr,
+            self._size_src.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def com_subtree(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.com_subtree, dtype=np.double, count=(self._size_src.nbody * 3)),
-            (self._size_src.nbody, 3,))
+            np.fromiter(
+                self._wrapped.contents.com_subtree,
+                dtype=np.double,
+                count=(self._size_src.nbody * 3),
+            ),
+            (
+                self._size_src.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @com_subtree.setter
     def com_subtree(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.com_subtree, val_ptr, self._size_src.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.com_subtree,
+            val_ptr,
+            self._size_src.nbody * 3 * sizeof(c_double),
+        )
 
     @property
     def cdof(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cdof, dtype=np.double, count=(self._size_src.nv * 6)),
-                         (self._size_src.nv, 6,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cdof,
+                dtype=np.double,
+                count=(self._size_src.nv * 6),
+            ),
+            (
+                self._size_src.nv,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cdof.setter
     def cdof(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cdof, val_ptr, self._size_src.nv * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cdof,
+            val_ptr,
+            self._size_src.nv * 6 * sizeof(c_double),
+        )
 
     @property
     def cinert(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cinert, dtype=np.double, count=(self._size_src.nbody * 10)),
-                         (self._size_src.nbody, 10,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cinert,
+                dtype=np.double,
+                count=(self._size_src.nbody * 10),
+            ),
+            (
+                self._size_src.nbody,
+                10,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cinert.setter
     def cinert(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cinert, val_ptr, self._size_src.nbody * 10 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cinert,
+            val_ptr,
+            self._size_src.nbody * 10 * sizeof(c_double),
+        )
 
     @property
     def ten_wrapadr(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.ten_wrapadr, dtype=np.int, count=(self._size_src.ntendon * 1)),
-            (self._size_src.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.ten_wrapadr,
+                dtype=np.int,
+                count=(self._size_src.ntendon * 1),
+            ),
+            (
+                self._size_src.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ten_wrapadr.setter
     def ten_wrapadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.ten_wrapadr, val_ptr, self._size_src.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.ten_wrapadr,
+            val_ptr,
+            self._size_src.ntendon * 1 * sizeof(c_int),
+        )
 
     @property
     def ten_wrapnum(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.ten_wrapnum, dtype=np.int, count=(self._size_src.ntendon * 1)),
-            (self._size_src.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.ten_wrapnum,
+                dtype=np.int,
+                count=(self._size_src.ntendon * 1),
+            ),
+            (
+                self._size_src.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ten_wrapnum.setter
     def ten_wrapnum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.ten_wrapnum, val_ptr, self._size_src.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.ten_wrapnum,
+            val_ptr,
+            self._size_src.ntendon * 1 * sizeof(c_int),
+        )
 
     @property
     def ten_length(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.ten_length, dtype=np.double, count=(self._size_src.ntendon * 1)),
-            (self._size_src.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.ten_length,
+                dtype=np.double,
+                count=(self._size_src.ntendon * 1),
+            ),
+            (
+                self._size_src.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ten_length.setter
     def ten_length(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.ten_length, val_ptr, self._size_src.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.ten_length,
+            val_ptr,
+            self._size_src.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def ten_moment(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.ten_moment, dtype=np.double,
-                                     count=(self._size_src.ntendon * self._size_src.nv)),
-                         (self._size_src.ntendon, self._size_src.nv,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.ten_moment,
+                dtype=np.double,
+                count=(self._size_src.ntendon * self._size_src.nv),
+            ),
+            (
+                self._size_src.ntendon,
+                self._size_src.nv,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ten_moment.setter
     def ten_moment(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.ten_moment, val_ptr,
-                self._size_src.ntendon * self._size_src.nv * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.ten_moment,
+            val_ptr,
+            self._size_src.ntendon * self._size_src.nv * sizeof(c_double),
+        )
 
     @property
     def wrap_obj(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.wrap_obj, dtype=np.int, count=(self._size_src.nwrap * 2)),
-                         (self._size_src.nwrap, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.wrap_obj,
+                dtype=np.int,
+                count=(self._size_src.nwrap * 2),
+            ),
+            (
+                self._size_src.nwrap,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @wrap_obj.setter
     def wrap_obj(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.wrap_obj, val_ptr, self._size_src.nwrap * 2 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.wrap_obj,
+            val_ptr,
+            self._size_src.nwrap * 2 * sizeof(c_int),
+        )
 
     @property
     def wrap_xpos(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.wrap_xpos, dtype=np.double, count=(self._size_src.nwrap * 6)),
-            (self._size_src.nwrap, 6,))
+            np.fromiter(
+                self._wrapped.contents.wrap_xpos,
+                dtype=np.double,
+                count=(self._size_src.nwrap * 6),
+            ),
+            (
+                self._size_src.nwrap,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @wrap_xpos.setter
     def wrap_xpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.wrap_xpos, val_ptr, self._size_src.nwrap * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.wrap_xpos,
+            val_ptr,
+            self._size_src.nwrap * 6 * sizeof(c_double),
+        )
 
     @property
     def actuator_length(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.actuator_length, dtype=np.double, count=(self._size_src.nu * 1)),
-            (self._size_src.nu, 1,))
+            np.fromiter(
+                self._wrapped.contents.actuator_length,
+                dtype=np.double,
+                count=(self._size_src.nu * 1),
+            ),
+            (
+                self._size_src.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_length.setter
     def actuator_length(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_length, val_ptr, self._size_src.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_length,
+            val_ptr,
+            self._size_src.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_moment(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_moment, dtype=np.double,
-                                     count=(self._size_src.nu * self._size_src.nv)),
-                         (self._size_src.nu, self._size_src.nv,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_moment,
+                dtype=np.double,
+                count=(self._size_src.nu * self._size_src.nv),
+            ),
+            (
+                self._size_src.nu,
+                self._size_src.nv,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_moment.setter
     def actuator_moment(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_moment, val_ptr,
-                self._size_src.nu * self._size_src.nv * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_moment,
+            val_ptr,
+            self._size_src.nu * self._size_src.nv * sizeof(c_double),
+        )
 
     @property
     def crb(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.crb, dtype=np.double, count=(self._size_src.nbody * 10)),
-                         (self._size_src.nbody, 10,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.crb,
+                dtype=np.double,
+                count=(self._size_src.nbody * 10),
+            ),
+            (
+                self._size_src.nbody,
+                10,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @crb.setter
     def crb(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.crb, val_ptr, self._size_src.nbody * 10 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.crb,
+            val_ptr,
+            self._size_src.nbody * 10 * sizeof(c_double),
+        )
 
     @property
     def qM(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qM, dtype=np.double, count=(self._size_src.nM * 1)),
-                         (self._size_src.nM, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qM,
+                dtype=np.double,
+                count=(self._size_src.nM * 1),
+            ),
+            (
+                self._size_src.nM,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qM.setter
     def qM(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qM, val_ptr, self._size_src.nM * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qM, val_ptr, self._size_src.nM * 1 * sizeof(c_double)
+        )
 
     @property
     def qLD(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qLD, dtype=np.double, count=(self._size_src.nM * 1)),
-                         (self._size_src.nM, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qLD,
+                dtype=np.double,
+                count=(self._size_src.nM * 1),
+            ),
+            (
+                self._size_src.nM,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qLD.setter
     def qLD(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qLD, val_ptr, self._size_src.nM * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qLD,
+            val_ptr,
+            self._size_src.nM * 1 * sizeof(c_double),
+        )
 
     @property
     def qLDiagInv(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qLDiagInv, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qLDiagInv,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qLDiagInv.setter
     def qLDiagInv(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qLDiagInv, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qLDiagInv,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def qLDiagSqrtInv(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qLDiagSqrtInv, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qLDiagSqrtInv,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qLDiagSqrtInv.setter
     def qLDiagSqrtInv(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qLDiagSqrtInv, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qLDiagSqrtInv,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_type, dtype=np.int, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_type,
+                dtype=np.int,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_type.setter
     def efc_type(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_type, val_ptr, self._size_src.njmax * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_type,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_id(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_id, dtype=np.int, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_id,
+                dtype=np.int,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_id.setter
     def efc_id(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_id, val_ptr, self._size_src.njmax * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_id,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_rownnz(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_rownnz, dtype=np.int, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_rownnz,
+                dtype=np.int,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_rownnz.setter
     def efc_rownnz(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_rownnz, val_ptr, self._size_src.njmax * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_rownnz,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_rowadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_rowadr, dtype=np.int, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_rowadr,
+                dtype=np.int,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_rowadr.setter
     def efc_rowadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_rowadr, val_ptr, self._size_src.njmax * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_rowadr,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_colind(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_colind, dtype=np.int,
-                                     count=(self._size_src.njmax * self._size_src.nv)),
-                         (self._size_src.njmax, self._size_src.nv,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_colind,
+                dtype=np.int,
+                count=(self._size_src.njmax * self._size_src.nv),
+            ),
+            (
+                self._size_src.njmax,
+                self._size_src.nv,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_colind.setter
     def efc_colind(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_colind, val_ptr, self._size_src.njmax * self._size_src.nv * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_colind,
+            val_ptr,
+            self._size_src.njmax * self._size_src.nv * sizeof(c_int),
+        )
 
     @property
     def efc_rownnz_T(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_rownnz_T, dtype=np.int, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_rownnz_T,
+                dtype=np.int,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_rownnz_T.setter
     def efc_rownnz_T(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_rownnz_T, val_ptr, self._size_src.nv * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_rownnz_T,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_rowadr_T(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_rowadr_T, dtype=np.int, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_rowadr_T,
+                dtype=np.int,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_rowadr_T.setter
     def efc_rowadr_T(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_rowadr_T, val_ptr, self._size_src.nv * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_rowadr_T,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_int),
+        )
 
     @property
     def efc_colind_T(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_colind_T, dtype=np.int,
-                                     count=(self._size_src.nv * self._size_src.njmax)),
-                         (self._size_src.nv, self._size_src.njmax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_colind_T,
+                dtype=np.int,
+                count=(self._size_src.nv * self._size_src.njmax),
+            ),
+            (
+                self._size_src.nv,
+                self._size_src.njmax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_colind_T.setter
     def efc_colind_T(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.efc_colind_T, val_ptr, self._size_src.nv * self._size_src.njmax * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.efc_colind_T,
+            val_ptr,
+            self._size_src.nv * self._size_src.njmax * sizeof(c_int),
+        )
 
     @property
     def efc_solref(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_solref, dtype=np.double, count=(self._size_src.njmax * 2)),
-            (self._size_src.njmax, 2,))
+            np.fromiter(
+                self._wrapped.contents.efc_solref,
+                dtype=np.double,
+                count=(self._size_src.njmax * 2),
+            ),
+            (
+                self._size_src.njmax,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_solref.setter
     def efc_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_solref, val_ptr, self._size_src.njmax * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_solref,
+            val_ptr,
+            self._size_src.njmax * 2 * sizeof(c_double),
+        )
 
     @property
     def efc_solimp(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_solimp, dtype=np.double, count=(self._size_src.njmax * 3)),
-            (self._size_src.njmax, 3,))
+            np.fromiter(
+                self._wrapped.contents.efc_solimp,
+                dtype=np.double,
+                count=(self._size_src.njmax * 3),
+            ),
+            (
+                self._size_src.njmax,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_solimp.setter
     def efc_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_solimp, val_ptr, self._size_src.njmax * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_solimp,
+            val_ptr,
+            self._size_src.njmax * 3 * sizeof(c_double),
+        )
 
     @property
     def efc_margin(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_margin, dtype=np.double, count=(self._size_src.njmax * 1)),
-            (self._size_src.njmax, 1,))
+            np.fromiter(
+                self._wrapped.contents.efc_margin,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_margin.setter
     def efc_margin(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_margin, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_margin,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_frictionloss(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_frictionloss, dtype=np.double, count=(self._size_src.njmax * 1)),
-            (self._size_src.njmax, 1,))
+            np.fromiter(
+                self._wrapped.contents.efc_frictionloss,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_frictionloss.setter
     def efc_frictionloss(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_frictionloss, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_frictionloss,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_pos, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_pos,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_pos.setter
     def efc_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_pos, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_pos,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_J(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_J, dtype=np.double,
-                                     count=(self._size_src.njmax * self._size_src.nv)),
-                         (self._size_src.njmax, self._size_src.nv,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_J,
+                dtype=np.double,
+                count=(self._size_src.njmax * self._size_src.nv),
+            ),
+            (
+                self._size_src.njmax,
+                self._size_src.nv,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_J.setter
     def efc_J(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_J, val_ptr, self._size_src.njmax * self._size_src.nv * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_J,
+            val_ptr,
+            self._size_src.njmax * self._size_src.nv * sizeof(c_double),
+        )
 
     @property
     def efc_J_T(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_J_T, dtype=np.double,
-                                     count=(self._size_src.nv * self._size_src.njmax)),
-                         (self._size_src.nv, self._size_src.njmax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_J_T,
+                dtype=np.double,
+                count=(self._size_src.nv * self._size_src.njmax),
+            ),
+            (
+                self._size_src.nv,
+                self._size_src.njmax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_J_T.setter
     def efc_J_T(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_J_T, val_ptr, self._size_src.nv * self._size_src.njmax * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_J_T,
+            val_ptr,
+            self._size_src.nv * self._size_src.njmax * sizeof(c_double),
+        )
 
     @property
     def efc_diagApprox(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_diagApprox, dtype=np.double, count=(self._size_src.njmax * 1)),
-            (self._size_src.njmax, 1,))
+            np.fromiter(
+                self._wrapped.contents.efc_diagApprox,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_diagApprox.setter
     def efc_diagApprox(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_diagApprox, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_diagApprox,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_D(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_D, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_D,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_D.setter
     def efc_D(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_D, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_D,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_R(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_R, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_R,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_R.setter
     def efc_R(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_R, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_R,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_AR(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_AR, dtype=np.double,
-                                     count=(self._size_src.njmax * self._size_src.njmax)),
-                         (self._size_src.njmax, self._size_src.njmax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_AR,
+                dtype=np.double,
+                count=(self._size_src.njmax * self._size_src.njmax),
+            ),
+            (
+                self._size_src.njmax,
+                self._size_src.njmax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_AR.setter
     def efc_AR(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_AR, val_ptr, self._size_src.njmax * self._size_src.njmax * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_AR,
+            val_ptr,
+            self._size_src.njmax * self._size_src.njmax * sizeof(c_double),
+        )
 
     @property
     def e_ARchol(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.e_ARchol, dtype=np.double,
-                                     count=(self._size_src.nemax * self._size_src.nemax)),
-                         (self._size_src.nemax, self._size_src.nemax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.e_ARchol,
+                dtype=np.double,
+                count=(self._size_src.nemax * self._size_src.nemax),
+            ),
+            (
+                self._size_src.nemax,
+                self._size_src.nemax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @e_ARchol.setter
     def e_ARchol(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.e_ARchol, val_ptr,
-                self._size_src.nemax * self._size_src.nemax * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.e_ARchol,
+            val_ptr,
+            self._size_src.nemax * self._size_src.nemax * sizeof(c_double),
+        )
 
     @property
     def fc_e_rect(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.fc_e_rect, dtype=np.double,
-                                     count=(self._size_src.njmax * self._size_src.nemax)),
-                         (self._size_src.njmax, self._size_src.nemax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.fc_e_rect,
+                dtype=np.double,
+                count=(self._size_src.njmax * self._size_src.nemax),
+            ),
+            (
+                self._size_src.njmax,
+                self._size_src.nemax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @fc_e_rect.setter
     def fc_e_rect(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.fc_e_rect, val_ptr,
-                self._size_src.njmax * self._size_src.nemax * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.fc_e_rect,
+            val_ptr,
+            self._size_src.njmax * self._size_src.nemax * sizeof(c_double),
+        )
 
     @property
     def fc_AR(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.fc_AR, dtype=np.double,
-                                     count=(self._size_src.njmax * self._size_src.njmax)),
-                         (self._size_src.njmax, self._size_src.njmax,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.fc_AR,
+                dtype=np.double,
+                count=(self._size_src.njmax * self._size_src.njmax),
+            ),
+            (
+                self._size_src.njmax,
+                self._size_src.njmax,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @fc_AR.setter
     def fc_AR(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.fc_AR, val_ptr, self._size_src.njmax * self._size_src.njmax * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.fc_AR,
+            val_ptr,
+            self._size_src.njmax * self._size_src.njmax * sizeof(c_double),
+        )
 
     @property
     def ten_velocity(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.ten_velocity, dtype=np.double, count=(self._size_src.ntendon * 1)),
-            (self._size_src.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.ten_velocity,
+                dtype=np.double,
+                count=(self._size_src.ntendon * 1),
+            ),
+            (
+                self._size_src.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @ten_velocity.setter
     def ten_velocity(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.ten_velocity, val_ptr, self._size_src.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.ten_velocity,
+            val_ptr,
+            self._size_src.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_velocity(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.actuator_velocity, dtype=np.double, count=(self._size_src.nu * 1)),
-            (self._size_src.nu, 1,))
+            np.fromiter(
+                self._wrapped.contents.actuator_velocity,
+                dtype=np.double,
+                count=(self._size_src.nu * 1),
+            ),
+            (
+                self._size_src.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_velocity.setter
     def actuator_velocity(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_velocity, val_ptr, self._size_src.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_velocity,
+            val_ptr,
+            self._size_src.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def cvel(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cvel, dtype=np.double, count=(self._size_src.nbody * 6)),
-                         (self._size_src.nbody, 6,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cvel,
+                dtype=np.double,
+                count=(self._size_src.nbody * 6),
+            ),
+            (
+                self._size_src.nbody,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cvel.setter
     def cvel(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cvel, val_ptr, self._size_src.nbody * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cvel,
+            val_ptr,
+            self._size_src.nbody * 6 * sizeof(c_double),
+        )
 
     @property
     def cdof_dot(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cdof_dot, dtype=np.double, count=(self._size_src.nv * 6)),
-                         (self._size_src.nv, 6,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cdof_dot,
+                dtype=np.double,
+                count=(self._size_src.nv * 6),
+            ),
+            (
+                self._size_src.nv,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cdof_dot.setter
     def cdof_dot(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cdof_dot, val_ptr, self._size_src.nv * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cdof_dot,
+            val_ptr,
+            self._size_src.nv * 6 * sizeof(c_double),
+        )
 
     @property
     def qfrc_bias(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qfrc_bias, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qfrc_bias,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_bias.setter
     def qfrc_bias(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_bias, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_bias,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_passive(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qfrc_passive, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qfrc_passive,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_passive.setter
     def qfrc_passive(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_passive, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_passive,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_vel(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_vel, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_vel,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_vel.setter
     def efc_vel(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_vel, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_vel,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_aref(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_aref, dtype=np.double, count=(self._size_src.njmax * 1)),
-            (self._size_src.njmax, 1,))
+            np.fromiter(
+                self._wrapped.contents.efc_aref,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_aref.setter
     def efc_aref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_aref, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_aref,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_force(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.actuator_force, dtype=np.double, count=(self._size_src.nu * 1)),
-            (self._size_src.nu, 1,))
+            np.fromiter(
+                self._wrapped.contents.actuator_force,
+                dtype=np.double,
+                count=(self._size_src.nu * 1),
+            ),
+            (
+                self._size_src.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_force.setter
     def actuator_force(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_force, val_ptr, self._size_src.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_force,
+            val_ptr,
+            self._size_src.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_actuator(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qfrc_actuator, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qfrc_actuator,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_actuator.setter
     def qfrc_actuator(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_actuator, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_actuator,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_unc(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qfrc_unc, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qfrc_unc,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_unc.setter
     def qfrc_unc(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_unc, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_unc,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def qacc_unc(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qacc_unc, dtype=np.double, count=(self._size_src.nv * 1)),
-                         (self._size_src.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qacc_unc,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qacc_unc.setter
     def qacc_unc(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qacc_unc, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qacc_unc,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_b(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.efc_b, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.efc_b,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_b.setter
     def efc_b(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_b, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_b,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def fc_b(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.fc_b, dtype=np.double, count=(self._size_src.njmax * 1)),
-                         (self._size_src.njmax, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.fc_b,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @fc_b.setter
     def fc_b(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.fc_b, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.fc_b,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def efc_force(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.efc_force, dtype=np.double, count=(self._size_src.njmax * 1)),
-            (self._size_src.njmax, 1,))
+            np.fromiter(
+                self._wrapped.contents.efc_force,
+                dtype=np.double,
+                count=(self._size_src.njmax * 1),
+            ),
+            (
+                self._size_src.njmax,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @efc_force.setter
     def efc_force(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.efc_force, val_ptr, self._size_src.njmax * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.efc_force,
+            val_ptr,
+            self._size_src.njmax * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_constraint(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qfrc_constraint, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qfrc_constraint,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_constraint.setter
     def qfrc_constraint(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_constraint, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_constraint,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def qfrc_inverse(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.qfrc_inverse, dtype=np.double, count=(self._size_src.nv * 1)),
-            (self._size_src.nv, 1,))
+            np.fromiter(
+                self._wrapped.contents.qfrc_inverse,
+                dtype=np.double,
+                count=(self._size_src.nv * 1),
+            ),
+            (
+                self._size_src.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qfrc_inverse.setter
     def qfrc_inverse(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qfrc_inverse, val_ptr, self._size_src.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qfrc_inverse,
+            val_ptr,
+            self._size_src.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def cacc(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cacc, dtype=np.double, count=(self._size_src.nbody * 6)),
-                         (self._size_src.nbody, 6,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cacc,
+                dtype=np.double,
+                count=(self._size_src.nbody * 6),
+            ),
+            (
+                self._size_src.nbody,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cacc.setter
     def cacc(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cacc, val_ptr, self._size_src.nbody * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cacc,
+            val_ptr,
+            self._size_src.nbody * 6 * sizeof(c_double),
+        )
 
     @property
     def cfrc_int(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.cfrc_int, dtype=np.double, count=(self._size_src.nbody * 6)),
-            (self._size_src.nbody, 6,))
+            np.fromiter(
+                self._wrapped.contents.cfrc_int,
+                dtype=np.double,
+                count=(self._size_src.nbody * 6),
+            ),
+            (
+                self._size_src.nbody,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cfrc_int.setter
     def cfrc_int(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cfrc_int, val_ptr, self._size_src.nbody * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cfrc_int,
+            val_ptr,
+            self._size_src.nbody * 6 * sizeof(c_double),
+        )
 
     @property
     def cfrc_ext(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.cfrc_ext, dtype=np.double, count=(self._size_src.nbody * 6)),
-            (self._size_src.nbody, 6,))
+            np.fromiter(
+                self._wrapped.contents.cfrc_ext,
+                dtype=np.double,
+                count=(self._size_src.nbody * 6),
+            ),
+            (
+                self._size_src.nbody,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cfrc_ext.setter
     def cfrc_ext(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cfrc_ext, val_ptr, self._size_src.nbody * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cfrc_ext,
+            val_ptr,
+            self._size_src.nbody * 6 * sizeof(c_double),
+        )
 
 
 class MjModelWrapper(object):
-
     def __init__(self, wrapped, size_src=None):
         self._wrapped = wrapped
         self._size_src = size_src
@@ -3828,8 +5006,12 @@ class MjModelWrapper(object):
 
     @property
     def buffer(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.buffer, dtype=np.uint8, count=(self.nbuffer)),
-                         (self.nbuffer,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.buffer, dtype=np.uint8, count=(self.nbuffer)
+            ),
+            (self.nbuffer,),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -3840,7 +5022,15 @@ class MjModelWrapper(object):
 
     @property
     def qpos0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qpos0, dtype=np.double, count=(self.nq * 1)), (self.nq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qpos0, dtype=np.double, count=(self.nq * 1)
+            ),
+            (
+                self.nq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -3851,237 +5041,446 @@ class MjModelWrapper(object):
 
     @property
     def qpos_spring(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.qpos_spring, dtype=np.double, count=(self.nq * 1)),
-                         (self.nq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.qpos_spring, dtype=np.double, count=(self.nq * 1)
+            ),
+            (
+                self.nq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @qpos_spring.setter
     def qpos_spring(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.qpos_spring, val_ptr, self.nq * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.qpos_spring, val_ptr, self.nq * 1 * sizeof(c_double)
+        )
 
     @property
     def body_parentid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_parentid, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_parentid,
+                dtype=np.int,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_parentid.setter
     def body_parentid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_parentid, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_parentid,
+            val_ptr,
+            self.nbody * 1 * sizeof(c_int),
+        )
 
     @property
     def body_rootid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_rootid, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_rootid, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_rootid.setter
     def body_rootid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_rootid, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_rootid, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_weldid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_weldid, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_weldid, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_weldid.setter
     def body_weldid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_weldid, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_weldid, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_mocapid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_mocapid, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_mocapid,
+                dtype=np.int,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_mocapid.setter
     def body_mocapid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_mocapid, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_mocapid, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_jntnum(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_jntnum, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_jntnum, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_jntnum.setter
     def body_jntnum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_jntnum, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_jntnum, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_jntadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_jntadr, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_jntadr, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_jntadr.setter
     def body_jntadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_jntadr, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_jntadr, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_dofnum(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_dofnum, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_dofnum, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_dofnum.setter
     def body_dofnum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_dofnum, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_dofnum, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_dofadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_dofadr, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_dofadr, dtype=np.int, count=(self.nbody * 1)
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_dofadr.setter
     def body_dofadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_dofadr, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_dofadr, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_geomnum(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_geomnum, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_geomnum,
+                dtype=np.int,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_geomnum.setter
     def body_geomnum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_geomnum, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_geomnum, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_geomadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_geomadr, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_geomadr,
+                dtype=np.int,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_geomadr.setter
     def body_geomadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.body_geomadr, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.body_geomadr, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def body_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_pos, dtype=np.double, count=(self.nbody * 3)),
-                         (self.nbody, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_pos, dtype=np.double, count=(self.nbody * 3)
+            ),
+            (
+                self.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_pos.setter
     def body_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_pos, val_ptr, self.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_pos, val_ptr, self.nbody * 3 * sizeof(c_double)
+        )
 
     @property
     def body_quat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_quat, dtype=np.double, count=(self.nbody * 4)),
-                         (self.nbody, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_quat,
+                dtype=np.double,
+                count=(self.nbody * 4),
+            ),
+            (
+                self.nbody,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_quat.setter
     def body_quat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_quat, val_ptr, self.nbody * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_quat, val_ptr, self.nbody * 4 * sizeof(c_double)
+        )
 
     @property
     def body_ipos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_ipos, dtype=np.double, count=(self.nbody * 3)),
-                         (self.nbody, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_ipos,
+                dtype=np.double,
+                count=(self.nbody * 3),
+            ),
+            (
+                self.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_ipos.setter
     def body_ipos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_ipos, val_ptr, self.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_ipos, val_ptr, self.nbody * 3 * sizeof(c_double)
+        )
 
     @property
     def body_iquat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_iquat, dtype=np.double, count=(self.nbody * 4)),
-                         (self.nbody, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_iquat,
+                dtype=np.double,
+                count=(self.nbody * 4),
+            ),
+            (
+                self.nbody,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_iquat.setter
     def body_iquat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_iquat, val_ptr, self.nbody * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_iquat,
+            val_ptr,
+            self.nbody * 4 * sizeof(c_double),
+        )
 
     @property
     def body_mass(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_mass, dtype=np.double, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_mass,
+                dtype=np.double,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_mass.setter
     def body_mass(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_mass, val_ptr, self.nbody * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_mass, val_ptr, self.nbody * 1 * sizeof(c_double)
+        )
 
     @property
     def body_inertia(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_inertia, dtype=np.double, count=(self.nbody * 3)),
-                         (self.nbody, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_inertia,
+                dtype=np.double,
+                count=(self.nbody * 3),
+            ),
+            (
+                self.nbody,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_inertia.setter
     def body_inertia(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_inertia, val_ptr, self.nbody * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_inertia,
+            val_ptr,
+            self.nbody * 3 * sizeof(c_double),
+        )
 
     @property
     def body_invweight0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.body_invweight0, dtype=np.double, count=(self.nbody * 2)),
-                         (self.nbody, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.body_invweight0,
+                dtype=np.double,
+                count=(self.nbody * 2),
+            ),
+            (
+                self.nbody,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_invweight0.setter
     def body_invweight0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_invweight0, val_ptr, self.nbody * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_invweight0,
+            val_ptr,
+            self.nbody * 2 * sizeof(c_double),
+        )
 
     @property
     def body_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.body_user, dtype=np.double, count=(self.nbody * self.nuser_body)),
-            (self.nbody, self.nuser_body,))
+            np.fromiter(
+                self._wrapped.contents.body_user,
+                dtype=np.double,
+                count=(self.nbody * self.nuser_body),
+            ),
+            (
+                self.nbody,
+                self.nuser_body,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @body_user.setter
     def body_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.body_user, val_ptr, self.nbody * self.nuser_body * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.body_user,
+            val_ptr,
+            self.nbody * self.nuser_body * sizeof(c_double),
+        )
 
     @property
     def jnt_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_type, dtype=np.int, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_type, dtype=np.int, count=(self.njnt * 1)
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -4092,153 +5491,283 @@ class MjModelWrapper(object):
 
     @property
     def jnt_qposadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_qposadr, dtype=np.int, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_qposadr, dtype=np.int, count=(self.njnt * 1)
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_qposadr.setter
     def jnt_qposadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.jnt_qposadr, val_ptr, self.njnt * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.jnt_qposadr, val_ptr, self.njnt * 1 * sizeof(c_int)
+        )
 
     @property
     def jnt_dofadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_dofadr, dtype=np.int, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_dofadr, dtype=np.int, count=(self.njnt * 1)
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_dofadr.setter
     def jnt_dofadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.jnt_dofadr, val_ptr, self.njnt * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.jnt_dofadr, val_ptr, self.njnt * 1 * sizeof(c_int)
+        )
 
     @property
     def jnt_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_bodyid, dtype=np.int, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_bodyid, dtype=np.int, count=(self.njnt * 1)
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_bodyid.setter
     def jnt_bodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.jnt_bodyid, val_ptr, self.njnt * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.jnt_bodyid, val_ptr, self.njnt * 1 * sizeof(c_int)
+        )
 
     @property
     def jnt_limited(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_limited, dtype=np.uint8, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_limited,
+                dtype=np.uint8,
+                count=(self.njnt * 1),
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_limited.setter
     def jnt_limited(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.jnt_limited, val_ptr, self.njnt * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.jnt_limited, val_ptr, self.njnt * 1 * sizeof(c_ubyte)
+        )
 
     @property
     def jnt_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_solref, dtype=np.double, count=(self.njnt * 2)),
-                         (self.njnt, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_solref,
+                dtype=np.double,
+                count=(self.njnt * 2),
+            ),
+            (
+                self.njnt,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_solref.setter
     def jnt_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_solref, val_ptr, self.njnt * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_solref, val_ptr, self.njnt * 2 * sizeof(c_double)
+        )
 
     @property
     def jnt_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_solimp, dtype=np.double, count=(self.njnt * 3)),
-                         (self.njnt, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_solimp,
+                dtype=np.double,
+                count=(self.njnt * 3),
+            ),
+            (
+                self.njnt,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_solimp.setter
     def jnt_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_solimp, val_ptr, self.njnt * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_solimp, val_ptr, self.njnt * 3 * sizeof(c_double)
+        )
 
     @property
     def jnt_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_pos, dtype=np.double, count=(self.njnt * 3)),
-                         (self.njnt, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_pos, dtype=np.double, count=(self.njnt * 3)
+            ),
+            (
+                self.njnt,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_pos.setter
     def jnt_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_pos, val_ptr, self.njnt * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_pos, val_ptr, self.njnt * 3 * sizeof(c_double)
+        )
 
     @property
     def jnt_axis(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_axis, dtype=np.double, count=(self.njnt * 3)),
-                         (self.njnt, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_axis, dtype=np.double, count=(self.njnt * 3)
+            ),
+            (
+                self.njnt,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_axis.setter
     def jnt_axis(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_axis, val_ptr, self.njnt * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_axis, val_ptr, self.njnt * 3 * sizeof(c_double)
+        )
 
     @property
     def jnt_stiffness(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_stiffness, dtype=np.double, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_stiffness,
+                dtype=np.double,
+                count=(self.njnt * 1),
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_stiffness.setter
     def jnt_stiffness(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_stiffness, val_ptr, self.njnt * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_stiffness,
+            val_ptr,
+            self.njnt * 1 * sizeof(c_double),
+        )
 
     @property
     def jnt_range(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_range, dtype=np.double, count=(self.njnt * 2)),
-                         (self.njnt, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_range, dtype=np.double, count=(self.njnt * 2)
+            ),
+            (
+                self.njnt,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_range.setter
     def jnt_range(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_range, val_ptr, self.njnt * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_range, val_ptr, self.njnt * 2 * sizeof(c_double)
+        )
 
     @property
     def jnt_margin(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.jnt_margin, dtype=np.double, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.jnt_margin,
+                dtype=np.double,
+                count=(self.njnt * 1),
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_margin.setter
     def jnt_margin(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_margin, val_ptr, self.njnt * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_margin, val_ptr, self.njnt * 1 * sizeof(c_double)
+        )
 
     @property
     def jnt_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.jnt_user, dtype=np.double, count=(self.njnt * self.nuser_jnt)),
-            (self.njnt, self.nuser_jnt,))
+            np.fromiter(
+                self._wrapped.contents.jnt_user,
+                dtype=np.double,
+                count=(self.njnt * self.nuser_jnt),
+            ),
+            (
+                self.njnt,
+                self.nuser_jnt,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @jnt_user.setter
     def jnt_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.jnt_user, val_ptr, self.njnt * self.nuser_jnt * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.jnt_user,
+            val_ptr,
+            self.njnt * self.nuser_jnt * sizeof(c_double),
+        )
 
     @property
     def dof_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_bodyid, dtype=np.int, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_bodyid, dtype=np.int, count=(self.nv * 1)
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -4249,8 +5778,15 @@ class MjModelWrapper(object):
 
     @property
     def dof_jntid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_jntid, dtype=np.int, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_jntid, dtype=np.int, count=(self.nv * 1)
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -4261,19 +5797,36 @@ class MjModelWrapper(object):
 
     @property
     def dof_parentid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_parentid, dtype=np.int, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_parentid, dtype=np.int, count=(self.nv * 1)
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_parentid.setter
     def dof_parentid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.dof_parentid, val_ptr, self.nv * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.dof_parentid, val_ptr, self.nv * 1 * sizeof(c_int)
+        )
 
     @property
     def dof_Madr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_Madr, dtype=np.int, count=(self.nv * 1)), (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_Madr, dtype=np.int, count=(self.nv * 1)
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -4284,442 +5837,831 @@ class MjModelWrapper(object):
 
     @property
     def dof_frictional(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_frictional, dtype=np.uint8, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_frictional,
+                dtype=np.uint8,
+                count=(self.nv * 1),
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_frictional.setter
     def dof_frictional(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.dof_frictional, val_ptr, self.nv * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.dof_frictional,
+            val_ptr,
+            self.nv * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def dof_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_solref, dtype=np.double, count=(self.nv * 2)),
-                         (self.nv, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_solref, dtype=np.double, count=(self.nv * 2)
+            ),
+            (
+                self.nv,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_solref.setter
     def dof_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_solref, val_ptr, self.nv * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_solref, val_ptr, self.nv * 2 * sizeof(c_double)
+        )
 
     @property
     def dof_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_solimp, dtype=np.double, count=(self.nv * 3)),
-                         (self.nv, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_solimp, dtype=np.double, count=(self.nv * 3)
+            ),
+            (
+                self.nv,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_solimp.setter
     def dof_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_solimp, val_ptr, self.nv * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_solimp, val_ptr, self.nv * 3 * sizeof(c_double)
+        )
 
     @property
     def dof_frictionloss(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_frictionloss, dtype=np.double, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_frictionloss,
+                dtype=np.double,
+                count=(self.nv * 1),
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_frictionloss.setter
     def dof_frictionloss(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_frictionloss, val_ptr, self.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_frictionloss,
+            val_ptr,
+            self.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def dof_armature(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_armature, dtype=np.double, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_armature,
+                dtype=np.double,
+                count=(self.nv * 1),
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_armature.setter
     def dof_armature(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_armature, val_ptr, self.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_armature, val_ptr, self.nv * 1 * sizeof(c_double)
+        )
 
     @property
     def dof_damping(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_damping, dtype=np.double, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_damping, dtype=np.double, count=(self.nv * 1)
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_damping.setter
     def dof_damping(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_damping, val_ptr, self.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_damping, val_ptr, self.nv * 1 * sizeof(c_double)
+        )
 
     @property
     def dof_invweight0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.dof_invweight0, dtype=np.double, count=(self.nv * 1)),
-                         (self.nv, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.dof_invweight0,
+                dtype=np.double,
+                count=(self.nv * 1),
+            ),
+            (
+                self.nv,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @dof_invweight0.setter
     def dof_invweight0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.dof_invweight0, val_ptr, self.nv * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.dof_invweight0,
+            val_ptr,
+            self.nv * 1 * sizeof(c_double),
+        )
 
     @property
     def geom_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_type, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_type, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_type.setter
     def geom_type(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_type, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_type, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_contype(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_contype, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_contype,
+                dtype=np.int,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_contype.setter
     def geom_contype(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_contype, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_contype, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_conaffinity(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_conaffinity, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_conaffinity,
+                dtype=np.int,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_conaffinity.setter
     def geom_conaffinity(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_conaffinity, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_conaffinity,
+            val_ptr,
+            self.ngeom * 1 * sizeof(c_int),
+        )
 
     @property
     def geom_condim(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_condim, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_condim, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_condim.setter
     def geom_condim(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_condim, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_condim, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_bodyid, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_bodyid, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_bodyid.setter
     def geom_bodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_bodyid, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_bodyid, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_dataid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_dataid, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_dataid, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_dataid.setter
     def geom_dataid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_dataid, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_dataid, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_matid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_matid, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_matid, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_matid.setter
     def geom_matid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_matid, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_matid, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_group(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_group, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_group, dtype=np.int, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_group.setter
     def geom_group(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.geom_group, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.geom_group, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def geom_solmix(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_solmix, dtype=np.double, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_solmix,
+                dtype=np.double,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_solmix.setter
     def geom_solmix(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_solmix, val_ptr, self.ngeom * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_solmix,
+            val_ptr,
+            self.ngeom * 1 * sizeof(c_double),
+        )
 
     @property
     def geom_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_solref, dtype=np.double, count=(self.ngeom * 2)),
-                         (self.ngeom, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_solref,
+                dtype=np.double,
+                count=(self.ngeom * 2),
+            ),
+            (
+                self.ngeom,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_solref.setter
     def geom_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_solref, val_ptr, self.ngeom * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_solref,
+            val_ptr,
+            self.ngeom * 2 * sizeof(c_double),
+        )
 
     @property
     def geom_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_solimp, dtype=np.double, count=(self.ngeom * 3)),
-                         (self.ngeom, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_solimp,
+                dtype=np.double,
+                count=(self.ngeom * 3),
+            ),
+            (
+                self.ngeom,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_solimp.setter
     def geom_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_solimp, val_ptr, self.ngeom * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_solimp,
+            val_ptr,
+            self.ngeom * 3 * sizeof(c_double),
+        )
 
     @property
     def geom_size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_size, dtype=np.double, count=(self.ngeom * 3)),
-                         (self.ngeom, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_size,
+                dtype=np.double,
+                count=(self.ngeom * 3),
+            ),
+            (
+                self.ngeom,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_size.setter
     def geom_size(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_size, val_ptr, self.ngeom * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_size, val_ptr, self.ngeom * 3 * sizeof(c_double)
+        )
 
     @property
     def geom_rbound(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_rbound, dtype=np.double, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_rbound,
+                dtype=np.double,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_rbound.setter
     def geom_rbound(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_rbound, val_ptr, self.ngeom * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_rbound,
+            val_ptr,
+            self.ngeom * 1 * sizeof(c_double),
+        )
 
     @property
     def geom_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_pos, dtype=np.double, count=(self.ngeom * 3)),
-                         (self.ngeom, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_pos, dtype=np.double, count=(self.ngeom * 3)
+            ),
+            (
+                self.ngeom,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_pos.setter
     def geom_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_pos, val_ptr, self.ngeom * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_pos, val_ptr, self.ngeom * 3 * sizeof(c_double)
+        )
 
     @property
     def geom_quat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_quat, dtype=np.double, count=(self.ngeom * 4)),
-                         (self.ngeom, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_quat,
+                dtype=np.double,
+                count=(self.ngeom * 4),
+            ),
+            (
+                self.ngeom,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_quat.setter
     def geom_quat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_quat, val_ptr, self.ngeom * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_quat, val_ptr, self.ngeom * 4 * sizeof(c_double)
+        )
 
     @property
     def geom_friction(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_friction, dtype=np.double, count=(self.ngeom * 3)),
-                         (self.ngeom, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_friction,
+                dtype=np.double,
+                count=(self.ngeom * 3),
+            ),
+            (
+                self.ngeom,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_friction.setter
     def geom_friction(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_friction, val_ptr, self.ngeom * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_friction,
+            val_ptr,
+            self.ngeom * 3 * sizeof(c_double),
+        )
 
     @property
     def geom_margin(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_margin, dtype=np.double, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_margin,
+                dtype=np.double,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_margin.setter
     def geom_margin(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_margin, val_ptr, self.ngeom * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_margin,
+            val_ptr,
+            self.ngeom * 1 * sizeof(c_double),
+        )
 
     @property
     def geom_gap(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_gap, dtype=np.double, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_gap, dtype=np.double, count=(self.ngeom * 1)
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_gap.setter
     def geom_gap(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_gap, val_ptr, self.ngeom * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_gap, val_ptr, self.ngeom * 1 * sizeof(c_double)
+        )
 
     @property
     def geom_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.geom_user, dtype=np.double, count=(self.ngeom * self.nuser_geom)),
-            (self.ngeom, self.nuser_geom,))
+            np.fromiter(
+                self._wrapped.contents.geom_user,
+                dtype=np.double,
+                count=(self.ngeom * self.nuser_geom),
+            ),
+            (
+                self.ngeom,
+                self.nuser_geom,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_user.setter
     def geom_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.geom_user, val_ptr, self.ngeom * self.nuser_geom * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.geom_user,
+            val_ptr,
+            self.ngeom * self.nuser_geom * sizeof(c_double),
+        )
 
     @property
     def geom_rgba(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.geom_rgba, dtype=np.float, count=(self.ngeom * 4)),
-                         (self.ngeom, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.geom_rgba, dtype=np.float, count=(self.ngeom * 4)
+            ),
+            (
+                self.ngeom,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @geom_rgba.setter
     def geom_rgba(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.geom_rgba, val_ptr, self.ngeom * 4 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.geom_rgba, val_ptr, self.ngeom * 4 * sizeof(c_float)
+        )
 
     @property
     def site_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_type, dtype=np.int, count=(self.nsite * 1)),
-                         (self.nsite, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_type, dtype=np.int, count=(self.nsite * 1)
+            ),
+            (
+                self.nsite,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_type.setter
     def site_type(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.site_type, val_ptr, self.nsite * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.site_type, val_ptr, self.nsite * 1 * sizeof(c_int)
+        )
 
     @property
     def site_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_bodyid, dtype=np.int, count=(self.nsite * 1)),
-                         (self.nsite, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_bodyid, dtype=np.int, count=(self.nsite * 1)
+            ),
+            (
+                self.nsite,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_bodyid.setter
     def site_bodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.site_bodyid, val_ptr, self.nsite * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.site_bodyid, val_ptr, self.nsite * 1 * sizeof(c_int)
+        )
 
     @property
     def site_matid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_matid, dtype=np.int, count=(self.nsite * 1)),
-                         (self.nsite, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_matid, dtype=np.int, count=(self.nsite * 1)
+            ),
+            (
+                self.nsite,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_matid.setter
     def site_matid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.site_matid, val_ptr, self.nsite * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.site_matid, val_ptr, self.nsite * 1 * sizeof(c_int)
+        )
 
     @property
     def site_group(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_group, dtype=np.int, count=(self.nsite * 1)),
-                         (self.nsite, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_group, dtype=np.int, count=(self.nsite * 1)
+            ),
+            (
+                self.nsite,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_group.setter
     def site_group(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.site_group, val_ptr, self.nsite * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.site_group, val_ptr, self.nsite * 1 * sizeof(c_int)
+        )
 
     @property
     def site_size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_size, dtype=np.double, count=(self.nsite * 3)),
-                         (self.nsite, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_size,
+                dtype=np.double,
+                count=(self.nsite * 3),
+            ),
+            (
+                self.nsite,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_size.setter
     def site_size(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_size, val_ptr, self.nsite * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_size, val_ptr, self.nsite * 3 * sizeof(c_double)
+        )
 
     @property
     def site_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_pos, dtype=np.double, count=(self.nsite * 3)),
-                         (self.nsite, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_pos, dtype=np.double, count=(self.nsite * 3)
+            ),
+            (
+                self.nsite,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_pos.setter
     def site_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_pos, val_ptr, self.nsite * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_pos, val_ptr, self.nsite * 3 * sizeof(c_double)
+        )
 
     @property
     def site_quat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_quat, dtype=np.double, count=(self.nsite * 4)),
-                         (self.nsite, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_quat,
+                dtype=np.double,
+                count=(self.nsite * 4),
+            ),
+            (
+                self.nsite,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_quat.setter
     def site_quat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_quat, val_ptr, self.nsite * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_quat, val_ptr, self.nsite * 4 * sizeof(c_double)
+        )
 
     @property
     def site_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.site_user, dtype=np.double, count=(self.nsite * self.nuser_site)),
-            (self.nsite, self.nuser_site,))
+            np.fromiter(
+                self._wrapped.contents.site_user,
+                dtype=np.double,
+                count=(self.nsite * self.nuser_site),
+            ),
+            (
+                self.nsite,
+                self.nuser_site,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_user.setter
     def site_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.site_user, val_ptr, self.nsite * self.nuser_site * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.site_user,
+            val_ptr,
+            self.nsite * self.nuser_site * sizeof(c_double),
+        )
 
     @property
     def site_rgba(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.site_rgba, dtype=np.float, count=(self.nsite * 4)),
-                         (self.nsite, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.site_rgba, dtype=np.float, count=(self.nsite * 4)
+            ),
+            (
+                self.nsite,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @site_rgba.setter
     def site_rgba(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.site_rgba, val_ptr, self.nsite * 4 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.site_rgba, val_ptr, self.nsite * 4 * sizeof(c_float)
+        )
 
     @property
     def cam_mode(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_mode, dtype=np.int, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_mode, dtype=np.int, count=(self.ncam * 1)
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -4730,488 +6672,973 @@ class MjModelWrapper(object):
 
     @property
     def cam_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_bodyid, dtype=np.int, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_bodyid, dtype=np.int, count=(self.ncam * 1)
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_bodyid.setter
     def cam_bodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.cam_bodyid, val_ptr, self.ncam * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.cam_bodyid, val_ptr, self.ncam * 1 * sizeof(c_int)
+        )
 
     @property
     def cam_targetbodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_targetbodyid, dtype=np.int, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_targetbodyid,
+                dtype=np.int,
+                count=(self.ncam * 1),
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_targetbodyid.setter
     def cam_targetbodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.cam_targetbodyid, val_ptr, self.ncam * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.cam_targetbodyid,
+            val_ptr,
+            self.ncam * 1 * sizeof(c_int),
+        )
 
     @property
     def cam_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_pos, dtype=np.double, count=(self.ncam * 3)),
-                         (self.ncam, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_pos, dtype=np.double, count=(self.ncam * 3)
+            ),
+            (
+                self.ncam,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_pos.setter
     def cam_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_pos, val_ptr, self.ncam * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_pos, val_ptr, self.ncam * 3 * sizeof(c_double)
+        )
 
     @property
     def cam_quat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_quat, dtype=np.double, count=(self.ncam * 4)),
-                         (self.ncam, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_quat, dtype=np.double, count=(self.ncam * 4)
+            ),
+            (
+                self.ncam,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_quat.setter
     def cam_quat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_quat, val_ptr, self.ncam * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_quat, val_ptr, self.ncam * 4 * sizeof(c_double)
+        )
 
     @property
     def cam_poscom0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_poscom0, dtype=np.double, count=(self.ncam * 3)),
-                         (self.ncam, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_poscom0,
+                dtype=np.double,
+                count=(self.ncam * 3),
+            ),
+            (
+                self.ncam,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_poscom0.setter
     def cam_poscom0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_poscom0, val_ptr, self.ncam * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_poscom0,
+            val_ptr,
+            self.ncam * 3 * sizeof(c_double),
+        )
 
     @property
     def cam_pos0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_pos0, dtype=np.double, count=(self.ncam * 3)),
-                         (self.ncam, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_pos0, dtype=np.double, count=(self.ncam * 3)
+            ),
+            (
+                self.ncam,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_pos0.setter
     def cam_pos0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_pos0, val_ptr, self.ncam * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_pos0, val_ptr, self.ncam * 3 * sizeof(c_double)
+        )
 
     @property
     def cam_mat0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_mat0, dtype=np.double, count=(self.ncam * 9)),
-                         (self.ncam, 9,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_mat0, dtype=np.double, count=(self.ncam * 9)
+            ),
+            (
+                self.ncam,
+                9,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_mat0.setter
     def cam_mat0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_mat0, val_ptr, self.ncam * 9 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_mat0, val_ptr, self.ncam * 9 * sizeof(c_double)
+        )
 
     @property
     def cam_fovy(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_fovy, dtype=np.double, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_fovy, dtype=np.double, count=(self.ncam * 1)
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_fovy.setter
     def cam_fovy(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_fovy, val_ptr, self.ncam * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_fovy, val_ptr, self.ncam * 1 * sizeof(c_double)
+        )
 
     @property
     def cam_ipd(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.cam_ipd, dtype=np.double, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.cam_ipd, dtype=np.double, count=(self.ncam * 1)
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @cam_ipd.setter
     def cam_ipd(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.cam_ipd, val_ptr, self.ncam * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.cam_ipd, val_ptr, self.ncam * 1 * sizeof(c_double)
+        )
 
     @property
     def light_mode(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_mode, dtype=np.int, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_mode, dtype=np.int, count=(self.nlight * 1)
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_mode.setter
     def light_mode(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.light_mode, val_ptr, self.nlight * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.light_mode, val_ptr, self.nlight * 1 * sizeof(c_int)
+        )
 
     @property
     def light_bodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_bodyid, dtype=np.int, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_bodyid,
+                dtype=np.int,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_bodyid.setter
     def light_bodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.light_bodyid, val_ptr, self.nlight * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.light_bodyid,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_int),
+        )
 
     @property
     def light_targetbodyid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_targetbodyid, dtype=np.int, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_targetbodyid,
+                dtype=np.int,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_targetbodyid.setter
     def light_targetbodyid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.light_targetbodyid, val_ptr, self.nlight * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.light_targetbodyid,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_int),
+        )
 
     @property
     def light_directional(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_directional, dtype=np.uint8, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_directional,
+                dtype=np.uint8,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_directional.setter
     def light_directional(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.light_directional, val_ptr, self.nlight * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.light_directional,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def light_castshadow(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_castshadow, dtype=np.uint8, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_castshadow,
+                dtype=np.uint8,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_castshadow.setter
     def light_castshadow(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.light_castshadow, val_ptr, self.nlight * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.light_castshadow,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def light_active(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_active, dtype=np.uint8, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_active,
+                dtype=np.uint8,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_active.setter
     def light_active(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.light_active, val_ptr, self.nlight * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.light_active,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def light_pos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_pos, dtype=np.double, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_pos,
+                dtype=np.double,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_pos.setter
     def light_pos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_pos, val_ptr, self.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_pos,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_dir(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_dir, dtype=np.double, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_dir,
+                dtype=np.double,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_dir.setter
     def light_dir(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_dir, val_ptr, self.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_dir,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_poscom0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_poscom0, dtype=np.double, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_poscom0,
+                dtype=np.double,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_poscom0.setter
     def light_poscom0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_poscom0, val_ptr, self.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_poscom0,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_pos0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_pos0, dtype=np.double, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_pos0,
+                dtype=np.double,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_pos0.setter
     def light_pos0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_pos0, val_ptr, self.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_pos0,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_dir0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_dir0, dtype=np.double, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_dir0,
+                dtype=np.double,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_dir0.setter
     def light_dir0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.light_dir0, val_ptr, self.nlight * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.light_dir0,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_double),
+        )
 
     @property
     def light_attenuation(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_attenuation, dtype=np.float, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_attenuation,
+                dtype=np.float,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_attenuation.setter
     def light_attenuation(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_attenuation, val_ptr, self.nlight * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_attenuation,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_float),
+        )
 
     @property
     def light_cutoff(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_cutoff, dtype=np.float, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_cutoff,
+                dtype=np.float,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_cutoff.setter
     def light_cutoff(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_cutoff, val_ptr, self.nlight * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_cutoff,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_float),
+        )
 
     @property
     def light_exponent(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_exponent, dtype=np.float, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_exponent,
+                dtype=np.float,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_exponent.setter
     def light_exponent(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_exponent, val_ptr, self.nlight * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_exponent,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_float),
+        )
 
     @property
     def light_ambient(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_ambient, dtype=np.float, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_ambient,
+                dtype=np.float,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_ambient.setter
     def light_ambient(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_ambient, val_ptr, self.nlight * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_ambient,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_float),
+        )
 
     @property
     def light_diffuse(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_diffuse, dtype=np.float, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_diffuse,
+                dtype=np.float,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_diffuse.setter
     def light_diffuse(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_diffuse, val_ptr, self.nlight * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_diffuse,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_float),
+        )
 
     @property
     def light_specular(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.light_specular, dtype=np.float, count=(self.nlight * 3)),
-                         (self.nlight, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.light_specular,
+                dtype=np.float,
+                count=(self.nlight * 3),
+            ),
+            (
+                self.nlight,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @light_specular.setter
     def light_specular(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.light_specular, val_ptr, self.nlight * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.light_specular,
+            val_ptr,
+            self.nlight * 3 * sizeof(c_float),
+        )
 
     @property
     def mesh_faceadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_faceadr, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_faceadr,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_faceadr.setter
     def mesh_faceadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_faceadr, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_faceadr, val_ptr, self.nmesh * 1 * sizeof(c_int)
+        )
 
     @property
     def mesh_facenum(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_facenum, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_facenum,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_facenum.setter
     def mesh_facenum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_facenum, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_facenum, val_ptr, self.nmesh * 1 * sizeof(c_int)
+        )
 
     @property
     def mesh_vertadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_vertadr, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_vertadr,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_vertadr.setter
     def mesh_vertadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_vertadr, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_vertadr, val_ptr, self.nmesh * 1 * sizeof(c_int)
+        )
 
     @property
     def mesh_vertnum(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_vertnum, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_vertnum,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_vertnum.setter
     def mesh_vertnum(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_vertnum, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_vertnum, val_ptr, self.nmesh * 1 * sizeof(c_int)
+        )
 
     @property
     def mesh_graphadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_graphadr, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_graphadr,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_graphadr.setter
     def mesh_graphadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_graphadr, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_graphadr,
+            val_ptr,
+            self.nmesh * 1 * sizeof(c_int),
+        )
 
     @property
     def mesh_vert(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_vert, dtype=np.float, count=(self.nmeshvert * 3)),
-                         (self.nmeshvert, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_vert,
+                dtype=np.float,
+                count=(self.nmeshvert * 3),
+            ),
+            (
+                self.nmeshvert,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_vert.setter
     def mesh_vert(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mesh_vert, val_ptr, self.nmeshvert * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mesh_vert,
+            val_ptr,
+            self.nmeshvert * 3 * sizeof(c_float),
+        )
 
     @property
     def mesh_normal(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_normal, dtype=np.float, count=(self.nmeshvert * 3)),
-                         (self.nmeshvert, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_normal,
+                dtype=np.float,
+                count=(self.nmeshvert * 3),
+            ),
+            (
+                self.nmeshvert,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_normal.setter
     def mesh_normal(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mesh_normal, val_ptr, self.nmeshvert * 3 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mesh_normal,
+            val_ptr,
+            self.nmeshvert * 3 * sizeof(c_float),
+        )
 
     @property
     def mesh_face(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_face, dtype=np.int, count=(self.nmeshface * 3)),
-                         (self.nmeshface, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_face,
+                dtype=np.int,
+                count=(self.nmeshface * 3),
+            ),
+            (
+                self.nmeshface,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_face.setter
     def mesh_face(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_face, val_ptr, self.nmeshface * 3 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_face,
+            val_ptr,
+            self.nmeshface * 3 * sizeof(c_int),
+        )
 
     @property
     def mesh_graph(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mesh_graph, dtype=np.int, count=(self.nmeshgraph * 1)),
-                         (self.nmeshgraph, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mesh_graph,
+                dtype=np.int,
+                count=(self.nmeshgraph * 1),
+            ),
+            (
+                self.nmeshgraph,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mesh_graph.setter
     def mesh_graph(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mesh_graph, val_ptr, self.nmeshgraph * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mesh_graph,
+            val_ptr,
+            self.nmeshgraph * 1 * sizeof(c_int),
+        )
 
     @property
     def hfield_size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.hfield_size, dtype=np.double, count=(self.nhfield * 4)),
-                         (self.nhfield, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.hfield_size,
+                dtype=np.double,
+                count=(self.nhfield * 4),
+            ),
+            (
+                self.nhfield,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @hfield_size.setter
     def hfield_size(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.hfield_size, val_ptr, self.nhfield * 4 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.hfield_size,
+            val_ptr,
+            self.nhfield * 4 * sizeof(c_double),
+        )
 
     @property
     def hfield_nrow(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.hfield_nrow, dtype=np.int, count=(self.nhfield * 1)),
-                         (self.nhfield, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.hfield_nrow,
+                dtype=np.int,
+                count=(self.nhfield * 1),
+            ),
+            (
+                self.nhfield,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @hfield_nrow.setter
     def hfield_nrow(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.hfield_nrow, val_ptr, self.nhfield * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.hfield_nrow,
+            val_ptr,
+            self.nhfield * 1 * sizeof(c_int),
+        )
 
     @property
     def hfield_ncol(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.hfield_ncol, dtype=np.int, count=(self.nhfield * 1)),
-                         (self.nhfield, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.hfield_ncol,
+                dtype=np.int,
+                count=(self.nhfield * 1),
+            ),
+            (
+                self.nhfield,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @hfield_ncol.setter
     def hfield_ncol(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.hfield_ncol, val_ptr, self.nhfield * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.hfield_ncol,
+            val_ptr,
+            self.nhfield * 1 * sizeof(c_int),
+        )
 
     @property
     def hfield_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.hfield_adr, dtype=np.int, count=(self.nhfield * 1)),
-                         (self.nhfield, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.hfield_adr,
+                dtype=np.int,
+                count=(self.nhfield * 1),
+            ),
+            (
+                self.nhfield,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @hfield_adr.setter
     def hfield_adr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.hfield_adr, val_ptr, self.nhfield * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.hfield_adr, val_ptr, self.nhfield * 1 * sizeof(c_int)
+        )
 
     @property
     def hfield_data(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.hfield_data, dtype=np.float, count=(self.nhfielddata * 1)),
-                         (self.nhfielddata, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.hfield_data,
+                dtype=np.float,
+                count=(self.nhfielddata * 1),
+            ),
+            (
+                self.nhfielddata,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @hfield_data.setter
     def hfield_data(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.hfield_data, val_ptr, self.nhfielddata * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.hfield_data,
+            val_ptr,
+            self.nhfielddata * 1 * sizeof(c_float),
+        )
 
     @property
     def tex_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tex_type, dtype=np.int, count=(self.ntex * 1)),
-                         (self.ntex, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tex_type, dtype=np.int, count=(self.ntex * 1)
+            ),
+            (
+                self.ntex,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -5222,32 +7649,57 @@ class MjModelWrapper(object):
 
     @property
     def tex_height(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tex_height, dtype=np.int, count=(self.ntex * 1)),
-                         (self.ntex, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tex_height, dtype=np.int, count=(self.ntex * 1)
+            ),
+            (
+                self.ntex,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tex_height.setter
     def tex_height(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.tex_height, val_ptr, self.ntex * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.tex_height, val_ptr, self.ntex * 1 * sizeof(c_int)
+        )
 
     @property
     def tex_width(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tex_width, dtype=np.int, count=(self.ntex * 1)),
-                         (self.ntex, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tex_width, dtype=np.int, count=(self.ntex * 1)
+            ),
+            (
+                self.ntex,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tex_width.setter
     def tex_width(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.tex_width, val_ptr, self.ntex * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.tex_width, val_ptr, self.ntex * 1 * sizeof(c_int)
+        )
 
     @property
     def tex_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tex_adr, dtype=np.int, count=(self.ntex * 1)),
-                         (self.ntex, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tex_adr, dtype=np.int, count=(self.ntex * 1)
+            ),
+            (
+                self.ntex,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -5258,236 +7710,464 @@ class MjModelWrapper(object):
 
     @property
     def tex_rgb(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tex_rgb, dtype=np.uint8, count=(self.ntexdata * 1)),
-                         (self.ntexdata, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tex_rgb,
+                dtype=np.uint8,
+                count=(self.ntexdata * 1),
+            ),
+            (
+                self.ntexdata,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tex_rgb.setter
     def tex_rgb(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.tex_rgb, val_ptr, self.ntexdata * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.tex_rgb, val_ptr, self.ntexdata * 1 * sizeof(c_ubyte)
+        )
 
     @property
     def mat_texid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_texid, dtype=np.int, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_texid, dtype=np.int, count=(self.nmat * 1)
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_texid.setter
     def mat_texid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.mat_texid, val_ptr, self.nmat * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.mat_texid, val_ptr, self.nmat * 1 * sizeof(c_int)
+        )
 
     @property
     def mat_texuniform(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_texuniform, dtype=np.uint8, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_texuniform,
+                dtype=np.uint8,
+                count=(self.nmat * 1),
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_texuniform.setter
     def mat_texuniform(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.mat_texuniform, val_ptr, self.nmat * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.mat_texuniform,
+            val_ptr,
+            self.nmat * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def mat_texrepeat(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_texrepeat, dtype=np.float, count=(self.nmat * 2)),
-                         (self.nmat, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_texrepeat,
+                dtype=np.float,
+                count=(self.nmat * 2),
+            ),
+            (
+                self.nmat,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_texrepeat.setter
     def mat_texrepeat(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_texrepeat, val_ptr, self.nmat * 2 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_texrepeat,
+            val_ptr,
+            self.nmat * 2 * sizeof(c_float),
+        )
 
     @property
     def mat_emission(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_emission, dtype=np.float, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_emission,
+                dtype=np.float,
+                count=(self.nmat * 1),
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_emission.setter
     def mat_emission(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_emission, val_ptr, self.nmat * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_emission,
+            val_ptr,
+            self.nmat * 1 * sizeof(c_float),
+        )
 
     @property
     def mat_specular(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_specular, dtype=np.float, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_specular,
+                dtype=np.float,
+                count=(self.nmat * 1),
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_specular.setter
     def mat_specular(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_specular, val_ptr, self.nmat * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_specular,
+            val_ptr,
+            self.nmat * 1 * sizeof(c_float),
+        )
 
     @property
     def mat_shininess(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_shininess, dtype=np.float, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_shininess,
+                dtype=np.float,
+                count=(self.nmat * 1),
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_shininess.setter
     def mat_shininess(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_shininess, val_ptr, self.nmat * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_shininess,
+            val_ptr,
+            self.nmat * 1 * sizeof(c_float),
+        )
 
     @property
     def mat_reflectance(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_reflectance, dtype=np.float, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_reflectance,
+                dtype=np.float,
+                count=(self.nmat * 1),
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_reflectance.setter
     def mat_reflectance(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_reflectance, val_ptr, self.nmat * 1 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_reflectance,
+            val_ptr,
+            self.nmat * 1 * sizeof(c_float),
+        )
 
     @property
     def mat_rgba(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.mat_rgba, dtype=np.float, count=(self.nmat * 4)),
-                         (self.nmat, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.mat_rgba, dtype=np.float, count=(self.nmat * 4)
+            ),
+            (
+                self.nmat,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @mat_rgba.setter
     def mat_rgba(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.mat_rgba, val_ptr, self.nmat * 4 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.mat_rgba, val_ptr, self.nmat * 4 * sizeof(c_float)
+        )
 
     @property
     def pair_dim(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_dim, dtype=np.int, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_dim, dtype=np.int, count=(self.npair * 1)
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_dim.setter
     def pair_dim(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.pair_dim, val_ptr, self.npair * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.pair_dim, val_ptr, self.npair * 1 * sizeof(c_int)
+        )
 
     @property
     def pair_geom1(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_geom1, dtype=np.int, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_geom1, dtype=np.int, count=(self.npair * 1)
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_geom1.setter
     def pair_geom1(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.pair_geom1, val_ptr, self.npair * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.pair_geom1, val_ptr, self.npair * 1 * sizeof(c_int)
+        )
 
     @property
     def pair_geom2(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_geom2, dtype=np.int, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_geom2, dtype=np.int, count=(self.npair * 1)
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_geom2.setter
     def pair_geom2(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.pair_geom2, val_ptr, self.npair * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.pair_geom2, val_ptr, self.npair * 1 * sizeof(c_int)
+        )
 
     @property
     def pair_signature(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_signature, dtype=np.int, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_signature,
+                dtype=np.int,
+                count=(self.npair * 1),
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_signature.setter
     def pair_signature(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.pair_signature, val_ptr, self.npair * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.pair_signature,
+            val_ptr,
+            self.npair * 1 * sizeof(c_int),
+        )
 
     @property
     def pair_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_solref, dtype=np.double, count=(self.npair * 2)),
-                         (self.npair, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_solref,
+                dtype=np.double,
+                count=(self.npair * 2),
+            ),
+            (
+                self.npair,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_solref.setter
     def pair_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.pair_solref, val_ptr, self.npair * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.pair_solref,
+            val_ptr,
+            self.npair * 2 * sizeof(c_double),
+        )
 
     @property
     def pair_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_solimp, dtype=np.double, count=(self.npair * 3)),
-                         (self.npair, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_solimp,
+                dtype=np.double,
+                count=(self.npair * 3),
+            ),
+            (
+                self.npair,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_solimp.setter
     def pair_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.pair_solimp, val_ptr, self.npair * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.pair_solimp,
+            val_ptr,
+            self.npair * 3 * sizeof(c_double),
+        )
 
     @property
     def pair_margin(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_margin, dtype=np.double, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_margin,
+                dtype=np.double,
+                count=(self.npair * 1),
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_margin.setter
     def pair_margin(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.pair_margin, val_ptr, self.npair * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.pair_margin,
+            val_ptr,
+            self.npair * 1 * sizeof(c_double),
+        )
 
     @property
     def pair_gap(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_gap, dtype=np.double, count=(self.npair * 1)),
-                         (self.npair, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_gap, dtype=np.double, count=(self.npair * 1)
+            ),
+            (
+                self.npair,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_gap.setter
     def pair_gap(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.pair_gap, val_ptr, self.npair * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.pair_gap, val_ptr, self.npair * 1 * sizeof(c_double)
+        )
 
     @property
     def pair_friction(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.pair_friction, dtype=np.double, count=(self.npair * 5)),
-                         (self.npair, 5,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.pair_friction,
+                dtype=np.double,
+                count=(self.npair * 5),
+            ),
+            (
+                self.npair,
+                5,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @pair_friction.setter
     def pair_friction(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.pair_friction, val_ptr, self.npair * 5 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.pair_friction,
+            val_ptr,
+            self.npair * 5 * sizeof(c_double),
+        )
 
     @property
     def exclude_signature(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.exclude_signature, dtype=np.int, count=(self.nexclude * 1)),
-                         (self.nexclude, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.exclude_signature,
+                dtype=np.int,
+                count=(self.nexclude * 1),
+            ),
+            (
+                self.nexclude,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @exclude_signature.setter
     def exclude_signature(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.exclude_signature, val_ptr, self.nexclude * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.exclude_signature,
+            val_ptr,
+            self.nexclude * 1 * sizeof(c_int),
+        )
 
     @property
     def eq_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_type, dtype=np.int, count=(self.neq * 1)),
-                         (self.neq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_type, dtype=np.int, count=(self.neq * 1)
+            ),
+            (
+                self.neq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -5498,8 +8178,15 @@ class MjModelWrapper(object):
 
     @property
     def eq_obj1id(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_obj1id, dtype=np.int, count=(self.neq * 1)),
-                         (self.neq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_obj1id, dtype=np.int, count=(self.neq * 1)
+            ),
+            (
+                self.neq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -5510,8 +8197,15 @@ class MjModelWrapper(object):
 
     @property
     def eq_obj2id(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_obj2id, dtype=np.int, count=(self.neq * 1)),
-                         (self.neq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_obj2id, dtype=np.int, count=(self.neq * 1)
+            ),
+            (
+                self.neq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
@@ -5522,676 +8216,1334 @@ class MjModelWrapper(object):
 
     @property
     def eq_active(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_active, dtype=np.uint8, count=(self.neq * 1)),
-                         (self.neq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_active, dtype=np.uint8, count=(self.neq * 1)
+            ),
+            (
+                self.neq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @eq_active.setter
     def eq_active(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.eq_active, val_ptr, self.neq * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.eq_active, val_ptr, self.neq * 1 * sizeof(c_ubyte)
+        )
 
     @property
     def eq_solref(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_solref, dtype=np.double, count=(self.neq * 2)),
-                         (self.neq, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_solref, dtype=np.double, count=(self.neq * 2)
+            ),
+            (
+                self.neq,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @eq_solref.setter
     def eq_solref(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.eq_solref, val_ptr, self.neq * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.eq_solref, val_ptr, self.neq * 2 * sizeof(c_double)
+        )
 
     @property
     def eq_solimp(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_solimp, dtype=np.double, count=(self.neq * 3)),
-                         (self.neq, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_solimp, dtype=np.double, count=(self.neq * 3)
+            ),
+            (
+                self.neq,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @eq_solimp.setter
     def eq_solimp(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.eq_solimp, val_ptr, self.neq * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.eq_solimp, val_ptr, self.neq * 3 * sizeof(c_double)
+        )
 
     @property
     def eq_data(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.eq_data, dtype=np.double, count=(self.neq * 7)),
-                         (self.neq, 7,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.eq_data, dtype=np.double, count=(self.neq * 7)
+            ),
+            (
+                self.neq,
+                7,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @eq_data.setter
     def eq_data(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.eq_data, val_ptr, self.neq * 7 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.eq_data, val_ptr, self.neq * 7 * sizeof(c_double)
+        )
 
     @property
     def tendon_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_adr, dtype=np.int, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_adr,
+                dtype=np.int,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_adr.setter
     def tendon_adr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.tendon_adr, val_ptr, self.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.tendon_adr, val_ptr, self.ntendon * 1 * sizeof(c_int)
+        )
 
     @property
     def tendon_num(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_num, dtype=np.int, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_num,
+                dtype=np.int,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_num.setter
     def tendon_num(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.tendon_num, val_ptr, self.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.tendon_num, val_ptr, self.ntendon * 1 * sizeof(c_int)
+        )
 
     @property
     def tendon_matid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_matid, dtype=np.int, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_matid,
+                dtype=np.int,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_matid.setter
     def tendon_matid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.tendon_matid, val_ptr, self.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.tendon_matid,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_int),
+        )
 
     @property
     def tendon_limited(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_limited, dtype=np.uint8, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_limited,
+                dtype=np.uint8,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_limited.setter
     def tendon_limited(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.tendon_limited, val_ptr, self.ntendon * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.tendon_limited,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def tendon_frictional(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_frictional, dtype=np.uint8, count=(self.ntendon * 1)),
-            (self.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.tendon_frictional,
+                dtype=np.uint8,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_frictional.setter
     def tendon_frictional(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.tendon_frictional, val_ptr, self.ntendon * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.tendon_frictional,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def tendon_width(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_width, dtype=np.double, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_width,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_width.setter
     def tendon_width(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_width, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_width,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_solref_lim(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_solref_lim, dtype=np.double, count=(self.ntendon * 2)),
-            (self.ntendon, 2,))
+            np.fromiter(
+                self._wrapped.contents.tendon_solref_lim,
+                dtype=np.double,
+                count=(self.ntendon * 2),
+            ),
+            (
+                self.ntendon,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_solref_lim.setter
     def tendon_solref_lim(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_solref_lim, val_ptr, self.ntendon * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_solref_lim,
+            val_ptr,
+            self.ntendon * 2 * sizeof(c_double),
+        )
 
     @property
     def tendon_solimp_lim(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_solimp_lim, dtype=np.double, count=(self.ntendon * 3)),
-            (self.ntendon, 3,))
+            np.fromiter(
+                self._wrapped.contents.tendon_solimp_lim,
+                dtype=np.double,
+                count=(self.ntendon * 3),
+            ),
+            (
+                self.ntendon,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_solimp_lim.setter
     def tendon_solimp_lim(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_solimp_lim, val_ptr, self.ntendon * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_solimp_lim,
+            val_ptr,
+            self.ntendon * 3 * sizeof(c_double),
+        )
 
     @property
     def tendon_solref_fri(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_solref_fri, dtype=np.double, count=(self.ntendon * 2)),
-            (self.ntendon, 2,))
+            np.fromiter(
+                self._wrapped.contents.tendon_solref_fri,
+                dtype=np.double,
+                count=(self.ntendon * 2),
+            ),
+            (
+                self.ntendon,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_solref_fri.setter
     def tendon_solref_fri(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_solref_fri, val_ptr, self.ntendon * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_solref_fri,
+            val_ptr,
+            self.ntendon * 2 * sizeof(c_double),
+        )
 
     @property
     def tendon_solimp_fri(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_solimp_fri, dtype=np.double, count=(self.ntendon * 3)),
-            (self.ntendon, 3,))
+            np.fromiter(
+                self._wrapped.contents.tendon_solimp_fri,
+                dtype=np.double,
+                count=(self.ntendon * 3),
+            ),
+            (
+                self.ntendon,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_solimp_fri.setter
     def tendon_solimp_fri(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_solimp_fri, val_ptr, self.ntendon * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_solimp_fri,
+            val_ptr,
+            self.ntendon * 3 * sizeof(c_double),
+        )
 
     @property
     def tendon_range(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_range, dtype=np.double, count=(self.ntendon * 2)),
-                         (self.ntendon, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_range,
+                dtype=np.double,
+                count=(self.ntendon * 2),
+            ),
+            (
+                self.ntendon,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_range.setter
     def tendon_range(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_range, val_ptr, self.ntendon * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_range,
+            val_ptr,
+            self.ntendon * 2 * sizeof(c_double),
+        )
 
     @property
     def tendon_margin(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_margin, dtype=np.double, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_margin,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_margin.setter
     def tendon_margin(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_margin, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_margin,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_stiffness(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_stiffness, dtype=np.double, count=(self.ntendon * 1)),
-            (self.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.tendon_stiffness,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_stiffness.setter
     def tendon_stiffness(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_stiffness, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_stiffness,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_damping(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_damping, dtype=np.double, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_damping,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_damping.setter
     def tendon_damping(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_damping, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_damping,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_frictionloss(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_frictionloss, dtype=np.double, count=(self.ntendon * 1)),
-            (self.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.tendon_frictionloss,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_frictionloss.setter
     def tendon_frictionloss(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_frictionloss, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_frictionloss,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_lengthspring(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_lengthspring, dtype=np.double, count=(self.ntendon * 1)),
-            (self.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.tendon_lengthspring,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_lengthspring.setter
     def tendon_lengthspring(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_lengthspring, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_lengthspring,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_length0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_length0, dtype=np.double, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_length0,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_length0.setter
     def tendon_length0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_length0, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_length0,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_invweight0(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_invweight0, dtype=np.double, count=(self.ntendon * 1)),
-            (self.ntendon, 1,))
+            np.fromiter(
+                self._wrapped.contents.tendon_invweight0,
+                dtype=np.double,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_invweight0.setter
     def tendon_invweight0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_invweight0, val_ptr, self.ntendon * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_invweight0,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_double),
+        )
 
     @property
     def tendon_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.tendon_user, dtype=np.double, count=(self.ntendon * self.nuser_tendon)),
-            (self.ntendon, self.nuser_tendon,))
+            np.fromiter(
+                self._wrapped.contents.tendon_user,
+                dtype=np.double,
+                count=(self.ntendon * self.nuser_tendon),
+            ),
+            (
+                self.ntendon,
+                self.nuser_tendon,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_user.setter
     def tendon_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.tendon_user, val_ptr, self.ntendon * self.nuser_tendon * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.tendon_user,
+            val_ptr,
+            self.ntendon * self.nuser_tendon * sizeof(c_double),
+        )
 
     @property
     def tendon_rgba(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.tendon_rgba, dtype=np.float, count=(self.ntendon * 4)),
-                         (self.ntendon, 4,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.tendon_rgba,
+                dtype=np.float,
+                count=(self.ntendon * 4),
+            ),
+            (
+                self.ntendon,
+                4,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @tendon_rgba.setter
     def tendon_rgba(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_float))
-        memmove(self._wrapped.contents.tendon_rgba, val_ptr, self.ntendon * 4 * sizeof(c_float))
+        memmove(
+            self._wrapped.contents.tendon_rgba,
+            val_ptr,
+            self.ntendon * 4 * sizeof(c_float),
+        )
 
     @property
     def wrap_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.wrap_type, dtype=np.int, count=(self.nwrap * 1)),
-                         (self.nwrap, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.wrap_type, dtype=np.int, count=(self.nwrap * 1)
+            ),
+            (
+                self.nwrap,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @wrap_type.setter
     def wrap_type(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.wrap_type, val_ptr, self.nwrap * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.wrap_type, val_ptr, self.nwrap * 1 * sizeof(c_int)
+        )
 
     @property
     def wrap_objid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.wrap_objid, dtype=np.int, count=(self.nwrap * 1)),
-                         (self.nwrap, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.wrap_objid, dtype=np.int, count=(self.nwrap * 1)
+            ),
+            (
+                self.nwrap,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @wrap_objid.setter
     def wrap_objid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.wrap_objid, val_ptr, self.nwrap * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.wrap_objid, val_ptr, self.nwrap * 1 * sizeof(c_int)
+        )
 
     @property
     def wrap_prm(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.wrap_prm, dtype=np.double, count=(self.nwrap * 1)),
-                         (self.nwrap, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.wrap_prm, dtype=np.double, count=(self.nwrap * 1)
+            ),
+            (
+                self.nwrap,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @wrap_prm.setter
     def wrap_prm(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.wrap_prm, val_ptr, self.nwrap * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.wrap_prm, val_ptr, self.nwrap * 1 * sizeof(c_double)
+        )
 
     @property
     def actuator_trntype(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_trntype, dtype=np.int, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_trntype,
+                dtype=np.int,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_trntype.setter
     def actuator_trntype(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.actuator_trntype, val_ptr, self.nu * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.actuator_trntype,
+            val_ptr,
+            self.nu * 1 * sizeof(c_int),
+        )
 
     @property
     def actuator_dyntype(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_dyntype, dtype=np.int, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_dyntype,
+                dtype=np.int,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_dyntype.setter
     def actuator_dyntype(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.actuator_dyntype, val_ptr, self.nu * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.actuator_dyntype,
+            val_ptr,
+            self.nu * 1 * sizeof(c_int),
+        )
 
     @property
     def actuator_gaintype(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_gaintype, dtype=np.int, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_gaintype,
+                dtype=np.int,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_gaintype.setter
     def actuator_gaintype(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.actuator_gaintype, val_ptr, self.nu * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.actuator_gaintype,
+            val_ptr,
+            self.nu * 1 * sizeof(c_int),
+        )
 
     @property
     def actuator_biastype(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_biastype, dtype=np.int, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_biastype,
+                dtype=np.int,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_biastype.setter
     def actuator_biastype(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.actuator_biastype, val_ptr, self.nu * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.actuator_biastype,
+            val_ptr,
+            self.nu * 1 * sizeof(c_int),
+        )
 
     @property
     def actuator_trnid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_trnid, dtype=np.int, count=(self.nu * 2)),
-                         (self.nu, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_trnid, dtype=np.int, count=(self.nu * 2)
+            ),
+            (
+                self.nu,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_trnid.setter
     def actuator_trnid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.actuator_trnid, val_ptr, self.nu * 2 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.actuator_trnid, val_ptr, self.nu * 2 * sizeof(c_int)
+        )
 
     @property
     def actuator_ctrllimited(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_ctrllimited, dtype=np.uint8, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_ctrllimited,
+                dtype=np.uint8,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_ctrllimited.setter
     def actuator_ctrllimited(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.actuator_ctrllimited, val_ptr, self.nu * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.actuator_ctrllimited,
+            val_ptr,
+            self.nu * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def actuator_forcelimited(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_forcelimited, dtype=np.uint8, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_forcelimited,
+                dtype=np.uint8,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_forcelimited.setter
     def actuator_forcelimited(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_ubyte))
-        memmove(self._wrapped.contents.actuator_forcelimited, val_ptr, self.nu * 1 * sizeof(c_ubyte))
+        memmove(
+            self._wrapped.contents.actuator_forcelimited,
+            val_ptr,
+            self.nu * 1 * sizeof(c_ubyte),
+        )
 
     @property
     def actuator_dynprm(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_dynprm, dtype=np.double, count=(self.nu * 3)),
-                         (self.nu, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_dynprm,
+                dtype=np.double,
+                count=(self.nu * 3),
+            ),
+            (
+                self.nu,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_dynprm.setter
     def actuator_dynprm(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_dynprm, val_ptr, self.nu * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_dynprm,
+            val_ptr,
+            self.nu * 3 * sizeof(c_double),
+        )
 
     @property
     def actuator_gainprm(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_gainprm, dtype=np.double, count=(self.nu * 3)),
-                         (self.nu, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_gainprm,
+                dtype=np.double,
+                count=(self.nu * 3),
+            ),
+            (
+                self.nu,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_gainprm.setter
     def actuator_gainprm(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_gainprm, val_ptr, self.nu * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_gainprm,
+            val_ptr,
+            self.nu * 3 * sizeof(c_double),
+        )
 
     @property
     def actuator_biasprm(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_biasprm, dtype=np.double, count=(self.nu * 3)),
-                         (self.nu, 3,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_biasprm,
+                dtype=np.double,
+                count=(self.nu * 3),
+            ),
+            (
+                self.nu,
+                3,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_biasprm.setter
     def actuator_biasprm(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_biasprm, val_ptr, self.nu * 3 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_biasprm,
+            val_ptr,
+            self.nu * 3 * sizeof(c_double),
+        )
 
     @property
     def actuator_ctrlrange(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_ctrlrange, dtype=np.double, count=(self.nu * 2)),
-                         (self.nu, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_ctrlrange,
+                dtype=np.double,
+                count=(self.nu * 2),
+            ),
+            (
+                self.nu,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_ctrlrange.setter
     def actuator_ctrlrange(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_ctrlrange, val_ptr, self.nu * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_ctrlrange,
+            val_ptr,
+            self.nu * 2 * sizeof(c_double),
+        )
 
     @property
     def actuator_forcerange(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_forcerange, dtype=np.double, count=(self.nu * 2)),
-                         (self.nu, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_forcerange,
+                dtype=np.double,
+                count=(self.nu * 2),
+            ),
+            (
+                self.nu,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_forcerange.setter
     def actuator_forcerange(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_forcerange, val_ptr, self.nu * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_forcerange,
+            val_ptr,
+            self.nu * 2 * sizeof(c_double),
+        )
 
     @property
     def actuator_gear(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_gear, dtype=np.double, count=(self.nu * 6)),
-                         (self.nu, 6,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_gear,
+                dtype=np.double,
+                count=(self.nu * 6),
+            ),
+            (
+                self.nu,
+                6,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_gear.setter
     def actuator_gear(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_gear, val_ptr, self.nu * 6 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_gear,
+            val_ptr,
+            self.nu * 6 * sizeof(c_double),
+        )
 
     @property
     def actuator_cranklength(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_cranklength, dtype=np.double, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_cranklength,
+                dtype=np.double,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_cranklength.setter
     def actuator_cranklength(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_cranklength, val_ptr, self.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_cranklength,
+            val_ptr,
+            self.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_invweight0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_invweight0, dtype=np.double, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_invweight0,
+                dtype=np.double,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_invweight0.setter
     def actuator_invweight0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_invweight0, val_ptr, self.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_invweight0,
+            val_ptr,
+            self.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_length0(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_length0, dtype=np.double, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_length0,
+                dtype=np.double,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_length0.setter
     def actuator_length0(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_length0, val_ptr, self.nu * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_length0,
+            val_ptr,
+            self.nu * 1 * sizeof(c_double),
+        )
 
     @property
     def actuator_lengthrange(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.actuator_lengthrange, dtype=np.double, count=(self.nu * 2)),
-                         (self.nu, 2,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.actuator_lengthrange,
+                dtype=np.double,
+                count=(self.nu * 2),
+            ),
+            (
+                self.nu,
+                2,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_lengthrange.setter
     def actuator_lengthrange(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_lengthrange, val_ptr, self.nu * 2 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_lengthrange,
+            val_ptr,
+            self.nu * 2 * sizeof(c_double),
+        )
 
     @property
     def actuator_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.actuator_user, dtype=np.double, count=(self.nu * self.nuser_actuator)),
-            (self.nu, self.nuser_actuator,))
+            np.fromiter(
+                self._wrapped.contents.actuator_user,
+                dtype=np.double,
+                count=(self.nu * self.nuser_actuator),
+            ),
+            (
+                self.nu,
+                self.nuser_actuator,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @actuator_user.setter
     def actuator_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.actuator_user, val_ptr, self.nu * self.nuser_actuator * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.actuator_user,
+            val_ptr,
+            self.nu * self.nuser_actuator * sizeof(c_double),
+        )
 
     @property
     def sensor_type(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sensor_type, dtype=np.int, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.sensor_type,
+                dtype=np.int,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_type.setter
     def sensor_type(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.sensor_type, val_ptr, self.nsensor * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.sensor_type,
+            val_ptr,
+            self.nsensor * 1 * sizeof(c_int),
+        )
 
     @property
     def sensor_objid(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sensor_objid, dtype=np.int, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.sensor_objid,
+                dtype=np.int,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_objid.setter
     def sensor_objid(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.sensor_objid, val_ptr, self.nsensor * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.sensor_objid,
+            val_ptr,
+            self.nsensor * 1 * sizeof(c_int),
+        )
 
     @property
     def sensor_dim(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sensor_dim, dtype=np.int, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.sensor_dim,
+                dtype=np.int,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_dim.setter
     def sensor_dim(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.sensor_dim, val_ptr, self.nsensor * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.sensor_dim, val_ptr, self.nsensor * 1 * sizeof(c_int)
+        )
 
     @property
     def sensor_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sensor_adr, dtype=np.int, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.sensor_adr,
+                dtype=np.int,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_adr.setter
     def sensor_adr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.sensor_adr, val_ptr, self.nsensor * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.sensor_adr, val_ptr, self.nsensor * 1 * sizeof(c_int)
+        )
 
     @property
     def sensor_scale(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.sensor_scale, dtype=np.double, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.sensor_scale,
+                dtype=np.double,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_scale.setter
     def sensor_scale(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.sensor_scale, val_ptr, self.nsensor * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.sensor_scale,
+            val_ptr,
+            self.nsensor * 1 * sizeof(c_double),
+        )
 
     @property
     def sensor_user(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.sensor_user, dtype=np.double, count=(self.nsensor * self.nuser_sensor)),
-            (self.nsensor, self.nuser_sensor,))
+            np.fromiter(
+                self._wrapped.contents.sensor_user,
+                dtype=np.double,
+                count=(self.nsensor * self.nuser_sensor),
+            ),
+            (
+                self.nsensor,
+                self.nuser_sensor,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @sensor_user.setter
     def sensor_user(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.sensor_user, val_ptr, self.nsensor * self.nuser_sensor * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.sensor_user,
+            val_ptr,
+            self.nsensor * self.nuser_sensor * sizeof(c_double),
+        )
 
     @property
     def numeric_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.numeric_adr, dtype=np.int, count=(self.nnumeric * 1)),
-                         (self.nnumeric, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.numeric_adr,
+                dtype=np.int,
+                count=(self.nnumeric * 1),
+            ),
+            (
+                self.nnumeric,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @numeric_adr.setter
     def numeric_adr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.numeric_adr, val_ptr, self.nnumeric * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.numeric_adr,
+            val_ptr,
+            self.nnumeric * 1 * sizeof(c_int),
+        )
 
     @property
     def numeric_size(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.numeric_size, dtype=np.int, count=(self.nnumeric * 1)),
-                         (self.nnumeric, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.numeric_size,
+                dtype=np.int,
+                count=(self.nnumeric * 1),
+            ),
+            (
+                self.nnumeric,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @numeric_size.setter
     def numeric_size(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.numeric_size, val_ptr, self.nnumeric * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.numeric_size,
+            val_ptr,
+            self.nnumeric * 1 * sizeof(c_int),
+        )
 
     @property
     def numeric_data(self):
         arr = np.reshape(
-            np.fromiter(self._wrapped.contents.numeric_data, dtype=np.double, count=(self.nnumericdata * 1)),
-            (self.nnumericdata, 1,))
+            np.fromiter(
+                self._wrapped.contents.numeric_data,
+                dtype=np.double,
+                count=(self.nnumericdata * 1),
+            ),
+            (
+                self.nnumericdata,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @numeric_data.setter
     def numeric_data(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.numeric_data, val_ptr, self.nnumericdata * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.numeric_data,
+            val_ptr,
+            self.nnumericdata * 1 * sizeof(c_double),
+        )
 
     @property
     def text_adr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.text_adr, dtype=np.int, count=(self.ntext * 1)),
-                         (self.ntext, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.text_adr, dtype=np.int, count=(self.ntext * 1)
+            ),
+            (
+                self.ntext,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @text_adr.setter
     def text_adr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.text_adr, val_ptr, self.ntext * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.text_adr, val_ptr, self.ntext * 1 * sizeof(c_int)
+        )
 
     @property
     def text_data(self):
@@ -6199,243 +9551,469 @@ class MjModelWrapper(object):
 
     @property
     def key_time(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.key_time, dtype=np.double, count=(self.nkey * 1)),
-                         (self.nkey, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.key_time, dtype=np.double, count=(self.nkey * 1)
+            ),
+            (
+                self.nkey,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @key_time.setter
     def key_time(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.key_time, val_ptr, self.nkey * 1 * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.key_time, val_ptr, self.nkey * 1 * sizeof(c_double)
+        )
 
     @property
     def key_qpos(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.key_qpos, dtype=np.double, count=(self.nkey * self.nq)),
-                         (self.nkey, self.nq,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.key_qpos,
+                dtype=np.double,
+                count=(self.nkey * self.nq),
+            ),
+            (
+                self.nkey,
+                self.nq,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @key_qpos.setter
     def key_qpos(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.key_qpos, val_ptr, self.nkey * self.nq * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.key_qpos,
+            val_ptr,
+            self.nkey * self.nq * sizeof(c_double),
+        )
 
     @property
     def key_qvel(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.key_qvel, dtype=np.double, count=(self.nkey * self.nv)),
-                         (self.nkey, self.nv,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.key_qvel,
+                dtype=np.double,
+                count=(self.nkey * self.nv),
+            ),
+            (
+                self.nkey,
+                self.nv,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @key_qvel.setter
     def key_qvel(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.key_qvel, val_ptr, self.nkey * self.nv * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.key_qvel,
+            val_ptr,
+            self.nkey * self.nv * sizeof(c_double),
+        )
 
     @property
     def key_act(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.key_act, dtype=np.double, count=(self.nkey * self.na)),
-                         (self.nkey, self.na,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.key_act,
+                dtype=np.double,
+                count=(self.nkey * self.na),
+            ),
+            (
+                self.nkey,
+                self.na,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @key_act.setter
     def key_act(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_double))
-        memmove(self._wrapped.contents.key_act, val_ptr, self.nkey * self.na * sizeof(c_double))
+        memmove(
+            self._wrapped.contents.key_act,
+            val_ptr,
+            self.nkey * self.na * sizeof(c_double),
+        )
 
     @property
     def name_bodyadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_bodyadr, dtype=np.int, count=(self.nbody * 1)),
-                         (self.nbody, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_bodyadr,
+                dtype=np.int,
+                count=(self.nbody * 1),
+            ),
+            (
+                self.nbody,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_bodyadr.setter
     def name_bodyadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_bodyadr, val_ptr, self.nbody * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_bodyadr, val_ptr, self.nbody * 1 * sizeof(c_int)
+        )
 
     @property
     def name_jntadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_jntadr, dtype=np.int, count=(self.njnt * 1)),
-                         (self.njnt, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_jntadr, dtype=np.int, count=(self.njnt * 1)
+            ),
+            (
+                self.njnt,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_jntadr.setter
     def name_jntadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_jntadr, val_ptr, self.njnt * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_jntadr, val_ptr, self.njnt * 1 * sizeof(c_int)
+        )
 
     @property
     def name_geomadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_geomadr, dtype=np.int, count=(self.ngeom * 1)),
-                         (self.ngeom, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_geomadr,
+                dtype=np.int,
+                count=(self.ngeom * 1),
+            ),
+            (
+                self.ngeom,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_geomadr.setter
     def name_geomadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_geomadr, val_ptr, self.ngeom * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_geomadr, val_ptr, self.ngeom * 1 * sizeof(c_int)
+        )
 
     @property
     def name_siteadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_siteadr, dtype=np.int, count=(self.nsite * 1)),
-                         (self.nsite, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_siteadr,
+                dtype=np.int,
+                count=(self.nsite * 1),
+            ),
+            (
+                self.nsite,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_siteadr.setter
     def name_siteadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_siteadr, val_ptr, self.nsite * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_siteadr, val_ptr, self.nsite * 1 * sizeof(c_int)
+        )
 
     @property
     def name_camadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_camadr, dtype=np.int, count=(self.ncam * 1)),
-                         (self.ncam, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_camadr, dtype=np.int, count=(self.ncam * 1)
+            ),
+            (
+                self.ncam,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_camadr.setter
     def name_camadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_camadr, val_ptr, self.ncam * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_camadr, val_ptr, self.ncam * 1 * sizeof(c_int)
+        )
 
     @property
     def name_lightadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_lightadr, dtype=np.int, count=(self.nlight * 1)),
-                         (self.nlight, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_lightadr,
+                dtype=np.int,
+                count=(self.nlight * 1),
+            ),
+            (
+                self.nlight,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_lightadr.setter
     def name_lightadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_lightadr, val_ptr, self.nlight * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_lightadr,
+            val_ptr,
+            self.nlight * 1 * sizeof(c_int),
+        )
 
     @property
     def name_meshadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_meshadr, dtype=np.int, count=(self.nmesh * 1)),
-                         (self.nmesh, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_meshadr,
+                dtype=np.int,
+                count=(self.nmesh * 1),
+            ),
+            (
+                self.nmesh,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_meshadr.setter
     def name_meshadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_meshadr, val_ptr, self.nmesh * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_meshadr, val_ptr, self.nmesh * 1 * sizeof(c_int)
+        )
 
     @property
     def name_hfieldadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_hfieldadr, dtype=np.int, count=(self.nhfield * 1)),
-                         (self.nhfield, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_hfieldadr,
+                dtype=np.int,
+                count=(self.nhfield * 1),
+            ),
+            (
+                self.nhfield,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_hfieldadr.setter
     def name_hfieldadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_hfieldadr, val_ptr, self.nhfield * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_hfieldadr,
+            val_ptr,
+            self.nhfield * 1 * sizeof(c_int),
+        )
 
     @property
     def name_texadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_texadr, dtype=np.int, count=(self.ntex * 1)),
-                         (self.ntex, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_texadr, dtype=np.int, count=(self.ntex * 1)
+            ),
+            (
+                self.ntex,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_texadr.setter
     def name_texadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_texadr, val_ptr, self.ntex * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_texadr, val_ptr, self.ntex * 1 * sizeof(c_int)
+        )
 
     @property
     def name_matadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_matadr, dtype=np.int, count=(self.nmat * 1)),
-                         (self.nmat, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_matadr, dtype=np.int, count=(self.nmat * 1)
+            ),
+            (
+                self.nmat,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_matadr.setter
     def name_matadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_matadr, val_ptr, self.nmat * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_matadr, val_ptr, self.nmat * 1 * sizeof(c_int)
+        )
 
     @property
     def name_eqadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_eqadr, dtype=np.int, count=(self.neq * 1)),
-                         (self.neq, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_eqadr, dtype=np.int, count=(self.neq * 1)
+            ),
+            (
+                self.neq,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_eqadr.setter
     def name_eqadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_eqadr, val_ptr, self.neq * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_eqadr, val_ptr, self.neq * 1 * sizeof(c_int)
+        )
 
     @property
     def name_tendonadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_tendonadr, dtype=np.int, count=(self.ntendon * 1)),
-                         (self.ntendon, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_tendonadr,
+                dtype=np.int,
+                count=(self.ntendon * 1),
+            ),
+            (
+                self.ntendon,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_tendonadr.setter
     def name_tendonadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_tendonadr, val_ptr, self.ntendon * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_tendonadr,
+            val_ptr,
+            self.ntendon * 1 * sizeof(c_int),
+        )
 
     @property
     def name_actuatoradr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_actuatoradr, dtype=np.int, count=(self.nu * 1)),
-                         (self.nu, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_actuatoradr,
+                dtype=np.int,
+                count=(self.nu * 1),
+            ),
+            (
+                self.nu,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_actuatoradr.setter
     def name_actuatoradr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_actuatoradr, val_ptr, self.nu * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_actuatoradr,
+            val_ptr,
+            self.nu * 1 * sizeof(c_int),
+        )
 
     @property
     def name_sensoradr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_sensoradr, dtype=np.int, count=(self.nsensor * 1)),
-                         (self.nsensor, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_sensoradr,
+                dtype=np.int,
+                count=(self.nsensor * 1),
+            ),
+            (
+                self.nsensor,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_sensoradr.setter
     def name_sensoradr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_sensoradr, val_ptr, self.nsensor * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_sensoradr,
+            val_ptr,
+            self.nsensor * 1 * sizeof(c_int),
+        )
 
     @property
     def name_numericadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_numericadr, dtype=np.int, count=(self.nnumeric * 1)),
-                         (self.nnumeric, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_numericadr,
+                dtype=np.int,
+                count=(self.nnumeric * 1),
+            ),
+            (
+                self.nnumeric,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_numericadr.setter
     def name_numericadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_numericadr, val_ptr, self.nnumeric * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_numericadr,
+            val_ptr,
+            self.nnumeric * 1 * sizeof(c_int),
+        )
 
     @property
     def name_textadr(self):
-        arr = np.reshape(np.fromiter(self._wrapped.contents.name_textadr, dtype=np.int, count=(self.ntext * 1)),
-                         (self.ntext, 1,))
+        arr = np.reshape(
+            np.fromiter(
+                self._wrapped.contents.name_textadr,
+                dtype=np.int,
+                count=(self.ntext * 1),
+            ),
+            (
+                self.ntext,
+                1,
+            ),
+        )
         arr.setflags(write=False)
         return arr
 
     @name_textadr.setter
     def name_textadr(self, value):
         val_ptr = np.array(value, dtype=np.float64).ctypes.data_as(POINTER(c_int))
-        memmove(self._wrapped.contents.name_textadr, val_ptr, self.ntext * 1 * sizeof(c_int))
+        memmove(
+            self._wrapped.contents.name_textadr, val_ptr, self.ntext * 1 * sizeof(c_int)
+        )
 
     @property
     def names(self):

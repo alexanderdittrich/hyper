@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to train Task Embedding PPO with PointEnv."""
+
 # pylint: disable=no-value-for-parameter
 import click
 import numpy as np
@@ -7,7 +8,10 @@ import tensorflow as tf
 
 from environments.garage import wrap_experiment
 from environments.garage.envs import PointEnv
-from environments.garage.envs.multi_env_wrapper import MultiEnvWrapper, round_robin_strategy
+from environments.garage.envs.multi_env_wrapper import (
+    MultiEnvWrapper,
+    round_robin_strategy,
+)
 from environments.garage.experiment.deterministic import set_seed
 from environments.garage.np.baselines import LinearMultiFeatureBaseline
 from environments.garage.sampler import LocalSampler
@@ -37,21 +41,21 @@ N = 4
 goals = circle(3.0, N)
 TASKS = {
     str(i + 1): {
-        'args': [],
-        'kwargs': {
-            'goal': g,
-            'never_done': False,
-            'done_bonus': 10.0,
-        }
+        "args": [],
+        "kwargs": {
+            "goal": g,
+            "never_done": False,
+            "done_bonus": 10.0,
+        },
     }
     for i, g in enumerate(goals)
 }
 
 
 @click.command()
-@click.option('--seed', default=1)
-@click.option('--n_epochs', default=600)
-@click.option('--batch_size_per_task', default=1024)
+@click.option("--seed", default=1)
+@click.option("--n_epochs", default=600)
+@click.option("--batch_size_per_task", default=1024)
 @wrap_experiment
 def te_ppo_pointenv(ctxt, seed, n_epochs, batch_size_per_task):
     """Train Task Embedding PPO with PointEnv.
@@ -82,21 +86,22 @@ def te_ppo_pointenv(ctxt, seed, n_epochs, batch_size_per_task):
     policy_min_std = None
 
     task_names = sorted(tasks.keys())
-    task_args = [tasks[t]['args'] for t in task_names]
-    task_kwargs = [tasks[t]['kwargs'] for t in task_names]
+    task_args = [tasks[t]["args"] for t in task_names]
+    task_kwargs = [tasks[t]["kwargs"] for t in task_names]
 
     with TFTrainer(snapshot_config=ctxt) as trainer:
         task_envs = [
             PointEnv(*t_args, **t_kwargs, max_episode_length=100)
             for t_args, t_kwargs in zip(task_args, task_kwargs)
         ]
-        env = MultiEnvWrapper(task_envs, round_robin_strategy, mode='vanilla')
+        env = MultiEnvWrapper(task_envs, round_robin_strategy, mode="vanilla")
 
-        task_embed_spec = TEPPO.get_encoder_spec(env.task_space,
-                                                 latent_dim=latent_length)
+        task_embed_spec = TEPPO.get_encoder_spec(
+            env.task_space, latent_dim=latent_length
+        )
 
         task_encoder = GaussianMLPEncoder(
-            name='embedding',
+            name="embedding",
             embedding_spec=task_embed_spec,
             hidden_sizes=(20, 20),
             std_share_network=True,
@@ -108,12 +113,11 @@ def te_ppo_pointenv(ctxt, seed, n_epochs, batch_size_per_task):
         )
 
         traj_embed_spec = TEPPO.get_infer_spec(
-            env.spec,
-            latent_dim=latent_length,
-            inference_window_size=inference_window)
+            env.spec, latent_dim=latent_length, inference_window_size=inference_window
+        )
 
         inference = GaussianMLPEncoder(
-            name='inference',
+            name="inference",
             embedding_spec=traj_embed_spec,
             hidden_sizes=(20, 20),
             std_share_network=True,
@@ -124,7 +128,7 @@ def te_ppo_pointenv(ctxt, seed, n_epochs, batch_size_per_task):
         )
 
         policy = GaussianMLPTaskEmbeddingPolicy(
-            name='policy',
+            name="policy",
             env_spec=env.spec,
             encoder=task_encoder,
             hidden_sizes=(32, 16),
@@ -135,37 +139,42 @@ def te_ppo_pointenv(ctxt, seed, n_epochs, batch_size_per_task):
         )
 
         baseline = LinearMultiFeatureBaseline(
-            env_spec=env.spec, features=['observations', 'tasks', 'latents'])
+            env_spec=env.spec, features=["observations", "tasks", "latents"]
+        )
 
-        sampler = LocalSampler(agents=policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True,
-                               worker_class=TaskEmbeddingWorker)
+        sampler = LocalSampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+            worker_class=TaskEmbeddingWorker,
+        )
 
-        algo = TEPPO(env_spec=env.spec,
-                     policy=policy,
-                     baseline=baseline,
-                     sampler=sampler,
-                     inference=inference,
-                     discount=0.99,
-                     lr_clip_range=0.2,
-                     policy_ent_coeff=policy_ent_coeff,
-                     encoder_ent_coeff=encoder_ent_coeff,
-                     inference_ce_coeff=inference_ce_coeff,
-                     use_softplus_entropy=True,
-                     optimizer_args=dict(
-                         batch_size=32,
-                         max_optimization_epochs=10,
-                         learning_rate=1e-3,
-                     ),
-                     inference_optimizer_args=dict(
-                         batch_size=32,
-                         max_optimization_epochs=10,
-                         learning_rate=1e-3,
-                     ),
-                     center_adv=True,
-                     stop_ce_gradient=True)
+        algo = TEPPO(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            inference=inference,
+            discount=0.99,
+            lr_clip_range=0.2,
+            policy_ent_coeff=policy_ent_coeff,
+            encoder_ent_coeff=encoder_ent_coeff,
+            inference_ce_coeff=inference_ce_coeff,
+            use_softplus_entropy=True,
+            optimizer_args=dict(
+                batch_size=32,
+                max_optimization_epochs=10,
+                learning_rate=1e-3,
+            ),
+            inference_optimizer_args=dict(
+                batch_size=32,
+                max_optimization_epochs=10,
+                learning_rate=1e-3,
+            ),
+            center_adv=True,
+            stop_ce_gradient=True,
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=n_epochs, batch_size=batch_size, plot=False)

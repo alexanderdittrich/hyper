@@ -2,6 +2,7 @@
 
 A model composed only of a long-short term memory (LSTM).
 """
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -55,27 +56,32 @@ class LSTMModel(Model):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 hidden_dim,
-                 name=None,
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 recurrent_nonlinearity=tf.nn.sigmoid,
-                 recurrent_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 hidden_state_init=tf.zeros_initializer(),
-                 hidden_state_init_trainable=False,
-                 cell_state_init=tf.zeros_initializer(),
-                 cell_state_init_trainable=False,
-                 forget_bias=True,
-                 layer_normalization=False):
+    def __init__(
+        self,
+        output_dim,
+        hidden_dim,
+        name=None,
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        recurrent_nonlinearity=tf.nn.sigmoid,
+        recurrent_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        hidden_state_init=tf.zeros_initializer(),
+        hidden_state_init_trainable=False,
+        cell_state_init=tf.zeros_initializer(),
+        cell_state_init_trainable=False,
+        forget_bias=True,
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._output_dim = output_dim
         self._hidden_dim = hidden_dim
@@ -105,13 +111,15 @@ class LSTMModel(Model):
             recurrent_activation=self._recurrent_nonlinearity,
             recurrent_initializer=self._recurrent_w_init,
             unit_forget_bias=self._forget_bias,
-            name='lstm_layer')
+            name="lstm_layer",
+        )
         self._output_nonlinearity_layer = tf.keras.layers.Dense(
             units=self._output_dim,
             activation=self._output_nonlinearity,
             kernel_initializer=self._output_w_init,
             bias_initializer=self._output_b_init,
-            name='output_layer')
+            name="output_layer",
+        )
 
     def network_input_spec(self):
         """Network input spec.
@@ -120,9 +128,7 @@ class LSTMModel(Model):
             list[str]: List of key(str) for the network outputs.
 
         """
-        return [
-            'full_input', 'step_input', 'step_hidden_input', 'step_cell_input'
-        ]
+        return ["full_input", "step_input", "step_hidden_input", "step_cell_input"]
 
     def network_output_spec(self):
         """Network output spec.
@@ -132,17 +138,18 @@ class LSTMModel(Model):
 
         """
         return [
-            'all_output', 'step_output', 'step_hidden', 'step_cell',
-            'init_hidden', 'init_cell'
+            "all_output",
+            "step_output",
+            "step_hidden",
+            "step_cell",
+            "init_hidden",
+            "init_cell",
         ]
 
     # pylint: disable=arguments-differ
-    def _build(self,
-               all_input_var,
-               step_input_var,
-               step_hidden_var,
-               step_cell_var,
-               name=None):
+    def _build(
+        self, all_input_var, step_input_var, step_hidden_var, step_cell_var, name=None
+    ):
         """Build model given input placeholder(s).
 
         Args:
@@ -166,7 +173,7 @@ class LSTMModel(Model):
         """
         del name
         return lstm(
-            name='lstm',
+            name="lstm",
             lstm_cell=self._lstm_cell,
             all_input_var=all_input_var,
             step_input_var=step_input_var,
@@ -176,7 +183,8 @@ class LSTMModel(Model):
             hidden_state_init_trainable=self._hidden_state_init_trainable,
             cell_state_init=self._cell_state_init,
             cell_state_init_trainable=self._cell_state_init_trainable,
-            output_nonlinearity_layer=self._output_nonlinearity_layer)
+            output_nonlinearity_layer=self._output_nonlinearity_layer,
+        )
 
     def __getstate__(self):
         """Object.__getstate__.
@@ -186,8 +194,8 @@ class LSTMModel(Model):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_lstm_cell']
-        del new_dict['_output_nonlinearity_layer']
+        del new_dict["_lstm_cell"]
+        del new_dict["_output_nonlinearity_layer"]
         return new_dict
 
     def __setstate__(self, state):

@@ -1,4 +1,5 @@
 """Discrete MLP QFunction."""
+
 import tensorflow as tf
 
 from environments.garage.tf.models import MLPDuelingModel
@@ -38,18 +39,19 @@ class DiscreteMLPDuelingQFunction(MLPDuelingModel):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 name=None,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=None,
-                 output_w_init=tf.initializers.glorot_uniform(),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
-
+    def __init__(
+        self,
+        env_spec,
+        name=None,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=None,
+        output_w_init=tf.initializers.glorot_uniform(),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         self._env_spec = env_spec
         self._hidden_sizes = hidden_sizes
         self._hidden_nonlinearity = hidden_nonlinearity
@@ -63,16 +65,18 @@ class DiscreteMLPDuelingQFunction(MLPDuelingModel):
         self.obs_dim = env_spec.observation_space.shape
         action_dim = env_spec.action_space.flat_dim
 
-        super().__init__(name=name,
-                         output_dim=action_dim,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         layer_normalization=layer_normalization)
+        super().__init__(
+            name=name,
+            output_dim=action_dim,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+        )
 
         self._network = None
 
@@ -80,8 +84,9 @@ class DiscreteMLPDuelingQFunction(MLPDuelingModel):
 
     def _initialize(self):
         """Initialize QFunction."""
-        obs_ph = tf.compat.v1.placeholder(tf.float32, (None, ) + self.obs_dim,
-                                          name='obs')
+        obs_ph = tf.compat.v1.placeholder(
+            tf.float32, (None,) + self.obs_dim, name="obs"
+        )
 
         self._network = super().build(obs_ph)
 
@@ -131,16 +136,18 @@ class DiscreteMLPDuelingQFunction(MLPDuelingModel):
             garage.tf.q_functions.DiscreteMLPQFunction: Clone of this object
 
         """
-        new_qf = self.__class__(name=name,
-                                env_spec=self._env_spec,
-                                hidden_sizes=self._hidden_sizes,
-                                hidden_nonlinearity=self._hidden_nonlinearity,
-                                hidden_w_init=self._hidden_w_init,
-                                hidden_b_init=self._hidden_b_init,
-                                output_nonlinearity=self._output_nonlinearity,
-                                output_w_init=self._output_w_init,
-                                output_b_init=self._output_b_init,
-                                layer_normalization=self._layer_normalization)
+        new_qf = self.__class__(
+            name=name,
+            env_spec=self._env_spec,
+            hidden_sizes=self._hidden_sizes,
+            hidden_nonlinearity=self._hidden_nonlinearity,
+            hidden_w_init=self._hidden_w_init,
+            hidden_b_init=self._hidden_b_init,
+            output_nonlinearity=self._output_nonlinearity,
+            output_w_init=self._output_w_init,
+            output_b_init=self._output_b_init,
+            layer_normalization=self._layer_normalization,
+        )
         new_qf.parameters = self.parameters
         return new_qf
 
@@ -152,7 +159,7 @@ class DiscreteMLPDuelingQFunction(MLPDuelingModel):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_network']
+        del new_dict["_network"]
         return new_dict
 
     def __setstate__(self, state):

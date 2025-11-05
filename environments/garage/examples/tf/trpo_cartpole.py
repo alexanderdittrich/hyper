@@ -7,6 +7,7 @@ Results:
     AverageReturn: 100
     RiseTime: itr 13
 """
+
 from environments.garage import wrap_experiment
 from environments.garage.envs import GymEnv
 from environments.garage.experiment.deterministic import set_seed
@@ -30,25 +31,29 @@ def trpo_cartpole(ctxt=None, seed=1):
     """
     set_seed(seed)
     with TFTrainer(ctxt) as trainer:
-        env = GymEnv('CartPole-v1')
+        env = GymEnv("CartPole-v1")
 
-        policy = CategoricalMLPPolicy(name='policy',
-                                      env_spec=env.spec,
-                                      hidden_sizes=(32, 32))
+        policy = CategoricalMLPPolicy(
+            name="policy", env_spec=env.spec, hidden_sizes=(32, 32)
+        )
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        sampler = LocalSampler(agents=policy,
-                               envs=env,
-                               max_episode_length=env.spec.max_episode_length,
-                               is_tf_worker=True)
+        sampler = LocalSampler(
+            agents=policy,
+            envs=env,
+            max_episode_length=env.spec.max_episode_length,
+            is_tf_worker=True,
+        )
 
-        algo = TRPO(env_spec=env.spec,
-                    policy=policy,
-                    baseline=baseline,
-                    sampler=sampler,
-                    discount=0.99,
-                    max_kl_step=0.01)
+        algo = TRPO(
+            env_spec=env.spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            discount=0.99,
+            max_kl_step=0.01,
+        )
 
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=4000)

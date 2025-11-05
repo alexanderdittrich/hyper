@@ -1,4 +1,5 @@
 """DM control environment."""
+
 import akro
 from dm_control import suite
 from dm_control.rl.control import flatten_observation
@@ -42,25 +43,27 @@ class DMControlEnv(Environment):
 
         # action space
         action_spec = self._env.action_spec()
-        if (len(action_spec.shape) == 1) and (-np.inf in action_spec.minimum or
-                                              np.inf in action_spec.maximum):
+        if (len(action_spec.shape) == 1) and (
+            -np.inf in action_spec.minimum or np.inf in action_spec.maximum
+        ):
             self._action_space = akro.Discrete(np.prod(action_spec.shape))
         else:
-            self._action_space = akro.Box(low=action_spec.minimum,
-                                          high=action_spec.maximum,
-                                          dtype=np.float32)
+            self._action_space = akro.Box(
+                low=action_spec.minimum, high=action_spec.maximum, dtype=np.float32
+            )
 
         # observation_space
         flat_dim = _flat_shape(self._env.observation_spec())
-        self._observation_space = akro.Box(low=-np.inf,
-                                           high=np.inf,
-                                           shape=[flat_dim],
-                                           dtype=np.float32)
+        self._observation_space = akro.Box(
+            low=-np.inf, high=np.inf, shape=[flat_dim], dtype=np.float32
+        )
 
         # spec
-        self._spec = EnvSpec(action_space=self.action_space,
-                             observation_space=self.observation_space,
-                             max_episode_length=self._max_episode_length)
+        self._spec = EnvSpec(
+            action_space=self.action_space,
+            observation_space=self.observation_space,
+            max_episode_length=self._max_episode_length,
+        )
 
     @property
     def action_space(self):
@@ -80,7 +83,7 @@ class DMControlEnv(Environment):
     @property
     def render_modes(self):
         """list: A list of string representing the supported render modes."""
-        return ['rgb_array']
+        return ["rgb_array"]
 
     @classmethod
     def from_suite(cls, domain_name, task_name):
@@ -93,8 +96,10 @@ class DMControlEnv(Environment):
         Return:
             dm_control.suite.Task: the dm_control task environment
         """
-        return cls(env=suite.load(domain_name, task_name),
-                   name='{}.{}'.format(domain_name, task_name))
+        return cls(
+            env=suite.load(domain_name, task_name),
+            name="{}.{}".format(domain_name, task_name),
+        )
 
     def reset(self):
         """Resets the environment.
@@ -110,7 +115,7 @@ class DMControlEnv(Environment):
 
         """
         time_step = self._env.reset()
-        first_obs = flatten_observation(time_step.observation)['observations']
+        first_obs = flatten_observation(time_step.observation)["observations"]
 
         self._step_cnt = 0
         return first_obs, {}
@@ -129,14 +134,13 @@ class DMControlEnv(Environment):
                 constructed and `reset()` has not been called.
         """
         if self._step_cnt is None:
-            raise RuntimeError('reset() must be called before step()!')
+            raise RuntimeError("reset() must be called before step()!")
 
         dm_time_step = self._env.step(action)
         if self._viewer:
             self._viewer.render()
 
-        observation = flatten_observation(
-            dm_time_step.observation)['observations']
+        observation = flatten_observation(dm_time_step.observation)["observations"]
 
         self._step_cnt += 1
 
@@ -153,12 +157,14 @@ class DMControlEnv(Environment):
         if step_type in (StepType.TERMINAL, StepType.TIMEOUT):
             self._step_cnt = None
 
-        return EnvStep(env_spec=self.spec,
-                       action=action,
-                       reward=dm_time_step.reward,
-                       observation=observation,
-                       env_info=dm_time_step.observation,
-                       step_type=step_type)
+        return EnvStep(
+            env_spec=self.spec,
+            action=action,
+            reward=dm_time_step.reward,
+            observation=observation,
+            env_info=dm_time_step.observation,
+            step_type=step_type,
+        )
 
     def render(self, mode):
         """Render the environment.
@@ -173,14 +179,14 @@ class DMControlEnv(Environment):
             ValueError: if mode is not supported.
         """
         self._validate_render_mode(mode)
-        if mode == 'rgb_array':
+        if mode == "rgb_array":
             return self._env.physics.render()
         return None
 
     def visualize(self):
         """Creates a visualization of the environment."""
         if not self._viewer:
-            title = 'dm_control {}'.format(self._name)
+            title = "dm_control {}".format(self._name)
             self._viewer = DmControlViewer(title=title)
             self._viewer.launch(self._env)
 
@@ -199,5 +205,5 @@ class DMControlEnv(Environment):
             dict: dict of the class.
         """
         d = self.__dict__.copy()
-        d['_viewer'] = None
+        d["_viewer"] = None
         return d

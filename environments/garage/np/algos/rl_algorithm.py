@@ -1,4 +1,5 @@
 """Interface of RLAlgorithm."""
+
 import abc
 
 

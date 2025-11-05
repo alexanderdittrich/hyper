@@ -4,6 +4,7 @@ A model represented by a Categorical distribution
 which is parameterized by a convolutional neural network (CNN)
 followed a multilayer perceptron (MLP).
 """
+
 import tensorflow as tf
 
 from environments.garage.experiment import deterministic
@@ -61,32 +62,38 @@ class CategoricalCNNModel(Model):
 
     """
 
-    def __init__(self,
-                 input_dim,
-                 output_dim,
-                 filters,
-                 strides,
-                 padding,
-                 name=None,
-                 is_image=True,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.relu,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
+    def __init__(
+        self,
+        input_dim,
+        output_dim,
+        filters,
+        strides,
+        padding,
+        name=None,
+        is_image=True,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.relu,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         super().__init__(name)
         self._is_image = is_image
-        self._cnn_model = CNNModel(input_dim=input_dim,
-                                   filters=filters,
-                                   strides=strides,
-                                   padding=padding,
-                                   hidden_nonlinearity=hidden_nonlinearity,
-                                   name='CNNModel')
+        self._cnn_model = CNNModel(
+            input_dim=input_dim,
+            filters=filters,
+            strides=strides,
+            padding=padding,
+            hidden_nonlinearity=hidden_nonlinearity,
+            name="CNNModel",
+        )
         self._mlp_model = CategoricalMLPModel(
             output_dim=output_dim,
             hidden_sizes=hidden_sizes,
@@ -97,7 +104,8 @@ class CategoricalCNNModel(Model):
             output_w_init=output_w_init,
             output_b_init=output_b_init,
             layer_normalization=layer_normalization,
-            name='MLPModel')
+            name="MLPModel",
+        )
 
     def network_output_spec(self):
         """Network output spec.
@@ -130,8 +138,7 @@ class CategoricalCNNModel(Model):
         time_dim = tf.shape(augmented_state_input)[1]
         dim = augmented_state_input.get_shape()[2:].as_list()
         augmented_state_input = tf.reshape(augmented_state_input, [-1, *dim])
-        cnn_output = self._cnn_model.build(augmented_state_input,
-                                           name=name).outputs
+        cnn_output = self._cnn_model.build(augmented_state_input, name=name).outputs
         dim = cnn_output.get_shape()[-1]
         cnn_output = tf.reshape(cnn_output, [-1, time_dim, dim])
         mlp_output = self._mlp_model.build(cnn_output, name=name).dist

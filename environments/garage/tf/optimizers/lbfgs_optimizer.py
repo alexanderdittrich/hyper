@@ -1,4 +1,5 @@
 """Limited-memory BFGS (L-BFGS) optimizer."""
+
 import time
 
 import scipy.optimize
@@ -25,13 +26,9 @@ class LBFGSOptimizer:
         self._target = None
         self._callback = callback
 
-    def update_opt(self,
-                   loss,
-                   target,
-                   inputs,
-                   extra_inputs=None,
-                   name='LBFGSOptimizer',
-                   **kwargs):
+    def update_opt(
+        self, loss, target, inputs, extra_inputs=None, name="LBFGSOptimizer", **kwargs
+    ):
         """Construct operation graph for the optimizer.
 
         Args:
@@ -57,13 +54,9 @@ class LBFGSOptimizer:
                     list[tf.Tensor]: Loss and gradient tensor.
 
                 """
-                with tf.name_scope('get_opt_output'):
-                    flat_grad = flatten_tensor_variables(
-                        tf.gradients(loss, params))
-                    return [
-                        tf.cast(loss, tf.float64),
-                        tf.cast(flat_grad, tf.float64)
-                    ]
+                with tf.name_scope("get_opt_output"):
+                    flat_grad = flatten_tensor_variables(tf.gradients(loss, params))
+                    return [tf.cast(loss, tf.float64), tf.cast(flat_grad, tf.float64)]
 
             if extra_inputs is None:
                 extra_inputs = list()
@@ -73,7 +66,8 @@ class LBFGSOptimizer:
                 f_opt=lambda: compile_function(
                     inputs=inputs + extra_inputs,
                     outputs=get_opt_output(),
-                ))
+                ),
+            )
 
     def loss(self, inputs, extra_inputs=None):
         """The loss.
@@ -90,13 +84,12 @@ class LBFGSOptimizer:
 
         """
         if self._opt_fun is None:
-            raise Exception(
-                'Use update_opt() to setup the loss function first.')
+            raise Exception("Use update_opt() to setup the loss function first.")
         if extra_inputs is None:
             extra_inputs = list()
-        return self._opt_fun['f_loss'](*(list(inputs) + list(extra_inputs)))
+        return self._opt_fun["f_loss"](*(list(inputs) + list(extra_inputs)))
 
-    def optimize(self, inputs, extra_inputs=None, name='optimize'):
+    def optimize(self, inputs, extra_inputs=None, name="optimize"):
         """Perform optimization.
 
         Args:
@@ -109,11 +102,10 @@ class LBFGSOptimizer:
 
         """
         if self._opt_fun is None:
-            raise Exception(
-                'Use update_opt() to setup the loss function first.')
+            raise Exception("Use update_opt() to setup the loss function first.")
 
         with tf.name_scope(name):
-            f_opt = self._opt_fun['f_opt']
+            f_opt = self._opt_fun["f_opt"]
 
             if extra_inputs is None:
                 extra_inputs = list()
@@ -144,7 +136,7 @@ class LBFGSOptimizer:
                         params (numpy.ndarray): Parameters.
 
                     """
-                    loss = self._opt_fun['f_loss'](*(inputs + extra_inputs))
+                    loss = self._opt_fun["f_loss"](*(inputs + extra_inputs))
                     elapsed = time.time() - start_time
                     self._callback(
                         dict(
@@ -152,7 +144,8 @@ class LBFGSOptimizer:
                             params=params,
                             itr=itr[0],
                             elapsed=elapsed,
-                        ))
+                        )
+                    )
                     itr[0] += 1
             else:
                 opt_callback = None
@@ -172,5 +165,5 @@ class LBFGSOptimizer:
 
         """
         new_dict = self.__dict__.copy()
-        del new_dict['_opt_fun']
+        del new_dict["_opt_fun"]
         return new_dict

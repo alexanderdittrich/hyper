@@ -7,7 +7,9 @@ def get_args(rest_args):
     parser = argparse.ArgumentParser()
 
     # changes from args_grid_varibad:
-    parser.add_argument('--env_name', default='Hall-L60H80-rshape-v0', help='environment to train on') # can change to another hall
+    parser.add_argument(
+        "--env_name", default="Hall-L60H80-rshape-v0", help="environment to train on"
+    )  # can change to another hall
 
     # take other args from args_grid_varibad
     args, unkown_args = parser.parse_known_args(rest_args)

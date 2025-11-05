@@ -1,4 +1,5 @@
 """CategoricalCNNPolicy."""
+
 import akro
 import torch
 from torch import nn
@@ -63,32 +64,35 @@ class CategoricalCNNPolicy(StochasticPolicy):
 
     """
 
-    def __init__(self,
-                 env,
-                 kernel_sizes,
-                 hidden_channels,
-                 strides=1,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=torch.tanh,
-                 hidden_w_init=nn.init.xavier_uniform_,
-                 hidden_b_init=nn.init.zeros_,
-                 paddings=0,
-                 padding_mode='zeros',
-                 max_pool=False,
-                 pool_shape=None,
-                 pool_stride=1,
-                 output_nonlinearity=None,
-                 output_w_init=nn.init.xavier_uniform_,
-                 output_b_init=nn.init.zeros_,
-                 layer_normalization=False,
-                 name='CategoricalCNNPolicy'):
-
+    def __init__(
+        self,
+        env,
+        kernel_sizes,
+        hidden_channels,
+        strides=1,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=torch.tanh,
+        hidden_w_init=nn.init.xavier_uniform_,
+        hidden_b_init=nn.init.zeros_,
+        paddings=0,
+        padding_mode="zeros",
+        max_pool=False,
+        pool_shape=None,
+        pool_stride=1,
+        output_nonlinearity=None,
+        output_w_init=nn.init.xavier_uniform_,
+        output_b_init=nn.init.zeros_,
+        layer_normalization=False,
+        name="CategoricalCNNPolicy",
+    ):
         if not isinstance(env.spec.action_space, akro.Discrete):
-            raise ValueError('CategoricalMLPPolicy only works '
-                             'with akro.Discrete action space.')
+            raise ValueError(
+                "CategoricalMLPPolicy only works with akro.Discrete action space."
+            )
         if isinstance(env.spec.observation_space, akro.Dict):
-            raise ValueError('CNN policies do not support '
-                             'with akro.Dict observation spaces.')
+            raise ValueError(
+                "CNN policies do not support with akro.Dict observation spaces."
+            )
 
         super().__init__(env.spec, name)
         self._env = env
@@ -110,8 +114,7 @@ class CategoricalCNNPolicy(StochasticPolicy):
         self._output_w_init = output_w_init
         self._output_b_init = output_b_init
         self._layer_normalization = layer_normalization
-        self._is_image = isinstance(self._env.spec.observation_space,
-                                    akro.Image)
+        self._is_image = isinstance(self._env.spec.observation_space, akro.Image)
 
     def forward(self, observations):
         """Compute the action distributions from the observations.
@@ -144,7 +147,8 @@ class CategoricalCNNPolicy(StochasticPolicy):
             output_w_init=self._output_w_init,
             output_b_init=self._output_b_init,
             layer_normalization=self._layer_normalization,
-            is_image=self._is_image)
+            is_image=self._is_image,
+        )
 
         dist = module(observations)
         return dist, {}

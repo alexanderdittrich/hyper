@@ -1,4 +1,5 @@
 """Garage wrappers for mujoco based gym environments."""
+
 try:
     import mujoco_py  # noqa: F401
 except Exception as e:
@@ -8,6 +9,6 @@ from environments.garage.envs.mujoco.half_cheetah_dir_env import HalfCheetahDirE
 from environments.garage.envs.mujoco.half_cheetah_vel_env import HalfCheetahVelEnv
 
 __all__ = [
-    'HalfCheetahDirEnv',
-    'HalfCheetahVelEnv',
+    "HalfCheetahDirEnv",
+    "HalfCheetahVelEnv",
 ]

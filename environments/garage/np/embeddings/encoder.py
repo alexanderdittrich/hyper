@@ -1,4 +1,5 @@
 """Base class for context encoder."""
+
 import abc
 
 

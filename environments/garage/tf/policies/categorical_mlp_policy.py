@@ -3,6 +3,7 @@
 A policy represented by a Categorical distribution
 which is parameterized by a multilayer perceptron (MLP).
 """
+
 # pylint: disable=wrong-import-order
 import akro
 import numpy as np
@@ -50,22 +51,27 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 name='CategoricalMLPPolicy',
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
+    def __init__(
+        self,
+        env_spec,
+        name="CategoricalMLPPolicy",
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
         if not isinstance(env_spec.action_space, akro.Discrete):
-            raise ValueError('CategoricalMLPPolicy only works'
-                             'with akro.Discrete action space.')
+            raise ValueError(
+                "CategoricalMLPPolicy only workswith akro.Discrete action space."
+            )
 
         self._env_spec = env_spec
         self._obs_dim = env_spec.observation_space.flat_dim
@@ -82,31 +88,34 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
 
         self._f_prob = None
 
-        super().__init__(output_dim=self._action_dim,
-                         hidden_sizes=hidden_sizes,
-                         hidden_nonlinearity=hidden_nonlinearity,
-                         hidden_w_init=hidden_w_init,
-                         hidden_b_init=hidden_b_init,
-                         output_nonlinearity=output_nonlinearity,
-                         output_w_init=output_w_init,
-                         output_b_init=output_b_init,
-                         layer_normalization=layer_normalization,
-                         name=name)
+        super().__init__(
+            output_dim=self._action_dim,
+            hidden_sizes=hidden_sizes,
+            hidden_nonlinearity=hidden_nonlinearity,
+            hidden_w_init=hidden_w_init,
+            hidden_b_init=hidden_b_init,
+            output_nonlinearity=output_nonlinearity,
+            output_w_init=output_w_init,
+            output_b_init=output_b_init,
+            layer_normalization=layer_normalization,
+            name=name,
+        )
 
         self._initialize()
 
     def _initialize(self):
         """Initialize policy."""
-        state_input = tf.compat.v1.placeholder(tf.float32,
-                                               shape=(None, None,
-                                                      self._obs_dim))
+        state_input = tf.compat.v1.placeholder(
+            tf.float32, shape=(None, None, self._obs_dim)
+        )
         dist = self.build(state_input).outputs
         self._f_prob = tf.compat.v1.get_default_session().make_callable(
             [
-                tf.argmax(dist.sample(seed=deterministic.get_tf_seed_stream()),
-                          -1), dist.probs
+                tf.argmax(dist.sample(seed=deterministic.get_tf_seed_stream()), -1),
+                dist.probs,
             ],
-            feed_list=[state_input])
+            feed_list=[state_input],
+        )
 
     @property
     def input_dim(self):
@@ -138,8 +147,10 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
-        if not isinstance(observations[0],
-                          np.ndarray) or len(observations[0].shape) > 1:
+        if (
+            not isinstance(observations[0], np.ndarray)
+            or len(observations[0].shape) > 1
+        ):
             observations = self.observation_space.flatten_n(observations)
         samples, probs = self._f_prob(np.expand_dims(observations, 1))
         return np.squeeze(samples), dict(prob=np.squeeze(probs, axis=1))
@@ -153,8 +164,7 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
         """
         trainable = self.get_trainable_vars()
         return [
-            var for var in trainable
-            if 'hidden' in var.name and 'kernel' in var.name
+            var for var in trainable if "hidden" in var.name and "kernel" in var.name
         ]
 
     @property
@@ -191,7 +201,8 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
             output_nonlinearity=self._output_nonlinearity,
             output_w_init=self._output_w_init,
             output_b_init=self._output_b_init,
-            layer_normalization=self._layer_normalization)
+            layer_normalization=self._layer_normalization,
+        )
         new_policy.parameters = self.parameters
         return new_policy
 
@@ -203,7 +214,7 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
 
         """
         new_dict = super().__getstate__()
-        del new_dict['_f_prob']
+        del new_dict["_f_prob"]
         return new_dict
 
     def __setstate__(self, state):

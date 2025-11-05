@@ -3,6 +3,7 @@
 A model represented by a Categorical distribution
 which is parameterized by a multilayer perceptron (MLP).
 """
+
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -44,22 +45,35 @@ class CategoricalMLPModel(MLPModel):
 
     """
 
-    def __init__(self,
-                 output_dim,
-                 name=None,
-                 hidden_sizes=(32, 32),
-                 hidden_nonlinearity=tf.nn.tanh,
-                 hidden_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 hidden_b_init=tf.zeros_initializer(),
-                 output_nonlinearity=tf.nn.softmax,
-                 output_w_init=tf.initializers.glorot_uniform(
-                     seed=deterministic.get_tf_seed_stream()),
-                 output_b_init=tf.zeros_initializer(),
-                 layer_normalization=False):
-        super().__init__(output_dim, name, hidden_sizes, hidden_nonlinearity,
-                         hidden_w_init, hidden_b_init, output_nonlinearity,
-                         output_w_init, output_b_init, layer_normalization)
+    def __init__(
+        self,
+        output_dim,
+        name=None,
+        hidden_sizes=(32, 32),
+        hidden_nonlinearity=tf.nn.tanh,
+        hidden_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        hidden_b_init=tf.zeros_initializer(),
+        output_nonlinearity=tf.nn.softmax,
+        output_w_init=tf.initializers.glorot_uniform(
+            seed=deterministic.get_tf_seed_stream()
+        ),
+        output_b_init=tf.zeros_initializer(),
+        layer_normalization=False,
+    ):
+        super().__init__(
+            output_dim,
+            name,
+            hidden_sizes,
+            hidden_nonlinearity,
+            hidden_w_init,
+            hidden_b_init,
+            output_nonlinearity,
+            output_w_init,
+            output_b_init,
+            layer_normalization,
+        )
 
     def network_output_spec(self):
         """Network output spec.
@@ -68,7 +82,7 @@ class CategoricalMLPModel(MLPModel):
             list[str]: Name of the model outputs, in order.
 
         """
-        return ['dist']
+        return ["dist"]
 
     def _build(self, state_input, name=None):
         """Build model.

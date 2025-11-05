@@ -3,6 +3,7 @@
 
 https://arxiv.org/pdf/1910.10897.pdf
 """
+
 import click
 import metaworld
 import numpy as np
@@ -23,19 +24,13 @@ from environments.garage.trainer import Trainer
 
 
 @click.command()
-@click.option('--seed', 'seed', type=int, default=1)
-@click.option('--use_gpu', 'use_gpu', type=bool, default=False)
-@click.option('--gpu', '_gpu', type=int, default=0)
-@click.option('--n_tasks', default=50)
-@click.option('--timesteps', default=100000000)
-@wrap_experiment(snapshot_mode='none')
-def mtsac_metaworld_mt50(ctxt=None,
-                         *,
-                         seed,
-                         use_gpu,
-                         _gpu,
-                         n_tasks,
-                         timesteps):
+@click.option("--seed", "seed", type=int, default=1)
+@click.option("--use_gpu", "use_gpu", type=bool, default=False)
+@click.option("--gpu", "_gpu", type=int, default=0)
+@click.option("--n_tasks", default=50)
+@click.option("--timesteps", default=100000000)
+@wrap_experiment(snapshot_mode="none")
+def mtsac_metaworld_mt50(ctxt=None, *, seed, use_gpu, _gpu, n_tasks, timesteps):
     """Train MTSAC with MT50 environment.
 
     Args:
@@ -55,13 +50,13 @@ def mtsac_metaworld_mt50(ctxt=None,
     mt50_test = metaworld.MT50()  # pylint: disable=no-member
     train_task_sampler = MetaWorldTaskSampler(
         mt50,
-        'train',
+        "train",
         lambda env, _: normalize(env, normalize_reward=True),
-        add_env_onehot=True)
-    test_task_sampler = MetaWorldTaskSampler(mt50_test,
-                                             'train',
-                                             lambda env, _: normalize(env),
-                                             add_env_onehot=True)
+        add_env_onehot=True,
+    )
+    test_task_sampler = MetaWorldTaskSampler(
+        mt50_test, "train", lambda env, _: normalize(env), add_env_onehot=True
+    )
     assert n_tasks % 50 == 0
     assert n_tasks <= 2500
     mt50_train_envs = train_task_sampler.sample(n_tasks)
@@ -73,19 +68,21 @@ def mtsac_metaworld_mt50(ctxt=None,
         hidden_sizes=[400, 400, 400],
         hidden_nonlinearity=nn.ReLU,
         output_nonlinearity=None,
-        min_std=np.exp(-20.),
-        max_std=np.exp(2.),
+        min_std=np.exp(-20.0),
+        max_std=np.exp(2.0),
     )
 
-    qf1 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[400, 400, 400],
-                                 hidden_nonlinearity=F.relu)
+    qf1 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[400, 400, 400], hidden_nonlinearity=F.relu
+    )
 
-    qf2 = ContinuousMLPQFunction(env_spec=env.spec,
-                                 hidden_sizes=[400, 400, 400],
-                                 hidden_nonlinearity=F.relu)
+    qf2 = ContinuousMLPQFunction(
+        env_spec=env.spec, hidden_sizes=[400, 400, 400], hidden_nonlinearity=F.relu
+    )
 
-    replay_buffer = PathBuffer(capacity_in_transitions=int(1e6), )
+    replay_buffer = PathBuffer(
+        capacity_in_transitions=int(1e6),
+    )
 
     sampler = LocalSampler(
         agents=policy,
@@ -101,27 +98,30 @@ def mtsac_metaworld_mt50(ctxt=None,
         # so creating 50 envs with 8 copies comes out to 20gb of memory. Many
         # users want to be able to run multiple seeds on 1 machine, so I have
         # reduced this to n_envs = 2 for 2 copies in the meantime.
-        worker_args=dict(n_envs=2))
+        worker_args=dict(n_envs=2),
+    )
 
     batch_size = int(env.spec.max_episode_length * n_tasks)
     num_evaluation_points = 500
     epochs = timesteps // batch_size
     epoch_cycles = epochs // num_evaluation_points
     epochs = epochs // epoch_cycles
-    mtsac = MTSAC(policy=policy,
-                  qf1=qf1,
-                  qf2=qf2,
-                  sampler=sampler,
-                  gradient_steps_per_itr=env.spec.max_episode_length,
-                  eval_env=mt50_test_envs,
-                  env_spec=env.spec,
-                  num_tasks=50,
-                  steps_per_epoch=epoch_cycles,
-                  replay_buffer=replay_buffer,
-                  min_buffer_size=7500,
-                  target_update_tau=5e-3,
-                  discount=0.99,
-                  buffer_batch_size=6400)
+    mtsac = MTSAC(
+        policy=policy,
+        qf1=qf1,
+        qf2=qf2,
+        sampler=sampler,
+        gradient_steps_per_itr=env.spec.max_episode_length,
+        eval_env=mt50_test_envs,
+        env_spec=env.spec,
+        num_tasks=50,
+        steps_per_epoch=epoch_cycles,
+        replay_buffer=replay_buffer,
+        min_buffer_size=7500,
+        target_update_tau=5e-3,
+        discount=0.99,
+        buffer_batch_size=6400,
+    )
     set_gpu_mode(use_gpu, _gpu)
     mtsac.to()
     trainer.setup(algo=mtsac, env=mt50_train_envs)

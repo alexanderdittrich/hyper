@@ -1,8 +1,10 @@
 """Variant of the HalfCheetahEnv with different target directions."""
+
 import numpy as np
 
 from environments.garage.envs.mujoco.half_cheetah_env_meta_base import (
-    HalfCheetahEnvMetaBase)  # noqa: E501
+    HalfCheetahEnvMetaBase,
+)  # noqa: E501
 
 
 class HalfCheetahDirEnv(HalfCheetahEnvMetaBase):
@@ -31,7 +33,7 @@ class HalfCheetahDirEnv(HalfCheetahEnvMetaBase):
     """
 
     def __init__(self, task=None):
-        super().__init__(task or {'direction': 1.})
+        super().__init__(task or {"direction": 1.0})
 
     def step(self, action):
         """Take one step in the environment.
@@ -64,22 +66,24 @@ class HalfCheetahDirEnv(HalfCheetahEnvMetaBase):
         xposafter = self.sim.data.qpos[0]
 
         forward_vel = (xposafter - xposbefore) / self.dt
-        forward_reward = self._task['direction'] * forward_vel
+        forward_reward = self._task["direction"] * forward_vel
         ctrl_cost = 0.5 * 1e-1 * np.sum(np.square(action))
 
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
         done = False
-        if self._task['direction'] == 1.:
-            task_name = 'fowrad'
-        elif self._task['direction'] == -1.:
-            task_name = 'backward'
+        if self._task["direction"] == 1.0:
+            task_name = "fowrad"
+        elif self._task["direction"] == -1.0:
+            task_name = "backward"
         else:
-            raise ValueError('task direction should be 1. or -1.')
-        infos = dict(reward_forward=np.asarray([forward_reward]),
-                     reward_ctrl=np.asarray([-ctrl_cost]),
-                     task_dir=np.asarray([self._task['direction']]),
-                     task_name=task_name)
+            raise ValueError("task direction should be 1. or -1.")
+        infos = dict(
+            reward_forward=np.asarray([forward_reward]),
+            reward_ctrl=np.asarray([-ctrl_cost]),
+            task_dir=np.asarray([self._task["direction"]]),
+            task_name=task_name,
+        )
         return observation, reward, done, infos
 
     def sample_tasks(self, num_tasks):
@@ -94,9 +98,8 @@ class HalfCheetahDirEnv(HalfCheetahEnvMetaBase):
                 or 1.
 
         """
-        directions = (
-            2 * self.np_random.binomial(1, p=0.5, size=(num_tasks, )) - 1)
-        tasks = [{'direction': direction} for direction in directions]
+        directions = 2 * self.np_random.binomial(1, p=0.5, size=(num_tasks,)) - 1
+        tasks = [{"direction": direction} for direction in directions]
         return tasks
 
     def set_task(self, task):

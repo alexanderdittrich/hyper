@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This is an example to resume training programmatically."""
+
 # pylint: disable=no-value-for-parameter
 import click
 
@@ -8,9 +9,7 @@ from environments.garage.trainer import TFTrainer
 
 
 @click.command()
-@click.option('--saved_dir',
-              required=True,
-              help='Path where snapshots are saved.')
+@click.option("--saved_dir", required=True, help="Path where snapshots are saved.")
 @wrap_experiment
 def resume_experiment(ctxt, saved_dir):
     """Resume a Tensorflow experiment.

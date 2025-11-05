@@ -1,7 +1,10 @@
 """Trust Region Policy Optimization."""
+
 from environments.garage.tf.algos.npo import NPO
-from environments.garage.tf.optimizers import (ConjugateGradientOptimizer,
-                                  PenaltyLBFGSOptimizer)
+from environments.garage.tf.optimizers import (
+    ConjugateGradientOptimizer,
+    PenaltyLBFGSOptimizer,
+)
 
 
 class TRPO(NPO):
@@ -53,57 +56,61 @@ class TRPO(NPO):
 
     """
 
-    def __init__(self,
-                 env_spec,
-                 policy,
-                 baseline,
-                 sampler,
-                 scope=None,
-                 discount=0.99,
-                 gae_lambda=0.98,
-                 center_adv=True,
-                 positive_adv=False,
-                 fixed_horizon=False,
-                 lr_clip_range=0.01,
-                 max_kl_step=0.01,
-                 optimizer=None,
-                 optimizer_args=None,
-                 policy_ent_coeff=0.0,
-                 use_softplus_entropy=False,
-                 use_neg_logli_entropy=False,
-                 stop_entropy_gradient=False,
-                 kl_constraint='hard',
-                 entropy_method='no_entropy',
-                 name='TRPO'):
+    def __init__(
+        self,
+        env_spec,
+        policy,
+        baseline,
+        sampler,
+        scope=None,
+        discount=0.99,
+        gae_lambda=0.98,
+        center_adv=True,
+        positive_adv=False,
+        fixed_horizon=False,
+        lr_clip_range=0.01,
+        max_kl_step=0.01,
+        optimizer=None,
+        optimizer_args=None,
+        policy_ent_coeff=0.0,
+        use_softplus_entropy=False,
+        use_neg_logli_entropy=False,
+        stop_entropy_gradient=False,
+        kl_constraint="hard",
+        entropy_method="no_entropy",
+        name="TRPO",
+    ):
         if not optimizer:
-            if kl_constraint == 'hard':
+            if kl_constraint == "hard":
                 optimizer = ConjugateGradientOptimizer
-            elif kl_constraint == 'soft':
+            elif kl_constraint == "soft":
                 optimizer = PenaltyLBFGSOptimizer
             else:
-                raise ValueError('Invalid kl_constraint')
+                raise ValueError("Invalid kl_constraint")
 
         if optimizer_args is None:
             optimizer_args = dict()
 
-        super().__init__(env_spec=env_spec,
-                         policy=policy,
-                         baseline=baseline,
-                         sampler=sampler,
-                         scope=scope,
-                         discount=discount,
-                         gae_lambda=gae_lambda,
-                         center_adv=center_adv,
-                         positive_adv=positive_adv,
-                         fixed_horizon=fixed_horizon,
-                         pg_loss='surrogate',
-                         lr_clip_range=lr_clip_range,
-                         max_kl_step=max_kl_step,
-                         optimizer=optimizer,
-                         optimizer_args=optimizer_args,
-                         policy_ent_coeff=policy_ent_coeff,
-                         use_softplus_entropy=use_softplus_entropy,
-                         use_neg_logli_entropy=use_neg_logli_entropy,
-                         stop_entropy_gradient=stop_entropy_gradient,
-                         entropy_method=entropy_method,
-                         name=name)
+        super().__init__(
+            env_spec=env_spec,
+            policy=policy,
+            baseline=baseline,
+            sampler=sampler,
+            scope=scope,
+            discount=discount,
+            gae_lambda=gae_lambda,
+            center_adv=center_adv,
+            positive_adv=positive_adv,
+            fixed_horizon=fixed_horizon,
+            pg_loss="surrogate",
+            lr_clip_range=lr_clip_range,
+            max_kl_step=max_kl_step,
+            optimizer=optimizer,
+            optimizer_args=optimizer_args,
+            policy_ent_coeff=policy_ent_coeff,
+            use_softplus_entropy=use_softplus_entropy,
+            use_neg_logli_entropy=use_neg_logli_entropy,
+            stop_entropy_gradient=stop_entropy_gradient,
+            entropy_method=entropy_method,
+            name=name,
+        )

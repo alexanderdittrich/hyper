@@ -37,16 +37,18 @@ class MetaEvaluator:
 
     # pylint: disable=too-few-public-methods
 
-    def __init__(self,
-                 *,
-                 test_task_sampler,
-                 n_exploration_eps=10,
-                 n_test_tasks=None,
-                 n_test_episodes=1,
-                 prefix='MetaTest',
-                 test_task_names=None,
-                 worker_class=DefaultWorker,
-                 worker_args=None):
+    def __init__(
+        self,
+        *,
+        test_task_sampler,
+        n_exploration_eps=10,
+        n_test_tasks=None,
+        n_test_episodes=1,
+        prefix="MetaTest",
+        test_task_names=None,
+        worker_class=DefaultWorker,
+        worker_args=None,
+    ):
         self._test_task_sampler = test_task_sampler
         self._worker_class = worker_class
         if worker_args is None:
@@ -75,43 +77,49 @@ class MetaEvaluator:
         if test_episodes_per_task is None:
             test_episodes_per_task = self._n_test_episodes
         adapted_episodes = []
-        logger.log('Sampling for adapation and meta-testing...')
+        logger.log("Sampling for adapation and meta-testing...")
         env_updates = self._test_task_sampler.sample(self._n_test_tasks)
         if self._test_sampler is None:
             env = env_updates[0]()
             self._max_episode_length = env.spec.max_episode_length
             self._test_sampler = LocalSampler.from_worker_factory(
-                WorkerFactory(seed=get_seed(),
-                              max_episode_length=self._max_episode_length,
-                              n_workers=1,
-                              worker_class=self._worker_class,
-                              worker_args=self._worker_args),
+                WorkerFactory(
+                    seed=get_seed(),
+                    max_episode_length=self._max_episode_length,
+                    n_workers=1,
+                    worker_class=self._worker_class,
+                    worker_args=self._worker_args,
+                ),
                 agents=algo.get_exploration_policy(),
-                envs=env)
+                envs=env,
+            )
         for env_up in env_updates:
             policy = algo.get_exploration_policy()
-            eps = EpisodeBatch.concatenate(*[
-                self._test_sampler.obtain_samples(self._eval_itr, 1, policy,
-                                                  env_up)
-                for _ in range(self._n_exploration_eps)
-            ])
+            eps = EpisodeBatch.concatenate(
+                *[
+                    self._test_sampler.obtain_samples(self._eval_itr, 1, policy, env_up)
+                    for _ in range(self._n_exploration_eps)
+                ]
+            )
             adapted_policy = algo.adapt_policy(policy, eps)
             adapted_eps = self._test_sampler.obtain_samples(
                 self._eval_itr,
                 test_episodes_per_task * self._max_episode_length,
-                adapted_policy)
+                adapted_policy,
+            )
             adapted_episodes.append(adapted_eps)
-        logger.log('Finished meta-testing...')
+        logger.log("Finished meta-testing...")
 
         if self._test_task_names is not None:
             name_map = dict(enumerate(self._test_task_names))
         else:
             name_map = None
 
-        with tabular.prefix(self._prefix + '/' if self._prefix else ''):
+        with tabular.prefix(self._prefix + "/" if self._prefix else ""):
             log_multitask_performance(
                 self._eval_itr,
                 EpisodeBatch.concatenate(*adapted_episodes),
-                getattr(algo, 'discount', 1.0),
-                name_map=name_map)
+                getattr(algo, "discount", 1.0),
+                name_map=name_map,
+            )
         self._eval_itr += 1

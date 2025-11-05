@@ -1,4 +1,5 @@
 """Functions used by multiple Samplers or Workers."""
+
 from environments.garage import Environment
 from environments.garage.sampler.env_update import EnvUpdate
 
@@ -35,6 +36,6 @@ def _apply_env_update(old_env, env_update):
                 old_env.close()
             return env_update, True
         else:
-            raise TypeError('Unknown environment update type.')
+            raise TypeError("Unknown environment update type.")
     else:
         return old_env, False

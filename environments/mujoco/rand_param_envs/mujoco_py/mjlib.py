@@ -17,7 +17,9 @@ else:
 
 if not os.path.exists(libfile):
     raise RuntimeError(
-        "Missing path: %s. (HINT: you should have unzipped the mjpro131.zip bundle without modification.)" % libfile)
+        "Missing path: %s. (HINT: you should have unzipped the mjpro131.zip bundle without modification.)"
+        % libfile
+    )
 
 mjlib = cdll.LoadLibrary(os.path.abspath(libfile))
 
@@ -163,7 +165,11 @@ mjlib.mj_deleteData.restype = None
 # mjlib.mj_jacSite.restype = None
 # mjlib.mj_jacPointAxis.argtypes = [POINTER(MJMODEL), POINTER(MJDATA), POINTER(c_double), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int]
 # mjlib.mj_jacPointAxis.restype = None
-mjlib.mj_name2id.argtypes = [POINTER(MJMODEL), c_int, String]  # The middle term is a mjtObj (an enum) in C.
+mjlib.mj_name2id.argtypes = [
+    POINTER(MJMODEL),
+    c_int,
+    String,
+]  # The middle term is a mjtObj (an enum) in C.
 mjlib.mj_name2id.restype = c_int
 # mjlib.mj_id2name.argtypes = [POINTER(MJMODEL), mjtObj, c_int]
 # mjlib.    mj_id2name.restype = ReturnString
@@ -212,21 +218,51 @@ mjlib.mjv_updateCameraPose.restype = None
 # mjlib.mjv_convert3D.restype = None
 # mjlib.mjv_convert2D.argtypes = [POINTER(c_double), mjtMouse, c_double, c_double, c_double, POINTER(MJVCAMERAPOSE)]
 # mjlib.mjv_convert2D.restype = None
-mjlib.mjv_moveCamera.argtypes = [c_int, c_float, c_float, POINTER(MJVCAMERA), c_float, c_float]
+mjlib.mjv_moveCamera.argtypes = [
+    c_int,
+    c_float,
+    c_float,
+    POINTER(MJVCAMERA),
+    c_float,
+    c_float,
+]
 mjlib.mjv_moveCamera.restype = None
 # mjlib.mjv_moveObject.argtypes = [mjtMouse, c_float, c_float, POINTER(MJVCAMERAPOSE), c_float, c_float, POINTER(c_double), POINTER(c_double)]
 # mjlib.mjv_moveObject.restype = None
-mjlib.mjv_mousePerturb.argtypes = [POINTER(MJMODEL), POINTER(MJDATA), c_int, c_int, POINTER(c_double),
-                                   POINTER(c_double), POINTER(c_double)]
+mjlib.mjv_mousePerturb.argtypes = [
+    POINTER(MJMODEL),
+    POINTER(MJDATA),
+    c_int,
+    c_int,
+    POINTER(c_double),
+    POINTER(c_double),
+    POINTER(c_double),
+]
 mjlib.mjv_mousePerturb.restype = None
 # mjlib.mjv_mouseEdit.argtypes = [POINTER(MJMODEL), POINTER(MJDATA), c_int, c_int, POINTER(c_double), POINTER(c_double)]
 # mjlib.mjv_mouseEdit.restype = None
-mjlib.mjv_makeGeoms.argtypes = [POINTER(MJMODEL), POINTER(MJDATA), POINTER(MJVOBJECTS), POINTER(MJVOPTION), c_int,
-                                c_int, POINTER(c_double), POINTER(c_double), POINTER(c_double)]
+mjlib.mjv_makeGeoms.argtypes = [
+    POINTER(MJMODEL),
+    POINTER(MJDATA),
+    POINTER(MJVOBJECTS),
+    POINTER(MJVOPTION),
+    c_int,
+    c_int,
+    POINTER(c_double),
+    POINTER(c_double),
+    POINTER(c_double),
+]
 mjlib.mjv_makeGeoms.restype = None
 mjlib.mjv_makeLights.argtypes = [POINTER(MJMODEL), POINTER(MJDATA), POINTER(MJVOBJECTS)]
 mjlib.mjv_makeLights.restype = None
-mjlib.mjr_overlay.argtypes = [MJRRECT, c_int, c_int, String, String, POINTER(MJRCONTEXT)]
+mjlib.mjr_overlay.argtypes = [
+    MJRRECT,
+    c_int,
+    c_int,
+    String,
+    String,
+    POINTER(MJRCONTEXT),
+]
 mjlib.mjr_overlay.restype = None
 # mjlib.mjr_rectangle.argtypes = [c_int, MJRRECT, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double]
 # mjlib.mjr_rectangle.restype = None
@@ -248,8 +284,14 @@ mjlib.mjr_makeContext.argtypes = [POINTER(MJMODEL), POINTER(MJRCONTEXT), c_int]
 mjlib.mjr_makeContext.restype = None
 mjlib.mjr_freeContext.argtypes = [POINTER(MJRCONTEXT)]
 mjlib.mjr_freeContext.restype = None
-mjlib.mjr_render.argtypes = [c_int, MJRRECT, POINTER(MJVOBJECTS), POINTER(MJROPTION), POINTER(MJVCAMERAPOSE),
-                             POINTER(MJRCONTEXT)]
+mjlib.mjr_render.argtypes = [
+    c_int,
+    MJRRECT,
+    POINTER(MJVOBJECTS),
+    POINTER(MJROPTION),
+    POINTER(MJVCAMERAPOSE),
+    POINTER(MJRCONTEXT),
+]
 mjlib.mjr_render.restype = None
 # mjlib.mjr_select.argtypes = [MJRRECT, POINTER(MJVOBJECTS), c_int, c_int, POINTER(c_double), POINTER(c_double), POINTER(MJROPTION), POINTER(MJVCAMERAPOSE), POINTER(MJRCONTEXT)]
 # mjlib.mjr_select.restype = c_int

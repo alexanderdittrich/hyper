@@ -1,4 +1,5 @@
 """Policy that performs a fixed sequence of actions."""
+
 import numpy as np
 
 from environments.garage.np.policies.policy import Policy
@@ -37,8 +38,9 @@ class FixedPolicy(Policy):
         if do_resets is None:
             do_resets = [True]
         if len(do_resets) > 1:
-            raise ValueError('FixedPolicy does not support more than one '
-                             'action at a time.')
+            raise ValueError(
+                "FixedPolicy does not support more than one action at a time."
+            )
         self._indices[0] = 0
 
     def set_param_values(self, params):
@@ -97,12 +99,11 @@ class FixedPolicy(Policy):
 
         """
         if len(observations) != 1:
-            raise ValueError('FixedPolicy does not support more than one '
-                             'observation at a time.')
+            raise ValueError(
+                "FixedPolicy does not support more than one observation at a time."
+            )
         action, agent_info = self.get_action(observations[0])
-        return np.array(
-            [action]), {k: np.array([v])
-                        for (k, v) in agent_info.items()}
+        return np.array([action]), {k: np.array([v]) for (k, v) in agent_info.items()}
 
     @property
     def env_spec(self):

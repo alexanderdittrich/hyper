@@ -1,4 +1,5 @@
 """Base class for policies based on numpy."""
+
 import abc
 
 

@@ -1,6 +1,7 @@
 """
 Taken from https://github.com/openai/baselines
 """
+
 import numpy as np
 
 from environments.env_utils.running_mean_std import RunningMeanStd
@@ -13,8 +14,16 @@ class VecNormalize(VecEnvWrapper):
     and returns from an environment.
     """
 
-    def __init__(self, venv, clipobs=10., cliprew=10., gamma=0.99, epsilon=1e-8,
-                 normalise_rew=False, ret_rms=None):
+    def __init__(
+        self,
+        venv,
+        clipobs=10.0,
+        cliprew=10.0,
+        gamma=0.99,
+        epsilon=1e-8,
+        normalise_rew=False,
+        ret_rms=None,
+    ):
         VecEnvWrapper.__init__(self, venv)
 
         self.normalise_rew = normalise_rew
@@ -48,7 +57,7 @@ class VecNormalize(VecEnvWrapper):
         obs, rews, news, infos = self.venv.step_wait()
         # update discounted return
         self.ret = self.ret * self.gamma + rews
-        self.ret[news] = 0.
+        self.ret[news] = 0.0
         # normalise
         rews = self._rewfilt(rews)
         return obs, rews, news, infos
@@ -59,7 +68,11 @@ class VecNormalize(VecEnvWrapper):
             if self.training:
                 self.ret_rms.update(self.ret)
             # normalise
-            rews_norm = np.clip(rews / np.sqrt(self.ret_rms.var + self.epsilon), -self.cliprew, self.cliprew)
+            rews_norm = np.clip(
+                rews / np.sqrt(self.ret_rms.var + self.epsilon),
+                -self.cliprew,
+                self.cliprew,
+            )
             return [rews, rews_norm]
         else:
             return [rews, rews]
@@ -68,20 +81,23 @@ class VecNormalize(VecEnvWrapper):
         if index is None:
             obs = self.venv.reset_mdp()
         else:
-            self.venv.remotes[index].send(('reset_mdp', None))
+            self.venv.remotes[index].send(("reset_mdp", None))
             obs = self.venv.remotes[index].recv()
         return obs
 
     def reset(self, index=None, task=None):
+        """Reset environment and return observation."""
         self.ret = np.zeros(self.num_envs)
         if index is None:
             obs = self.venv.reset(task=task)
         else:
             try:
-                self.venv.remotes[index].send(('reset', task))
+                self.venv.remotes[index].send(("reset", task))
                 obs = self.venv.remotes[index].recv()
             except AttributeError:
-                obs = self.venv.envs[index].reset(task=task)
+                # For DummyVecEnv
+                seed = getattr(self.venv.envs[index], "_seed", None)
+                obs, info = self.venv.envs[index].reset(task=task, seed=seed)
         return obs
 
     def __getattr__(self, attr):
@@ -94,6 +110,7 @@ class VecNormalize(VecEnvWrapper):
             orig_attr = self.unwrapped.__getattribute__(attr)
 
         if callable(orig_attr):
+
             def hooked(*args, **kwargs):
                 result = orig_attr(*args, **kwargs)
                 return result
@@ -101,4 +118,3 @@ class VecNormalize(VecEnvWrapper):
             return hooked
         else:
             return orig_attr
-
