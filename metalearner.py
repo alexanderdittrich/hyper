@@ -11,7 +11,7 @@ from environments.parallel_envs import make_vec_envs
 from models.policy import Policy
 from utils import evaluation as utl_eval
 from utils import helpers as utl
-from utils.tb_logger import TBLogger
+from utils.wandb_logger import WandbLogger
 from vae import VaribadVAE
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -33,8 +33,8 @@ class MetaLearner:
         self.frames = 0
         self.iter_idx = 0
 
-        # initialise tensorboard logger
-        self.logger = TBLogger(self.args, self.args.exp_label) if make_logger else None
+        # initialise wandb logger
+        self.logger = WandbLogger(self.args, self.args.exp_label) if make_logger else None
 
         if args.env_name == "metaworld_ml1":
             if args.mw_version == 1:

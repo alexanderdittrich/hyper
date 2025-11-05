@@ -472,6 +472,20 @@ def get_args(rest_args):
         default=None,
         help="directory to save results (None uses ./logs)",
     )
+    
+    # wandb logging
+    parser.add_argument(
+        "--wandb_project",
+        type=str,
+        default="hyper-metarl",
+        help="wandb project name",
+    )
+    parser.add_argument(
+        "--wandb_mode",
+        type=str,
+        default="online",
+        help="wandb mode: online, offline, or disabled",
+    )
 
     # general settings
     parser.add_argument("--seed", nargs="+", type=int, default=[73])

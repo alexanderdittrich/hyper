@@ -333,11 +333,17 @@ def main():
             learner = Learner(args)
         else:
             learner = MetaLearner(args)
-        learner.train()
-        with open(
-            os.path.join(learner.logger.full_output_folder, "DONE"), "w+"
-        ) as done_file:
-            done_file.write("\n")
+        
+        try:
+            learner.train()
+            with open(
+                os.path.join(learner.logger.full_output_folder, "DONE"), "w+"
+            ) as done_file:
+                done_file.write("\n")
+        finally:
+            # Ensure wandb is properly closed
+            if learner.logger is not None:
+                learner.logger.finish()
 
 
 if __name__ == "__main__":
