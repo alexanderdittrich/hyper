@@ -14,7 +14,9 @@ class WandbLogger:
         self.exp_label = exp_label
 
         # Create output folder
-        results_log_dir = args.results_log_dir if args.results_log_dir is not None else "./logs"
+        results_log_dir = (
+            args.results_log_dir if args.results_log_dir is not None else "./logs"
+        )
         self.full_output_folder = os.path.join(results_log_dir, exp_label)
         if not os.path.exists(self.full_output_folder):
             os.makedirs(self.full_output_folder)
@@ -40,7 +42,16 @@ class WandbLogger:
         wandb.define_metric("return_std_per_iter/*", step_metric="iterations")
         wandb.define_metric("Meta-Episode Return*", step_metric="frames")
         wandb.define_metric("Meta-Episode Success*", step_metric="frames")
-        
+        wandb.define_metric("Grad_Norm*", step_metric="frames")
+        wandb.define_metric("State_Grad_Norm*", step_metric="frames")
+        wandb.define_metric("policy_losses/*", step_metric="iterations")
+        wandb.define_metric("policy/*", step_metric="iterations")
+        wandb.define_metric("vae_losses/*", step_metric="iterations")
+        wandb.define_metric("encoder/*", step_metric="iterations")
+        wandb.define_metric("decoder/*", step_metric="iterations")
+        wandb.define_metric("weights/*", step_metric="iterations")
+        wandb.define_metric("gradients/*", step_metric="iterations")
+
         # Store wandb run
         self.run = wandb.run
 
@@ -66,13 +77,16 @@ class WandbLogger:
         log_dict = {name: value}
         if "_per_frame" in name or "Meta-Episode" in name:
             log_dict["frames"] = step
-        elif "_per_iter" in name or any(x in name for x in ["policy", "vae", "encoder", "decoder", "weights", "gradients"]):
+        elif "_per_iter" in name or any(
+            x in name
+            for x in ["policy", "vae", "encoder", "decoder", "weights", "gradients"]
+        ):
             log_dict["iterations"] = step
         else:
             # Default: use both for compatibility
             log_dict["frames"] = step
             log_dict["iterations"] = step
-        
+
         wandb.log(log_dict, commit=True)
 
     def add_image(self, name, image, step):

@@ -472,7 +472,7 @@ def get_args(rest_args):
         default=None,
         help="directory to save results (None uses ./logs)",
     )
-    
+
     # wandb logging
     parser.add_argument(
         "--wandb_project",

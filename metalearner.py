@@ -34,7 +34,9 @@ class MetaLearner:
         self.iter_idx = 0
 
         # initialise wandb logger
-        self.logger = WandbLogger(self.args, self.args.exp_label) if make_logger else None
+        self.logger = (
+            WandbLogger(self.args, self.args.exp_label) if make_logger else None
+        )
 
         if args.env_name == "metaworld_ml1":
             if args.mw_version == 1:
